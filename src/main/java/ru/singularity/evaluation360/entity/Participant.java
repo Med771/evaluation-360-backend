@@ -7,8 +7,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "accounts")
-public class Account {
+@Table(name = "participants")
+public class Participant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -20,7 +20,7 @@ public class Account {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "avatar", nullable = true)
+    @Column(name = "avatar", nullable = false, columnDefinition = "varchar(255) default 'url'")
     private String avatar;
 
     @Column(name = "web_id", nullable = false)
