@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "roles")
-public class Role {
+public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,5 +19,5 @@ public class Role {
     private String role;
 
     @OneToMany(mappedBy = "role")
-    private List<Participant> users;
+    private List<ParticipantEntity> users;
 }
