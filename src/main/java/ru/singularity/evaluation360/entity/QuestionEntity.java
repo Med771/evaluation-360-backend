@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "questions")
-public class Question {
+public class QuestionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -20,8 +20,8 @@ public class Question {
 
     @ManyToOne
     @JoinColumn(name = "skills_id", nullable = false)
-    private Skill skill;
+    private SkillEntity skill;
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers;
+    private List<AnswerEntity> answers;
 }

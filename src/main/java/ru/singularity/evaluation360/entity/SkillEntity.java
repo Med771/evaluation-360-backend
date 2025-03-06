@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "skills")
-public class Skill  {
+public class SkillEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,5 +19,5 @@ public class Skill  {
     private String skillsText;
 
     @OneToMany(mappedBy = "skill")
-    private List<Question> questions;
+    private List<QuestionEntity> questions;
 }

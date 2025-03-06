@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "participants")
-public class Participant {
+public class ParticipantEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -18,7 +18,7 @@ public class Participant {
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    private RoleEntity role;
 
     @Column(name = "avatar", nullable = false, columnDefinition = "varchar(255) default 'url'")
     private String avatar;
