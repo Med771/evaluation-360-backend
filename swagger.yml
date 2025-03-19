@@ -1,0 +1,256 @@
+openapi: 3.0.0
+info:
+  title: "360 оценка API"
+  description: "API для проведения 360 оценки"
+  version: "1.0.0"
+
+servers:
+  - url: "http://localhost:8080/api/v1"
+    description: "Локальный сервер"
+
+paths:
+  /test:
+    get:
+      summary: "Получить список тестов"
+      description: "Возвращает список доступных тестов"
+      responses:
+        "200":
+          description: "Успешный ответ"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nameGroup:
+                    type: string
+                    example: "Группа A"
+                  tests:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pk:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: "Тест по лидерству"
+                        endDimeStamp:
+                          type: integer
+                          example: 1712345678
+                        startTimeStamp:
+                          type: integer
+                          example: 1712340000
+
+  /test/menu/{test_id}:
+    get:
+      summary: "Получить меню теста"
+      parameters:
+        - name: test_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: "Успешный ответ"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: "Меню теста"
+                  isGetRespondents:
+                    type: boolean
+                    example: false
+                  isSelectRespondents:
+                    type: boolean
+                    example: false
+                  isCompleteEvaluation:
+                    type: boolean
+                    example: false
+                  isActiveResult:
+                    type: boolean
+                    example: false
+                  evaluatedRespondents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pk:
+                          type: integer
+                          example: 1
+                        fullName:
+                          type: string
+                          example: "Иван Иванов"
+                        isComplete:
+                          type: boolean
+                          example: true
+                  evaluatorRespondents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pk:
+                          type: integer
+                          example: 2
+                        fullName:
+                          type: string
+                          example: "Петр Петров"
+                        isComplete:
+                          type: boolean
+                          example: true
+
+  /test/{test_id}:
+    get:
+      summary: "Получить сам тест"
+      parameters:
+        - name: test_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: "Успешный ответ"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: "Тест по менеджменту"
+                  evaluatedId:
+                    type: integer
+                    example: 1
+                  evaluatorId:
+                    type: integer
+                    example: 2
+                  questions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        questionText:
+                          type: string
+                          example: "Как вы оцениваете навыки общения?"
+                        skills:
+                          type: array
+                          items:
+                            type: integer
+                          example: [1, 2, 3, 4]
+
+  /result/{test_id}:
+    get:
+      summary: "Получение результата по тесту"
+      parameters:
+        - name: test_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: "Успешный ответ"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: "Результаты теста"
+                  thisResult:
+                    type: number
+                    format: float
+                    example: 8.55
+                  commandResult:
+                    type: number
+                    format: float
+                    example: 8.00
+                  expertResult:
+                    type: number
+                    format: float
+                    example: 9.00
+                  skillsResult:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        skillsName:
+                          type: string
+                          example: "Коммуникация"
+                        thisEvaluation:
+                          type: number
+                          format: float
+                          example: 8.00
+                        commandEvaluation:
+                          type: number
+                          format: float
+                          example: 7.50
+                        expertEvaluation:
+                          type: number
+                          format: float
+                          example: 8.50
+                        comments:
+                          type: array
+                          items:
+                            type: string
+                          example: ["Отличные навыки", "Может быть лучше"]
+                  ResultComment:
+                    type: string
+                    example: "Хороший результат, но есть над чем работать"
+
+  /respondent/{test_id}:
+    get:
+      summary: "Получение респондентов"
+      parameters:
+        - name: test_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        "200":
+          description: "Успешный ответ"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  minRespondents:
+                    type: integer
+                    example: 1
+                  maxRespondents:
+                    type: integer
+                    example: 10
+                  minHighRoleRespondents:
+                    type: integer
+                    example: 1
+                  minOtherCourseRespondents:
+                    type: integer
+                    example: 1
+                  respondents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pk:
+                          type: integer
+                          example: 1
+                        roleId:
+                          type: integer
+                          example: 2
+                        fullName:
+                          type: string
+                          example: "Александр Сидоров"
+                        course:
+                          type: integer
+                          example: 3

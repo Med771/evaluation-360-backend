@@ -1,0 +1,160 @@
+{
+	"info": {
+		"_postman_id": "1c316796-64f2-4479-88c6-c99045c3e6a1",
+		"name": "360 оценка api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38964850"
+	},
+	"item": [
+		{
+			"name": "тесты",
+			"item": [
+				{
+					"name": "получить список тестов",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhoast:8080/api/v1/test",
+							"host": [
+								"localhoast"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "получить меню теста",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhoast:8080/api/v1/test/menu/{{test_id}}",
+							"host": [
+								"localhoast"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"test",
+								"menu",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "получить сам тест",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/test/{{test_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"test",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "результаты",
+			"item": [
+				{
+					"name": "получение результата по тесту",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/result/{{test_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"result",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "респонденты",
+			"item": [
+				{
+					"name": "получение респондентов",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/v1/respondent/{{test_id}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"respondent",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}
