@@ -1,6 +1,6 @@
-package ru.singularity.evaluation360.dto;
+package ru.singularity.evaluation360.dto.test.model;
 
-public record TestTitleDTO(
+public record TestTitleModel(
         Long pk,
         String title,
         Long startTimeStamp,

@@ -1,6 +1,6 @@
-package ru.singularity.evaluation360.dto;
+package ru.singularity.evaluation360.dto.respondent.model;
 
-public record RespondentDTO(
+public record RespondentModel(
         Long pk,
         Integer roleId,
         String fullName,

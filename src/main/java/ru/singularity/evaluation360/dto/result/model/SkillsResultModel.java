@@ -1,8 +1,8 @@
-package ru.singularity.evaluation360.dto;
+package ru.singularity.evaluation360.dto.result.model;
 
 import java.util.List;
 
-public record SkillsResultDTO(
+public record SkillsResultModel(
         String skillName,
         Double thisEvaluation,
         Double commandEvaluation,
