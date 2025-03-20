@@ -4,5 +4,5 @@ import java.util.List;
 
 public record QuestionTestModel(
         String questionText,
-        List<Integer> skills) {
+        List<Integer> skillsIds) {
 }

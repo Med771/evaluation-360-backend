@@ -9,6 +9,8 @@ public record TestMenuResponseDTO(
         Boolean isGetRespondents,
         Boolean isSelectRespondents,
         Boolean isCompleteEvaluation,
+        Boolean isCompleteEvaluated,
+        Boolean isCompeteEvaluator,
         List<TestRespondentTitleModel> evaluatedRespondents,
         List<TestRespondentTitleModel> evaluatorRespondents,
         Boolean isActiveResult) {

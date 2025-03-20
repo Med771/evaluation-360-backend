@@ -1,7 +1,7 @@
 package ru.singularity.evaluation360.dto.test.model;
 
 public record TestRespondentTitleModel(
-        Long pk,
+        Long respondentId,
         String fullName,
         Boolean isComplete) {
 }
