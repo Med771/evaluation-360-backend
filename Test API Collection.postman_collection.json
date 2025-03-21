@@ -1,0 +1,283 @@
+{
+	"info": {
+		"_postman_id": "255e4180-2e46-47eb-85ed-57ae893dd47e",
+		"name": "Test API Collection",
+		"description": "Collection for the Test API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38964850"
+	},
+	"item": [
+		{
+			"name": "test",
+			"item": [
+				{
+					"name": "Get All Tests",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/test",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"test"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/test",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"test"
+									]
+								}
+							},
+							"status": "200 OK",
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get Test by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/test/{{test_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"test",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/test/{{test_id}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"test",
+										"{{test_id}}"
+									]
+								}
+							},
+							"status": "200 OK",
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Get Test Menu",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/test/menu/{{test_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"test",
+								"menu",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/test/menu/{{test_id}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"test",
+										"menu",
+										"{{test_id}}"
+									]
+								}
+							},
+							"status": "200 OK",
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "results",
+			"item": [
+				{
+					"name": "Get Test Results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/result/{{test_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"result",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/result/{{test_id}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"result",
+										"{{test_id}}"
+									]
+								}
+							},
+							"status": "200 OK",
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "Post Test Result",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"evaluatedId\": 456,\r\n  \"evaluatorId\": 789,\r\n  \"startTimeStamp\": 1710567890,\r\n  \"endTimeStamp\": 1710571490,\r\n  \"answers\": [\r\n    {\r\n      \"value\": 3,\r\n      \"comment\": \"Отличный вопрос, но не совсем понял формулировку\"\r\n    }\r\n  ],\r\n  \"skills\": [\r\n    {\r\n      \"skillId\": 12,\r\n      \"value\": 3.8\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/result",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"result"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "respondent",
+			"item": [
+				{
+					"name": "Get Respondents for Test",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/respondent/{{test_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"respondent",
+								"{{test_id}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Untitled Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/respondent/{{test_id}}",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"respondent",
+										"{{test_id}}"
+									]
+								}
+							},
+							"status": "200 OK",
+							"_postman_previewlanguage": "Text",
+							"header": [],
+							"cookie": [],
+							"body": ""
+						}
+					]
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"respondentsIds\": [\r\n    101,\r\n    102,\r\n    103\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/respondent",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"respondent"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

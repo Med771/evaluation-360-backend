@@ -1,256 +1,797 @@
-openapi: 3.0.0
+openapi: 3.0.1
 info:
-  title: "360 оценка API"
-  description: "API для проведения 360 оценки"
-  version: "1.0.0"
-
+  title: API Documentation
+  description: API endpoints for the application
+  version: 1.0.0
 servers:
-  - url: "http://localhost:8080/api/v1"
-    description: "Локальный сервер"
-
+  - url: http://localhost:8080
+    description: Generated server url
 paths:
+  /result:
+    post:
+      tags:
+        - result-controller
+      summary: Добавить результат
+      description: Добавляет результат для прохождения теста.
+      operationId: addResult
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResultRequestDTO'
+        required: true
+      responses:
+        '201':
+          description: Результат успешно добавлен
+          content:
+            '*/*':
+              schema:
+                type: string
+                enum:
+                  - 100 CONTINUE
+                  - 101 SWITCHING_PROTOCOLS
+                  - 102 PROCESSING
+                  - 103 EARLY_HINTS
+                  - 103 CHECKPOINT
+                  - 200 OK
+                  - 201 CREATED
+                  - 202 ACCEPTED
+                  - 203 NON_AUTHORITATIVE_INFORMATION
+                  - 204 NO_CONTENT
+                  - 205 RESET_CONTENT
+                  - 206 PARTIAL_CONTENT
+                  - 207 MULTI_STATUS
+                  - 208 ALREADY_REPORTED
+                  - 226 IM_USED
+                  - 300 MULTIPLE_CHOICES
+                  - 301 MOVED_PERMANENTLY
+                  - 302 FOUND
+                  - 302 MOVED_TEMPORARILY
+                  - 303 SEE_OTHER
+                  - 304 NOT_MODIFIED
+                  - 305 USE_PROXY
+                  - 307 TEMPORARY_REDIRECT
+                  - 308 PERMANENT_REDIRECT
+                  - 400 BAD_REQUEST
+                  - 401 UNAUTHORIZED
+                  - 402 PAYMENT_REQUIRED
+                  - 403 FORBIDDEN
+                  - 404 NOT_FOUND
+                  - 405 METHOD_NOT_ALLOWED
+                  - 406 NOT_ACCEPTABLE
+                  - 407 PROXY_AUTHENTICATION_REQUIRED
+                  - 408 REQUEST_TIMEOUT
+                  - 409 CONFLICT
+                  - 410 GONE
+                  - 411 LENGTH_REQUIRED
+                  - 412 PRECONDITION_FAILED
+                  - 413 PAYLOAD_TOO_LARGE
+                  - 413 REQUEST_ENTITY_TOO_LARGE
+                  - 414 URI_TOO_LONG
+                  - 414 REQUEST_URI_TOO_LONG
+                  - 415 UNSUPPORTED_MEDIA_TYPE
+                  - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+                  - 417 EXPECTATION_FAILED
+                  - 418 I_AM_A_TEAPOT
+                  - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+                  - 420 METHOD_FAILURE
+                  - 421 DESTINATION_LOCKED
+                  - 422 UNPROCESSABLE_ENTITY
+                  - 423 LOCKED
+                  - 424 FAILED_DEPENDENCY
+                  - 425 TOO_EARLY
+                  - 426 UPGRADE_REQUIRED
+                  - 428 PRECONDITION_REQUIRED
+                  - 429 TOO_MANY_REQUESTS
+                  - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+                  - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+                  - 500 INTERNAL_SERVER_ERROR
+                  - 501 NOT_IMPLEMENTED
+                  - 502 BAD_GATEWAY
+                  - 503 SERVICE_UNAVAILABLE
+                  - 504 GATEWAY_TIMEOUT
+                  - 505 HTTP_VERSION_NOT_SUPPORTED
+                  - 506 VARIANT_ALSO_NEGOTIATES
+                  - 507 INSUFFICIENT_STORAGE
+                  - 508 LOOP_DETECTED
+                  - 509 BANDWIDTH_LIMIT_EXCEEDED
+                  - 510 NOT_EXTENDED
+                  - 511 NETWORK_AUTHENTICATION_REQUIRED
+        '400':
+          description: Некорректные данные запроса
+          content:
+            '*/*':
+              schema:
+                type: string
+                enum:
+                  - 100 CONTINUE
+                  - 101 SWITCHING_PROTOCOLS
+                  - 102 PROCESSING
+                  - 103 EARLY_HINTS
+                  - 103 CHECKPOINT
+                  - 200 OK
+                  - 201 CREATED
+                  - 202 ACCEPTED
+                  - 203 NON_AUTHORITATIVE_INFORMATION
+                  - 204 NO_CONTENT
+                  - 205 RESET_CONTENT
+                  - 206 PARTIAL_CONTENT
+                  - 207 MULTI_STATUS
+                  - 208 ALREADY_REPORTED
+                  - 226 IM_USED
+                  - 300 MULTIPLE_CHOICES
+                  - 301 MOVED_PERMANENTLY
+                  - 302 FOUND
+                  - 302 MOVED_TEMPORARILY
+                  - 303 SEE_OTHER
+                  - 304 NOT_MODIFIED
+                  - 305 USE_PROXY
+                  - 307 TEMPORARY_REDIRECT
+                  - 308 PERMANENT_REDIRECT
+                  - 400 BAD_REQUEST
+                  - 401 UNAUTHORIZED
+                  - 402 PAYMENT_REQUIRED
+                  - 403 FORBIDDEN
+                  - 404 NOT_FOUND
+                  - 405 METHOD_NOT_ALLOWED
+                  - 406 NOT_ACCEPTABLE
+                  - 407 PROXY_AUTHENTICATION_REQUIRED
+                  - 408 REQUEST_TIMEOUT
+                  - 409 CONFLICT
+                  - 410 GONE
+                  - 411 LENGTH_REQUIRED
+                  - 412 PRECONDITION_FAILED
+                  - 413 PAYLOAD_TOO_LARGE
+                  - 413 REQUEST_ENTITY_TOO_LARGE
+                  - 414 URI_TOO_LONG
+                  - 414 REQUEST_URI_TOO_LONG
+                  - 415 UNSUPPORTED_MEDIA_TYPE
+                  - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+                  - 417 EXPECTATION_FAILED
+                  - 418 I_AM_A_TEAPOT
+                  - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+                  - 420 METHOD_FAILURE
+                  - 421 DESTINATION_LOCKED
+                  - 422 UNPROCESSABLE_ENTITY
+                  - 423 LOCKED
+                  - 424 FAILED_DEPENDENCY
+                  - 425 TOO_EARLY
+                  - 426 UPGRADE_REQUIRED
+                  - 428 PRECONDITION_REQUIRED
+                  - 429 TOO_MANY_REQUESTS
+                  - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+                  - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+                  - 500 INTERNAL_SERVER_ERROR
+                  - 501 NOT_IMPLEMENTED
+                  - 502 BAD_GATEWAY
+                  - 503 SERVICE_UNAVAILABLE
+                  - 504 GATEWAY_TIMEOUT
+                  - 505 HTTP_VERSION_NOT_SUPPORTED
+                  - 506 VARIANT_ALSO_NEGOTIATES
+                  - 507 INSUFFICIENT_STORAGE
+                  - 508 LOOP_DETECTED
+                  - 509 BANDWIDTH_LIMIT_EXCEEDED
+                  - 510 NOT_EXTENDED
+                  - 511 NETWORK_AUTHENTICATION_REQUIRED
+  /respondent:
+    post:
+      tags:
+        - respondent-controller
+      summary: Создать респондентов
+      description: Создаёт новых респондентов на основе предоставленных данных.
+      operationId: createRespondent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RespondentsRequestDTO'
+        required: true
+      responses:
+        '201':
+          description: Респонденты успешно созданы
+          content:
+            '*/*':
+              schema:
+                type: string
+                enum:
+                  - 100 CONTINUE
+                  - 101 SWITCHING_PROTOCOLS
+                  - 102 PROCESSING
+                  - 103 EARLY_HINTS
+                  - 103 CHECKPOINT
+                  - 200 OK
+                  - 201 CREATED
+                  - 202 ACCEPTED
+                  - 203 NON_AUTHORITATIVE_INFORMATION
+                  - 204 NO_CONTENT
+                  - 205 RESET_CONTENT
+                  - 206 PARTIAL_CONTENT
+                  - 207 MULTI_STATUS
+                  - 208 ALREADY_REPORTED
+                  - 226 IM_USED
+                  - 300 MULTIPLE_CHOICES
+                  - 301 MOVED_PERMANENTLY
+                  - 302 FOUND
+                  - 302 MOVED_TEMPORARILY
+                  - 303 SEE_OTHER
+                  - 304 NOT_MODIFIED
+                  - 305 USE_PROXY
+                  - 307 TEMPORARY_REDIRECT
+                  - 308 PERMANENT_REDIRECT
+                  - 400 BAD_REQUEST
+                  - 401 UNAUTHORIZED
+                  - 402 PAYMENT_REQUIRED
+                  - 403 FORBIDDEN
+                  - 404 NOT_FOUND
+                  - 405 METHOD_NOT_ALLOWED
+                  - 406 NOT_ACCEPTABLE
+                  - 407 PROXY_AUTHENTICATION_REQUIRED
+                  - 408 REQUEST_TIMEOUT
+                  - 409 CONFLICT
+                  - 410 GONE
+                  - 411 LENGTH_REQUIRED
+                  - 412 PRECONDITION_FAILED
+                  - 413 PAYLOAD_TOO_LARGE
+                  - 413 REQUEST_ENTITY_TOO_LARGE
+                  - 414 URI_TOO_LONG
+                  - 414 REQUEST_URI_TOO_LONG
+                  - 415 UNSUPPORTED_MEDIA_TYPE
+                  - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+                  - 417 EXPECTATION_FAILED
+                  - 418 I_AM_A_TEAPOT
+                  - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+                  - 420 METHOD_FAILURE
+                  - 421 DESTINATION_LOCKED
+                  - 422 UNPROCESSABLE_ENTITY
+                  - 423 LOCKED
+                  - 424 FAILED_DEPENDENCY
+                  - 425 TOO_EARLY
+                  - 426 UPGRADE_REQUIRED
+                  - 428 PRECONDITION_REQUIRED
+                  - 429 TOO_MANY_REQUESTS
+                  - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+                  - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+                  - 500 INTERNAL_SERVER_ERROR
+                  - 501 NOT_IMPLEMENTED
+                  - 502 BAD_GATEWAY
+                  - 503 SERVICE_UNAVAILABLE
+                  - 504 GATEWAY_TIMEOUT
+                  - 505 HTTP_VERSION_NOT_SUPPORTED
+                  - 506 VARIANT_ALSO_NEGOTIATES
+                  - 507 INSUFFICIENT_STORAGE
+                  - 508 LOOP_DETECTED
+                  - 509 BANDWIDTH_LIMIT_EXCEEDED
+                  - 510 NOT_EXTENDED
+                  - 511 NETWORK_AUTHENTICATION_REQUIRED
+        '400':
+          description: Некорректные данные запроса
+          content:
+            '*/*':
+              schema:
+                type: string
+                enum:
+                  - 100 CONTINUE
+                  - 101 SWITCHING_PROTOCOLS
+                  - 102 PROCESSING
+                  - 103 EARLY_HINTS
+                  - 103 CHECKPOINT
+                  - 200 OK
+                  - 201 CREATED
+                  - 202 ACCEPTED
+                  - 203 NON_AUTHORITATIVE_INFORMATION
+                  - 204 NO_CONTENT
+                  - 205 RESET_CONTENT
+                  - 206 PARTIAL_CONTENT
+                  - 207 MULTI_STATUS
+                  - 208 ALREADY_REPORTED
+                  - 226 IM_USED
+                  - 300 MULTIPLE_CHOICES
+                  - 301 MOVED_PERMANENTLY
+                  - 302 FOUND
+                  - 302 MOVED_TEMPORARILY
+                  - 303 SEE_OTHER
+                  - 304 NOT_MODIFIED
+                  - 305 USE_PROXY
+                  - 307 TEMPORARY_REDIRECT
+                  - 308 PERMANENT_REDIRECT
+                  - 400 BAD_REQUEST
+                  - 401 UNAUTHORIZED
+                  - 402 PAYMENT_REQUIRED
+                  - 403 FORBIDDEN
+                  - 404 NOT_FOUND
+                  - 405 METHOD_NOT_ALLOWED
+                  - 406 NOT_ACCEPTABLE
+                  - 407 PROXY_AUTHENTICATION_REQUIRED
+                  - 408 REQUEST_TIMEOUT
+                  - 409 CONFLICT
+                  - 410 GONE
+                  - 411 LENGTH_REQUIRED
+                  - 412 PRECONDITION_FAILED
+                  - 413 PAYLOAD_TOO_LARGE
+                  - 413 REQUEST_ENTITY_TOO_LARGE
+                  - 414 URI_TOO_LONG
+                  - 414 REQUEST_URI_TOO_LONG
+                  - 415 UNSUPPORTED_MEDIA_TYPE
+                  - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+                  - 417 EXPECTATION_FAILED
+                  - 418 I_AM_A_TEAPOT
+                  - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+                  - 420 METHOD_FAILURE
+                  - 421 DESTINATION_LOCKED
+                  - 422 UNPROCESSABLE_ENTITY
+                  - 423 LOCKED
+                  - 424 FAILED_DEPENDENCY
+                  - 425 TOO_EARLY
+                  - 426 UPGRADE_REQUIRED
+                  - 428 PRECONDITION_REQUIRED
+                  - 429 TOO_MANY_REQUESTS
+                  - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+                  - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+                  - 500 INTERNAL_SERVER_ERROR
+                  - 501 NOT_IMPLEMENTED
+                  - 502 BAD_GATEWAY
+                  - 503 SERVICE_UNAVAILABLE
+                  - 504 GATEWAY_TIMEOUT
+                  - 505 HTTP_VERSION_NOT_SUPPORTED
+                  - 506 VARIANT_ALSO_NEGOTIATES
+                  - 507 INSUFFICIENT_STORAGE
+                  - 508 LOOP_DETECTED
+                  - 509 BANDWIDTH_LIMIT_EXCEEDED
+                  - 510 NOT_EXTENDED
+                  - 511 NETWORK_AUTHENTICATION_REQUIRED
   /test:
     get:
-      summary: "Получить список тестов"
-      description: "Возвращает список доступных тестов"
+      tags:
+        - test-controller
+      summary: Получить все тесты
+      description: Возвращает все доступные тесты в системе.
+      operationId: getTests
       responses:
-        "200":
-          description: "Успешный ответ"
+        '200':
+          description: Успешное получение списка тестов
           content:
-            application/json:
+            '*/*':
               schema:
-                type: object
-                properties:
-                  nameGroup:
-                    type: string
-                    example: "Группа A"
-                  tests:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        pk:
-                          type: integer
-                          example: 1
-                        title:
-                          type: string
-                          example: "Тест по лидерству"
-                        endDimeStamp:
-                          type: integer
-                          example: 1712345678
-                        startTimeStamp:
-                          type: integer
-                          example: 1712340000
-
-  /test/menu/{test_id}:
-    get:
-      summary: "Получить меню теста"
-      parameters:
-        - name: test_id
-          in: path
-          required: true
-          schema:
-            type: integer
-          example: 1
-      responses:
-        "200":
-          description: "Успешный ответ"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  title:
-                    type: string
-                    example: "Меню теста"
-                  isGetRespondents:
-                    type: boolean
-                    example: false
-                  isSelectRespondents:
-                    type: boolean
-                    example: false
-                  isCompleteEvaluation:
-                    type: boolean
-                    example: false
-                  isActiveResult:
-                    type: boolean
-                    example: false
-                  evaluatedRespondents:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        pk:
-                          type: integer
-                          example: 1
-                        fullName:
-                          type: string
-                          example: "Иван Иванов"
-                        isComplete:
-                          type: boolean
-                          example: true
-                  evaluatorRespondents:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        pk:
-                          type: integer
-                          example: 2
-                        fullName:
-                          type: string
-                          example: "Петр Петров"
-                        isComplete:
-                          type: boolean
-                          example: true
-
+                $ref: '#/components/schemas/TestsResponseDTO'
   /test/{test_id}:
     get:
-      summary: "Получить сам тест"
+      tags:
+        - test-controller
+      summary: Получить тест
+      description: Возвращает тест с вопросами и респондентами по заданному test_id.
+      operationId: getTest
       parameters:
         - name: test_id
           in: path
+          description: Идентификатор теста
           required: true
           schema:
             type: integer
-          example: 1
+            format: int64
       responses:
-        "200":
-          description: "Успешный ответ"
+        '200':
+          description: Успешное получение теста
           content:
-            application/json:
+            '*/*':
               schema:
-                type: object
-                properties:
-                  title:
-                    type: string
-                    example: "Тест по менеджменту"
-                  evaluatedId:
-                    type: integer
-                    example: 1
-                  evaluatorId:
-                    type: integer
-                    example: 2
-                  questions:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        questionText:
-                          type: string
-                          example: "Как вы оцениваете навыки общения?"
-                        skills:
-                          type: array
-                          items:
-                            type: integer
-                          example: [1, 2, 3, 4]
-
+                $ref: '#/components/schemas/TestResponseDTO'
+  /test/menu/{test_id}:
+    get:
+      tags:
+        - test-controller
+      summary: Получить меню теста
+      description: Возвращает меню для указанного теста.
+      operationId: getTestMenu
+      parameters:
+        - name: test_id
+          in: path
+          description: Идентификатор теста
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешное получение меню теста
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TestMenuResponseDTO'
   /result/{test_id}:
     get:
-      summary: "Получение результата по тесту"
+      tags:
+        - result-controller
+      summary: Получить результаты теста
+      description: Возвращает результаты прохождения теста для указанного test_id.
+      operationId: getResult
       parameters:
         - name: test_id
           in: path
+          description: Идентификатор теста
           required: true
           schema:
             type: integer
-          example: 1
+            format: int64
       responses:
-        "200":
-          description: "Успешный ответ"
+        '200':
+          description: Успешное получение результатов теста
           content:
-            application/json:
+            '*/*':
               schema:
-                type: object
-                properties:
-                  title:
-                    type: string
-                    example: "Результаты теста"
-                  thisResult:
-                    type: number
-                    format: float
-                    example: 8.55
-                  commandResult:
-                    type: number
-                    format: float
-                    example: 8.00
-                  expertResult:
-                    type: number
-                    format: float
-                    example: 9.00
-                  skillsResult:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        skillsName:
-                          type: string
-                          example: "Коммуникация"
-                        thisEvaluation:
-                          type: number
-                          format: float
-                          example: 8.00
-                        commandEvaluation:
-                          type: number
-                          format: float
-                          example: 7.50
-                        expertEvaluation:
-                          type: number
-                          format: float
-                          example: 8.50
-                        comments:
-                          type: array
-                          items:
-                            type: string
-                          example: ["Отличные навыки", "Может быть лучше"]
-                  ResultComment:
-                    type: string
-                    example: "Хороший результат, но есть над чем работать"
-
+                $ref: '#/components/schemas/ResultResponseDTO'
+        '404':
+          description: Результаты не найдены
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultResponseDTO'
   /respondent/{test_id}:
     get:
-      summary: "Получение респондентов"
+      tags:
+        - respondent-controller
+      summary: Получить респондентов для теста
+      description: Возвращает список респондентов для указанного теста.
+      operationId: respondent
       parameters:
         - name: test_id
           in: path
+          description: Идентификатор теста
           required: true
           schema:
             type: integer
-          example: 1
+            format: int64
       responses:
-        "200":
-          description: "Успешный ответ"
+        '200':
+          description: Успешное получение списка респондентов
           content:
-            application/json:
+            '*/*':
               schema:
-                type: object
-                properties:
-                  minRespondents:
-                    type: integer
-                    example: 1
-                  maxRespondents:
-                    type: integer
-                    example: 10
-                  minHighRoleRespondents:
-                    type: integer
-                    example: 1
-                  minOtherCourseRespondents:
-                    type: integer
-                    example: 1
-                  respondents:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        pk:
-                          type: integer
-                          example: 1
-                        roleId:
-                          type: integer
-                          example: 2
-                        fullName:
-                          type: string
-                          example: "Александр Сидоров"
-                        course:
-                          type: integer
-                          example: 3
+                $ref: '#/components/schemas/RespondentsResponseDTO'
+        '404':
+          description: Тест не найден
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RespondentsResponseDTO'
+components:
+  schemas:
+    AnswerTestModel:
+      type: object
+      properties:
+        value:
+          type: integer
+          description: Значение ответа (0-4)
+          format: int32
+          example: 3
+        comment:
+          type: string
+          description: Комментарий к ответу
+          example: Отличный вопрос, но не совсем понял формулировку
+      description: Ответ на тестовый вопрос
+    ResultRequestDTO:
+      type: object
+      properties:
+        evaluatedId:
+          type: integer
+          description: ID оцениваемого пользователя
+          format: int32
+          example: 456
+        evaluatorId:
+          type: integer
+          description: ID оценивающего пользователя
+          format: int32
+          example: 789
+        startTimeStamp:
+          type: integer
+          description: Время начала теста (Unix timestamp)
+          format: int64
+          example: 1710567890
+        endTimeStamp:
+          type: integer
+          description: Время окончания теста (Unix timestamp)
+          format: int64
+          example: 1710571490
+        answers:
+          type: array
+          description: Ответы на тестовые вопросы
+          items:
+            $ref: '#/components/schemas/AnswerTestModel'
+        skills:
+          type: array
+          description: Оценки навыков
+          items:
+            $ref: '#/components/schemas/SkillsTestModel'
+      description: Отправка результатов после теста
+    SkillsTestModel:
+      type: object
+      properties:
+        skillId:
+          type: integer
+          description: ID навыка
+          format: int32
+          example: 12
+        value:
+          type: number
+          description: Среднее значение оценки навыка
+          format: double
+          example: 3.8
+      description: Оценка навыков в тесте
+    RespondentsRequestDTO:
+      type: object
+      properties:
+        respondentsIds:
+          type: array
+          description: Список ID респондентов
+          example:
+            - 101
+            - 102
+            - 103
+          items:
+            type: integer
+            description: Список ID респондентов
+            format: int32
+      description: Респонденты, которые оценивают пользователя
+    TestTitleModel:
+      type: object
+      properties:
+        testId:
+          type: integer
+          description: Идентификатор теста
+          format: int64
+          example: 10
+        title:
+          type: string
+          description: Название теста
+          example: Оценка сотрудников
+        startTimeStamp:
+          type: integer
+          description: Временная метка начала теста (в миллисекундах)
+          format: int64
+          example: 1672531200000
+        endTimeStamp:
+          type: integer
+          description: Временная метка окончания теста (в миллисекундах)
+          format: int64
+          example: 1672617600000
+      description: Модель заголовка теста
+    TestsResponseDTO:
+      type: object
+      properties:
+        nameGroup:
+          type: string
+          description: Название группы тестов
+          example: Годовая аттестация
+        tests:
+          type: array
+          description: Список тестов
+          items:
+            $ref: '#/components/schemas/TestTitleModel'
+      description: DTO для списка тестов
+    QuestionTestModel:
+      type: object
+      properties:
+        questionText:
+          type: string
+          description: Текст вопроса
+          example: Каковы ваши сильные стороны?
+        skillsIds:
+          type: array
+          description: Список идентификаторов навыков
+          example:
+            - 1
+            - 2
+            - 3
+          items:
+            type: integer
+            description: Список идентификаторов навыков
+            format: int32
+      description: Модель вопроса теста
+    TestResponseDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Название теста
+          example: Оценка навыков
+        evaluatedId:
+          type: integer
+          description: ID оцениваемого
+          format: int64
+          example: 2001
+        evaluatorId:
+          type: integer
+          description: ID оценщика
+          format: int64
+          example: 3001
+        questions:
+          type: array
+          description: Список вопросов теста
+          items:
+            $ref: '#/components/schemas/QuestionTestModel'
+      description: DTO для получения информации о тесте
+    TestMenuResponseDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Название теста
+          example: Оценка 360
+        isGetRespondents:
+          type: boolean
+          description: Флаг получения списка респондентов
+          example: true
+        isSelectRespondents:
+          type: boolean
+          description: Флаг выбора респондентов
+          example: false
+        isCompleteEvaluation:
+          type: boolean
+          description: Флаг завершенности процесса оценки
+          example: true
+        isCompleteEvaluated:
+          type: boolean
+          description: Флаг завершенности тестирования оцениваемых
+          example: true
+        isCompeteEvaluator:
+          type: boolean
+          description: Флаг завершенности тестирования оценщиков
+          example: false
+        evaluatedRespondents:
+          type: array
+          description: Список оцениваемых респондентов
+          items:
+            $ref: '#/components/schemas/TestRespondentTitleModel'
+        evaluatorRespondents:
+          type: array
+          description: Список оценщиков
+          items:
+            $ref: '#/components/schemas/TestRespondentTitleModel'
+        isActiveResult:
+          type: boolean
+          description: Флаг активности результата теста
+          example: true
+      description: DTO для меню тестов
+    TestRespondentTitleModel:
+      type: object
+      properties:
+        respondentId:
+          type: integer
+          description: Идентификатор респондента
+          format: int64
+          example: 101
+        fullName:
+          type: string
+          description: Полное имя респондента
+          example: Иван Иванов
+        isComplete:
+          type: boolean
+          description: Флаг завершенности теста респондентом
+          example: true
+      description: Модель заголовка респондента в тесте
+    ResultResponseDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Название теста
+          example: Оценка командной работы
+        averageResult:
+          type: number
+          description: Средний результат
+          format: double
+          example: 4.2
+        thisResult:
+          type: number
+          description: Личный результат
+          format: double
+          example: 4
+        commandResult:
+          type: number
+          description: Результат команды
+          format: double
+          example: 4.3
+        expertResult:
+          type: number
+          description: Результат экспертов
+          format: double
+          example: 4.1
+        results:
+          type: array
+          description: Результаты по навыкам
+          items:
+            $ref: '#/components/schemas/SkillsResultModel'
+        resultComment:
+          type: string
+          description: Финальный комментарий
+          example: В целом хороший результат, но есть куда расти
+      description: Результаты теста
+    SkillsResultModel:
+      type: object
+      properties:
+        skillName:
+          type: string
+          description: Название навыка
+          example: Командная работа
+        averageEvaluation:
+          type: number
+          description: Средняя оценка по навыку
+          format: double
+          example: 4.2
+        thisEvaluation:
+          type: number
+          description: Личная оценка
+          format: double
+          example: 4
+        commandEvaluation:
+          type: number
+          description: Оценка команды
+          format: double
+          example: 4.3
+        expertEvaluation:
+          type: number
+          description: Оценка эксперта
+          format: double
+          example: 4.1
+        comments:
+          type: array
+          description: Комментарии
+          example:
+            - Очень хорошо работает в команде
+            - Немного медлит в принятии решений
+          items:
+            type: string
+            description: Комментарии
+            example: '["Очень хорошо работает в команде","Немного медлит в принятии решений"]'
+      description: Результаты по навыкам
+    RespondentModel:
+      type: object
+      properties:
+        respondentId:
+          type: integer
+          description: ID респондента
+          format: int64
+          example: 123
+        roleId:
+          type: integer
+          description: ID роли респондента
+          format: int32
+          example: 2
+        fullName:
+          type: string
+          description: Полное имя респондента
+          example: Иванов Иван Иванович
+        course:
+          type: integer
+          description: Курс респондента
+          format: int32
+          example: 3
+      description: Респондент
+    RespondentsResponseDTO:
+      type: object
+      properties:
+        minRespondents:
+          type: integer
+          description: Минимальное количество респондентов
+          format: int32
+          example: 3
+        maxRespondents:
+          type: integer
+          description: Максимальное количество респондентов
+          format: int32
+          example: 10
+        minHighRoleRespondents:
+          type: integer
+          description: Минимальное количество администраторов, экспертов или кураторов
+          format: int32
+          example: 1
+        minOtherCourseRespondents:
+          type: integer
+          description: Минимальное количество респондентов с другого курса
+          format: int32
+          example: 2
+        respondents:
+          type: array
+          description: Список респондентов
+          items:
+            $ref: '#/components/schemas/RespondentModel'
+      description: Информация о выборе респондентов
