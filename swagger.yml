@@ -536,84 +536,138 @@ components:
       properties:
         testId:
           type: integer
+          description: Идентификатор теста
           format: int64
+          example: 10
         title:
           type: string
+          description: Название теста
+          example: Оценка сотрудников
         startTimeStamp:
           type: integer
+          description: Временная метка начала теста (в миллисекундах)
           format: int64
+          example: 1672531200000
         endTimeStamp:
           type: integer
+          description: Временная метка окончания теста (в миллисекундах)
           format: int64
+          example: 1672617600000
+      description: Модель заголовка теста
     TestsResponseDTO:
       type: object
       properties:
         nameGroup:
           type: string
+          description: Название группы тестов
+          example: Годовая аттестация
         tests:
           type: array
+          description: Список тестов
           items:
             $ref: '#/components/schemas/TestTitleModel'
+      description: DTO для списка тестов
     QuestionTestModel:
       type: object
       properties:
         questionText:
           type: string
+          description: Текст вопроса
+          example: Каковы ваши сильные стороны?
         skillsIds:
           type: array
+          description: Список идентификаторов навыков
+          example:
+            - 1
+            - 2
+            - 3
           items:
             type: integer
+            description: Список идентификаторов навыков
             format: int32
+      description: Модель вопроса теста
     TestResponseDTO:
       type: object
       properties:
         title:
           type: string
+          description: Название теста
+          example: Оценка навыков
         evaluatedId:
           type: integer
+          description: ID оцениваемого
           format: int64
+          example: 2001
         evaluatorId:
           type: integer
+          description: ID оценщика
           format: int64
+          example: 3001
         questions:
           type: array
+          description: Список вопросов теста
           items:
             $ref: '#/components/schemas/QuestionTestModel'
+      description: DTO для получения информации о тесте
     TestMenuResponseDTO:
       type: object
       properties:
         title:
           type: string
+          description: Название теста
+          example: Оценка 360
         isGetRespondents:
           type: boolean
+          description: Флаг получения списка респондентов
+          example: true
         isSelectRespondents:
           type: boolean
+          description: Флаг выбора респондентов
+          example: false
         isCompleteEvaluation:
           type: boolean
+          description: Флаг завершенности процесса оценки
+          example: true
         isCompleteEvaluated:
           type: boolean
+          description: Флаг завершенности тестирования оцениваемых
+          example: true
         isCompeteEvaluator:
           type: boolean
+          description: Флаг завершенности тестирования оценщиков
+          example: false
         evaluatedRespondents:
           type: array
+          description: Список оцениваемых респондентов
           items:
             $ref: '#/components/schemas/TestRespondentTitleModel'
         evaluatorRespondents:
           type: array
+          description: Список оценщиков
           items:
             $ref: '#/components/schemas/TestRespondentTitleModel'
         isActiveResult:
           type: boolean
+          description: Флаг активности результата теста
+          example: true
+      description: DTO для меню тестов
     TestRespondentTitleModel:
       type: object
       properties:
         respondentId:
           type: integer
+          description: Идентификатор респондента
           format: int64
+          example: 101
         fullName:
           type: string
+          description: Полное имя респондента
+          example: Иван Иванов
         isComplete:
           type: boolean
+          description: Флаг завершенности теста респондентом
+          example: true
+      description: Модель заголовка респондента в тесте
     ResultResponseDTO:
       type: object
       properties:
