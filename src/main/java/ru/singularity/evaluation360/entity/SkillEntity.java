@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Setter
@@ -17,7 +15,4 @@ public class SkillEntity {
 
     @Column(name = "skills_text", nullable = false)
     private String skillsText;
-
-    @OneToMany(mappedBy = "skill")
-    private List<QuestionEntity> questions;
 }
