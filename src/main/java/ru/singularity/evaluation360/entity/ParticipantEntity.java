@@ -13,16 +13,17 @@ public class ParticipantEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    // Values for MVP [
     @Column(name = "full_name", nullable = false)
     private String fullName;
+
+    @Column(name = "course", nullable = false, columnDefinition = "INTEGER default -10")
+    private Integer course;
+    // Values for MVP ]
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
 
-    @Column(name = "avatar", nullable = false, columnDefinition = "varchar(255) default 'url'")
-    private String avatar;
 
-    @Column(name = "web_id", nullable = false)
-    private String webId;
 }
