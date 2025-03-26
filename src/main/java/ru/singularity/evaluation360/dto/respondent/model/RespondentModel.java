@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record RespondentModel(
 
         @Schema(description = "ID респондента", example = "123")
-        Long respondentId,
+        Integer respondentId,
 
         @Schema(description = "ID роли респондента", example = "2")
         Integer roleId,
