@@ -33,7 +33,7 @@ public class RespondentController {
     @GetMapping("/{test_id}")
     public ResponseEntity<RespondentsResponseDTO> respondent(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable("test_id") long test_id) {
-        List<RespondentModel> respondentModel = List.of(new RespondentModel(1L, 1, "String", 1));
+        List<RespondentModel> respondentModel = List.of(new RespondentModel(1, 1, "String", 1));
         RespondentsResponseDTO respondentsResponseDTO =
                 new RespondentsResponseDTO(1, 7, 2, 2, respondentModel);
 
