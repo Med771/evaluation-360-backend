@@ -16,6 +16,9 @@ public class ResultEntity {
     @Id
     private String id;
 
+    // Unique UserId-TestId
+    private String UserTestIndex;
+
     private String title;
 
     // Average Result

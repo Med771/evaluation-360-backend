@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import ru.singularity.evaluation360.entity.model.TestStatusEnum;
+import ru.singularity.evaluation360.entity.model.StatusTestEnum;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class TestEntity {
     private TypeTestEnum type;
 
     // Status
-    private TestStatusEnum status;
+    private StatusTestEnum status;
 
     // Date time
     private Long createTimeStamp;
