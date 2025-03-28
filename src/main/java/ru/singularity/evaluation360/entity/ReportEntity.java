@@ -18,6 +18,9 @@ public class ReportEntity {
     @Id
     private String id;
 
+    // Unique index evaluatedId-TestId
+    private String evaluatedTestIndex;
+
     // Participant Id
     private Integer evaluatedId;
     private Integer evaluatorId;
