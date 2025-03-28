@@ -7,7 +7,7 @@ import ru.singularity.evaluation360.entity.model.TypeTestEnum;
 
 import java.util.List;
 
-public record TestEditResponseDTO(
+public record TestViewResponseDTO(
         String title,
 
         TypeTestEnum type,
