@@ -25,5 +25,6 @@ public class ParticipantEntity {
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
 
-
+    @OneToOne(cascade = CascadeType.ALL, mappedBy="participant")
+    private UserEntity user;
 }
