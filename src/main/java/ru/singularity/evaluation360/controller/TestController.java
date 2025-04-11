@@ -5,11 +5,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.singularity.evaluation360.dto.test.TestMenuResponseDTO;
-import ru.singularity.evaluation360.dto.test.TestResponseDTO;
-import ru.singularity.evaluation360.dto.test.TestsResponseDTO;
+import ru.singularity.evaluation360.dto.test.*;
 import ru.singularity.evaluation360.dto.test.model.QuestionTestModel;
 import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
 import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
@@ -31,7 +31,7 @@ public class TestController {
             @ApiResponse(responseCode = "200", description = "Успешное получение списка тестов")
     })
     @GetMapping()
-    public ResponseEntity<TestsResponseDTO> getTests(){
+    public ResponseEntity<TestsResponseDTO> getTests() {
         List<TestTitleModel> testTitleModel = List.of(new TestTitleModel(1L, "sdf", 234L, 2346L));
 
         TestsResponseDTO testsResponseDTO = new TestsResponseDTO("360", testTitleModel);
@@ -51,7 +51,7 @@ public class TestController {
     })
     @GetMapping("menu/{test_id}")
     public ResponseEntity<TestMenuResponseDTO> getTestMenu(
-            @Parameter(description = "Идентификатор теста", required = true) @PathVariable Long test_id){
+            @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id) {
         List<TestRespondentTitleModel> testRespondentTitleModel =
                 List.of(new TestRespondentTitleModel(1L, "String", true));
 
@@ -74,9 +74,72 @@ public class TestController {
     })
     @GetMapping("/{test_id}")
     public ResponseEntity<TestResponseDTO> getTest(
-            @Parameter(description = "Идентификатор теста", required = true) @PathVariable Long test_id){
+            @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id) {
         List<QuestionTestModel> questionTestModel = List.of(new QuestionTestModel("quest", List.of(1, 2, 3)));
         TestResponseDTO testResponseDTO = new TestResponseDTO("fgd", 2L, 3L, questionTestModel);
         return ResponseEntity.ok(testResponseDTO);
+    }
+
+    /**
+     * получить информацию о тесте для админа.
+     *
+     * @param test_id Идентификатор теста.
+     * @return Детали теста.
+     */
+    @Operation(summary = "Получить тест", description = "Возвращает тест.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешное получение теста")
+    })
+    @GetMapping("admin/{test_id}")
+    // TODO написать mapper
+    public ResponseEntity<TestViewResponseDTO> getTestAdmin(@PathVariable String test_id) {
+        return ResponseEntity.ok(new TestViewResponseDTO("title", null,
+                null, 45L, 45L, 45L, null, null, 1,
+                1, 1, 1));
+    }
+
+    /**
+     *
+     * изменение статуса.
+     *
+     * @param testStatusRequestDTO модель для изменения комментария
+     */
+    @PutMapping("status/{test_id}")
+    @Operation(summary = "изменить статус", description = "меняет статус")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешное получение теста")
+    })
+    public ResponseEntity<HttpStatus> updateTestStatus(@PathVariable String test_id,@RequestBody TestStatusRequestDTO testStatusRequestDTO){
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    /**
+     *
+     * добовление теста
+     * @param testRequestDTO тест
+     */
+    // TODO добавить маппер
+    @PostMapping()
+    @Operation(summary = "добавить тест", description = "добовляет тест")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешное добовление теста")
+    })
+    public ResponseEntity<HttpStatus> postTest(@RequestBody TestRequestDTO testRequestDTO){
+        return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
+    /**
+     *
+     * получить список вопросов
+     */
+
+    //TODO добавить маппер
+    @Operation(summary = "получить все вопросы", description = "получить вопросы")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "получение шаблонов вопросов")
+    })
+    @GetMapping("questions")
+    public ResponseEntity<QuestionsResponseDTO> getQuestions() {
+        return ResponseEntity.ok(new QuestionsResponseDTO(null));
     }
 }

@@ -1,12 +1,307 @@
 openapi: 3.0.1
 info:
-  title: API Documentation
-  description: API endpoints for the application
   version: 1.0.0
+  title: Test
 servers:
   - url: http://localhost:8080
     description: Generated server url
 paths:
+  /test/status:
+    put:
+      tags:
+        - test-controller
+      summary: изменить статус
+      description: меняет статус
+      operationId: updateTestStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestStatusRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: Успешное получение теста
+          content:
+            '*/*':
+              schema:
+                type: string
+                enum:
+                  - 100 CONTINUE
+                  - 101 SWITCHING_PROTOCOLS
+                  - 102 PROCESSING
+                  - 103 EARLY_HINTS
+                  - 103 CHECKPOINT
+                  - 200 OK
+                  - 201 CREATED
+                  - 202 ACCEPTED
+                  - 203 NON_AUTHORITATIVE_INFORMATION
+                  - 204 NO_CONTENT
+                  - 205 RESET_CONTENT
+                  - 206 PARTIAL_CONTENT
+                  - 207 MULTI_STATUS
+                  - 208 ALREADY_REPORTED
+                  - 226 IM_USED
+                  - 300 MULTIPLE_CHOICES
+                  - 301 MOVED_PERMANENTLY
+                  - 302 FOUND
+                  - 302 MOVED_TEMPORARILY
+                  - 303 SEE_OTHER
+                  - 304 NOT_MODIFIED
+                  - 305 USE_PROXY
+                  - 307 TEMPORARY_REDIRECT
+                  - 308 PERMANENT_REDIRECT
+                  - 400 BAD_REQUEST
+                  - 401 UNAUTHORIZED
+                  - 402 PAYMENT_REQUIRED
+                  - 403 FORBIDDEN
+                  - 404 NOT_FOUND
+                  - 405 METHOD_NOT_ALLOWED
+                  - 406 NOT_ACCEPTABLE
+                  - 407 PROXY_AUTHENTICATION_REQUIRED
+                  - 408 REQUEST_TIMEOUT
+                  - 409 CONFLICT
+                  - 410 GONE
+                  - 411 LENGTH_REQUIRED
+                  - 412 PRECONDITION_FAILED
+                  - 413 PAYLOAD_TOO_LARGE
+                  - 413 REQUEST_ENTITY_TOO_LARGE
+                  - 414 URI_TOO_LONG
+                  - 414 REQUEST_URI_TOO_LONG
+                  - 415 UNSUPPORTED_MEDIA_TYPE
+                  - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+                  - 417 EXPECTATION_FAILED
+                  - 418 I_AM_A_TEAPOT
+                  - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+                  - 420 METHOD_FAILURE
+                  - 421 DESTINATION_LOCKED
+                  - 422 UNPROCESSABLE_ENTITY
+                  - 423 LOCKED
+                  - 424 FAILED_DEPENDENCY
+                  - 425 TOO_EARLY
+                  - 426 UPGRADE_REQUIRED
+                  - 428 PRECONDITION_REQUIRED
+                  - 429 TOO_MANY_REQUESTS
+                  - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+                  - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+                  - 500 INTERNAL_SERVER_ERROR
+                  - 501 NOT_IMPLEMENTED
+                  - 502 BAD_GATEWAY
+                  - 503 SERVICE_UNAVAILABLE
+                  - 504 GATEWAY_TIMEOUT
+                  - 505 HTTP_VERSION_NOT_SUPPORTED
+                  - 506 VARIANT_ALSO_NEGOTIATES
+                  - 507 INSUFFICIENT_STORAGE
+                  - 508 LOOP_DETECTED
+                  - 509 BANDWIDTH_LIMIT_EXCEEDED
+                  - 510 NOT_EXTENDED
+                  - 511 NETWORK_AUTHENTICATION_REQUIRED
+  /result/edit/comment/{skillIndex}/{commentIndex}:
+    put:
+      tags:
+        - result-controller
+      summary: изменить комментарий
+      description: меняет комментарий под нужным индексом
+      operationId: editComment
+      parameters:
+        - name: skillIndex
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: commentIndex
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentEditRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                enum:
+                  - 100 CONTINUE
+                  - 101 SWITCHING_PROTOCOLS
+                  - 102 PROCESSING
+                  - 103 EARLY_HINTS
+                  - 103 CHECKPOINT
+                  - 200 OK
+                  - 201 CREATED
+                  - 202 ACCEPTED
+                  - 203 NON_AUTHORITATIVE_INFORMATION
+                  - 204 NO_CONTENT
+                  - 205 RESET_CONTENT
+                  - 206 PARTIAL_CONTENT
+                  - 207 MULTI_STATUS
+                  - 208 ALREADY_REPORTED
+                  - 226 IM_USED
+                  - 300 MULTIPLE_CHOICES
+                  - 301 MOVED_PERMANENTLY
+                  - 302 FOUND
+                  - 302 MOVED_TEMPORARILY
+                  - 303 SEE_OTHER
+                  - 304 NOT_MODIFIED
+                  - 305 USE_PROXY
+                  - 307 TEMPORARY_REDIRECT
+                  - 308 PERMANENT_REDIRECT
+                  - 400 BAD_REQUEST
+                  - 401 UNAUTHORIZED
+                  - 402 PAYMENT_REQUIRED
+                  - 403 FORBIDDEN
+                  - 404 NOT_FOUND
+                  - 405 METHOD_NOT_ALLOWED
+                  - 406 NOT_ACCEPTABLE
+                  - 407 PROXY_AUTHENTICATION_REQUIRED
+                  - 408 REQUEST_TIMEOUT
+                  - 409 CONFLICT
+                  - 410 GONE
+                  - 411 LENGTH_REQUIRED
+                  - 412 PRECONDITION_FAILED
+                  - 413 PAYLOAD_TOO_LARGE
+                  - 413 REQUEST_ENTITY_TOO_LARGE
+                  - 414 URI_TOO_LONG
+                  - 414 REQUEST_URI_TOO_LONG
+                  - 415 UNSUPPORTED_MEDIA_TYPE
+                  - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+                  - 417 EXPECTATION_FAILED
+                  - 418 I_AM_A_TEAPOT
+                  - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+                  - 420 METHOD_FAILURE
+                  - 421 DESTINATION_LOCKED
+                  - 422 UNPROCESSABLE_ENTITY
+                  - 423 LOCKED
+                  - 424 FAILED_DEPENDENCY
+                  - 425 TOO_EARLY
+                  - 426 UPGRADE_REQUIRED
+                  - 428 PRECONDITION_REQUIRED
+                  - 429 TOO_MANY_REQUESTS
+                  - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+                  - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+                  - 500 INTERNAL_SERVER_ERROR
+                  - 501 NOT_IMPLEMENTED
+                  - 502 BAD_GATEWAY
+                  - 503 SERVICE_UNAVAILABLE
+                  - 504 GATEWAY_TIMEOUT
+                  - 505 HTTP_VERSION_NOT_SUPPORTED
+                  - 506 VARIANT_ALSO_NEGOTIATES
+                  - 507 INSUFFICIENT_STORAGE
+                  - 508 LOOP_DETECTED
+                  - 509 BANDWIDTH_LIMIT_EXCEEDED
+                  - 510 NOT_EXTENDED
+                  - 511 NETWORK_AUTHENTICATION_REQUIRED
+  /test:
+    get:
+      tags:
+        - test-controller
+      summary: Получить все тесты
+      description: Возвращает все доступные тесты в системе.
+      operationId: getTests
+      responses:
+        '200':
+          description: Успешное получение списка тестов
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TestsResponseDTO'
+    post:
+      tags:
+        - test-controller
+      summary: добавить тест
+      description: добовляет тест
+      operationId: postTest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestRequestDTO'
+        required: true
+      responses:
+        '200':
+          description: Успешное добовление теста
+          content:
+            '*/*':
+              schema:
+                type: string
+                enum:
+                  - 100 CONTINUE
+                  - 101 SWITCHING_PROTOCOLS
+                  - 102 PROCESSING
+                  - 103 EARLY_HINTS
+                  - 103 CHECKPOINT
+                  - 200 OK
+                  - 201 CREATED
+                  - 202 ACCEPTED
+                  - 203 NON_AUTHORITATIVE_INFORMATION
+                  - 204 NO_CONTENT
+                  - 205 RESET_CONTENT
+                  - 206 PARTIAL_CONTENT
+                  - 207 MULTI_STATUS
+                  - 208 ALREADY_REPORTED
+                  - 226 IM_USED
+                  - 300 MULTIPLE_CHOICES
+                  - 301 MOVED_PERMANENTLY
+                  - 302 FOUND
+                  - 302 MOVED_TEMPORARILY
+                  - 303 SEE_OTHER
+                  - 304 NOT_MODIFIED
+                  - 305 USE_PROXY
+                  - 307 TEMPORARY_REDIRECT
+                  - 308 PERMANENT_REDIRECT
+                  - 400 BAD_REQUEST
+                  - 401 UNAUTHORIZED
+                  - 402 PAYMENT_REQUIRED
+                  - 403 FORBIDDEN
+                  - 404 NOT_FOUND
+                  - 405 METHOD_NOT_ALLOWED
+                  - 406 NOT_ACCEPTABLE
+                  - 407 PROXY_AUTHENTICATION_REQUIRED
+                  - 408 REQUEST_TIMEOUT
+                  - 409 CONFLICT
+                  - 410 GONE
+                  - 411 LENGTH_REQUIRED
+                  - 412 PRECONDITION_FAILED
+                  - 413 PAYLOAD_TOO_LARGE
+                  - 413 REQUEST_ENTITY_TOO_LARGE
+                  - 414 URI_TOO_LONG
+                  - 414 REQUEST_URI_TOO_LONG
+                  - 415 UNSUPPORTED_MEDIA_TYPE
+                  - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+                  - 417 EXPECTATION_FAILED
+                  - 418 I_AM_A_TEAPOT
+                  - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+                  - 420 METHOD_FAILURE
+                  - 421 DESTINATION_LOCKED
+                  - 422 UNPROCESSABLE_ENTITY
+                  - 423 LOCKED
+                  - 424 FAILED_DEPENDENCY
+                  - 425 TOO_EARLY
+                  - 426 UPGRADE_REQUIRED
+                  - 428 PRECONDITION_REQUIRED
+                  - 429 TOO_MANY_REQUESTS
+                  - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+                  - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+                  - 500 INTERNAL_SERVER_ERROR
+                  - 501 NOT_IMPLEMENTED
+                  - 502 BAD_GATEWAY
+                  - 503 SERVICE_UNAVAILABLE
+                  - 504 GATEWAY_TIMEOUT
+                  - 505 HTTP_VERSION_NOT_SUPPORTED
+                  - 506 VARIANT_ALSO_NEGOTIATES
+                  - 507 INSUFFICIENT_STORAGE
+                  - 508 LOOP_DETECTED
+                  - 509 BANDWIDTH_LIMIT_EXCEEDED
+                  - 510 NOT_EXTENDED
+                  - 511 NETWORK_AUTHENTICATION_REQUIRED
   /result:
     post:
       tags:
@@ -339,20 +634,6 @@ paths:
                   - 509 BANDWIDTH_LIMIT_EXCEEDED
                   - 510 NOT_EXTENDED
                   - 511 NETWORK_AUTHENTICATION_REQUIRED
-  /test:
-    get:
-      tags:
-        - test-controller
-      summary: Получить все тесты
-      description: Возвращает все доступные тесты в системе.
-      operationId: getTests
-      responses:
-        '200':
-          description: Успешное получение списка тестов
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/TestsResponseDTO'
   /test/{test_id}:
     get:
       tags:
@@ -366,8 +647,7 @@ paths:
           description: Идентификатор теста
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '200':
           description: Успешное получение теста
@@ -375,6 +655,20 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/TestResponseDTO'
+  /test/questions:
+    get:
+      tags:
+        - test-controller
+      summary: получить все вопросы
+      description: получить вопросы
+      operationId: getQuestions
+      responses:
+        '200':
+          description: получение шаблонов вопросов
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QuestionsResponseDTO'
   /test/menu/{test_id}:
     get:
       tags:
@@ -388,8 +682,7 @@ paths:
           description: Идентификатор теста
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '200':
           description: Успешное получение меню теста
@@ -397,6 +690,26 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/TestMenuResponseDTO'
+  /test/admin/{test_id}:
+    get:
+      tags:
+        - test-controller
+      summary: Получить тест
+      description: Возвращает тест.
+      operationId: getTestAdmin
+      parameters:
+        - name: test_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешное получение теста
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TestViewResponseDTO'
   /result/{test_id}:
     get:
       tags:
@@ -410,8 +723,7 @@ paths:
           description: Идентификатор теста
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '200':
           description: Успешное получение результатов теста
@@ -438,8 +750,7 @@ paths:
           description: Идентификатор теста
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '200':
           description: Успешное получение списка респондентов
@@ -455,6 +766,94 @@ paths:
                 $ref: '#/components/schemas/RespondentsResponseDTO'
 components:
   schemas:
+    TestStatusRequestDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - CREATED
+            - STARTED
+            - ARCHIVED
+      description: обновление статуса
+    CommentEditRequestDTO:
+      type: object
+      properties:
+        newComment:
+          type: string
+          description: новый комментарий
+    QuestionTestModel:
+      type: object
+      properties:
+        questionText:
+          type: string
+          description: Текст вопроса
+          example: Каковы ваши сильные стороны?
+        skillsIds:
+          type: array
+          description: Список идентификаторов навыков
+          example:
+            - 1
+            - 2
+            - 3
+          items:
+            type: integer
+            description: Список идентификаторов навыков
+            format: int32
+      description: Модель вопроса теста
+    TestRequestDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          description: название теста
+        type:
+          type: string
+          description: тип теста
+          enum:
+            - SELF
+            - COMMAND
+            - FULL
+        createTimeStamp:
+          type: integer
+          description: время создания теста
+          format: int64
+        startTimeStamp:
+          type: integer
+          description: время начало теста
+          format: int64
+        endTimeStamp:
+          type: integer
+          description: Время окончания теста
+          format: int64
+        questionIds:
+          type: object
+          additionalProperties:
+            type: string
+            description: выбранный вопрос
+          description: выбранный вопрос
+        newQuestions:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/QuestionTestModel'
+          description: новый вопрос
+        minRespondents:
+          type: integer
+          description: минимум респондентов
+          format: int32
+        maxRespondents:
+          type: integer
+          description: максимум респондентов
+          format: int32
+        minHighRoleRespondents:
+          type: integer
+          description: минимум высоких ролей
+          format: int32
+        minOtherCourseRespondents:
+          type: integer
+          description: минимум других курсов
+          format: int32
+      description: создание теста
     AnswerTestModel:
       type: object
       properties:
@@ -567,25 +966,6 @@ components:
           items:
             $ref: '#/components/schemas/TestTitleModel'
       description: DTO для списка тестов
-    QuestionTestModel:
-      type: object
-      properties:
-        questionText:
-          type: string
-          description: Текст вопроса
-          example: Каковы ваши сильные стороны?
-        skillsIds:
-          type: array
-          description: Список идентификаторов навыков
-          example:
-            - 1
-            - 2
-            - 3
-          items:
-            type: integer
-            description: Список идентификаторов навыков
-            format: int32
-      description: Модель вопроса теста
     TestResponseDTO:
       type: object
       properties:
@@ -609,6 +989,34 @@ components:
           items:
             $ref: '#/components/schemas/QuestionTestModel'
       description: DTO для получения информации о тесте
+    QuestionModel:
+      type: object
+      properties:
+        id:
+          type: string
+        questionText:
+          type: string
+          description: Текст вопроса
+          example: Каковы ваши сильные стороны?
+        skillsIds:
+          type: array
+          description: Список идентификаторов навыков
+          example:
+            - 1
+            - 2
+            - 3
+          items:
+            type: integer
+            description: Список идентификаторов навыков
+            format: int32
+    QuestionsResponseDTO:
+      type: object
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionModel'
+      description: существующие вопросы
     TestMenuResponseDTO:
       type: object
       properties:
@@ -668,6 +1076,88 @@ components:
           description: Флаг завершенности теста респондентом
           example: true
       description: Модель заголовка респондента в тесте
+    RespondentModel:
+      type: object
+      properties:
+        respondentId:
+          type: integer
+          description: ID респондента
+          format: int32
+          example: 123
+        roleId:
+          type: integer
+          description: ID роли респондента
+          format: int32
+          example: 2
+        fullName:
+          type: string
+          description: Полное имя респондента
+          example: Иванов Иван Иванович
+        course:
+          type: integer
+          description: Курс респондента
+          format: int32
+          example: 3
+      description: Респондент
+    TestViewResponseDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Название теста
+        type:
+          type: string
+          description: Тип теста
+          enum:
+            - SELF
+            - COMMAND
+            - FULL
+        status:
+          type: string
+          description: Статус теста
+          enum:
+            - CREATED
+            - STARTED
+            - ARCHIVED
+        createTimeStamp:
+          type: integer
+          description: Время создания теста
+          format: int64
+        startTimeStamp:
+          type: integer
+          description: Время начала теста
+          format: int64
+        endTimeStamp:
+          type: integer
+          description: Время конца теста
+          format: int64
+        respondents:
+          type: array
+          description: Респонденты
+          items:
+            $ref: '#/components/schemas/RespondentModel'
+        questions:
+          type: array
+          description: Вопросы теста
+          items:
+            $ref: '#/components/schemas/QuestionModel'
+        minRespondents:
+          type: integer
+          description: минимум респондентов
+          format: int32
+        maxRespondents:
+          type: integer
+          description: максимум респондентов
+          format: int32
+        minHighRoleRespondents:
+          type: integer
+          description: минимум высоких ролей
+          format: int32
+        minOtherCourseRespondents:
+          type: integer
+          description: минимум других курсов
+          format: int32
+      description: просмотр теста от администратора
     ResultResponseDTO:
       type: object
       properties:
@@ -743,29 +1233,6 @@ components:
             description: Комментарии
             example: '["Очень хорошо работает в команде","Немного медлит в принятии решений"]'
       description: Результаты по навыкам
-    RespondentModel:
-      type: object
-      properties:
-        respondentId:
-          type: integer
-          description: ID респондента
-          format: int64
-          example: 123
-        roleId:
-          type: integer
-          description: ID роли респондента
-          format: int32
-          example: 2
-        fullName:
-          type: string
-          description: Полное имя респондента
-          example: Иванов Иван Иванович
-        course:
-          type: integer
-          description: Курс респондента
-          format: int32
-          example: 3
-      description: Респондент
     RespondentsResponseDTO:
       type: object
       properties:

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.singularity.evaluation360.dto.result.CommentEditRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
 import ru.singularity.evaluation360.dto.result.model.SkillsResultModel;
@@ -32,7 +33,7 @@ public class ResultController {
     })
     @GetMapping("/{test_id}")
     public ResponseEntity<ResultResponseDTO> getResult(
-            @Parameter(description = "Идентификатор теста", required = true) @PathVariable long test_id) {
+            @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id) {
         List<String> comment = List.of("1", "2", "3");
         List<SkillsResultModel> skillsResultModels = List.of(new SkillsResultModel("test", 2.2, 2.2,
                 2.2, 2.2, comment));
@@ -56,5 +57,21 @@ public class ResultController {
     @PostMapping()
     public ResponseEntity<HttpStatus> addResult(@RequestBody ResultRequestDTO resultRequestDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(HttpStatus.CREATED);
+    }
+
+
+    /**
+     * Изменить комментарий.
+     *
+     * @param skillIndex индекс скилла у которого мы меняем комментарий
+     * @param commentIndex индекс комментария
+     * @param commentEditRequestDTO измененный комментарий
+     */
+    @Operation(summary = "изменить комментарий", description = "меняет комментарий под нужным индексом")
+    @PutMapping("/edit/comment/{skillIndex}/{commentIndex}")
+    public ResponseEntity<HttpStatus> editComment(@PathVariable int skillIndex,
+                                                  @PathVariable int commentIndex,
+                                                  @RequestBody CommentEditRequestDTO commentEditRequestDTO) {
+        return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
     }
 }

@@ -1,20 +1,25 @@
 {
 	"info": {
-		"_postman_id": "255e4180-2e46-47eb-85ed-57ae893dd47e",
-		"name": "Test API Collection",
-		"description": "Collection for the Test API",
+		"_postman_id": "d78b0b4c-a202-4196-b3ee-f0d6f416ddc7",
+		"name": "Evaluation 360 API Collection",
+		"description": "Collection for the Evaluation 360 API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "38964850"
 	},
 	"item": [
 		{
-			"name": "test",
+			"name": "Test",
 			"item": [
 				{
 					"name": "Get All Tests",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/test",
 							"host": [
@@ -25,124 +30,107 @@
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "Untitled Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/test",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"test"
-									]
-								}
-							},
-							"status": "200 OK",
-							"_postman_previewlanguage": "Text",
-							"header": [],
-							"cookie": [],
-							"body": ""
-						}
-					]
+					"response": []
 				},
 				{
-					"name": "Get Test by ID",
+					"name": "Create Test",
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Name\",\n  \"description\": \"Test Description\",\n  \"questions\": [\n    {\n      \"text\": \"Question 1\",\n      \"type\": \"SINGLE_CHOICE\"\n    }\n  ],\n  \"skills\": [\n    {\n      \"name\": \"Skill 1\",\n      \"description\": \"Skill Description\"\n    }\n  ]\n}"
+						},
 						"url": {
-							"raw": "{{baseUrl}}/test/{{test_id}}",
+							"raw": "{{baseUrl}}/test",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Test Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"STARTED\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/test/status/1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"test",
-								"{{test_id}}"
+								"status",
+								"1"
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "Untitled Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/test/{{test_id}}",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"test",
-										"{{test_id}}"
-									]
-								}
-							},
-							"status": "200 OK",
-							"_postman_previewlanguage": "Text",
-							"header": [],
-							"cookie": [],
-							"body": ""
-						}
-					]
-				},
-				{
-					"name": "Get Test Menu",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/test/menu/{{test_id}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"test",
-								"menu",
-								"{{test_id}}"
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "Untitled Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/test/menu/{{test_id}}",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"test",
-										"menu",
-										"{{test_id}}"
-									]
-								}
-							},
-							"status": "200 OK",
-							"_postman_previewlanguage": "Text",
-							"header": [],
-							"cookie": [],
-							"body": ""
-						}
-					]
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "results",
+			"name": "Result",
 			"item": [
+				{
+					"name": "Edit Comment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comment\": \"Updated comment text\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/result/edit/comment/{{skillIndex}}/{{commentIndex}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"result",
+								"edit",
+								"comment",
+								"{{skillIndex}}",
+								"{{commentIndex}}"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Get Test Results",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/result/{{test_id}}",
 							"host": [
@@ -154,44 +142,21 @@
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "Untitled Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/result/{{test_id}}",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"result",
-										"{{test_id}}"
-									]
-								}
-							},
-							"status": "200 OK",
-							"_postman_previewlanguage": "Text",
-							"header": [],
-							"cookie": [],
-							"body": ""
-						}
-					]
+					"response": []
 				},
 				{
-					"name": "Post Test Result",
+					"name": "Submit Test Result",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"evaluatedId\": 456,\r\n  \"evaluatorId\": 789,\r\n  \"startTimeStamp\": 1710567890,\r\n  \"endTimeStamp\": 1710571490,\r\n  \"answers\": [\r\n    {\r\n      \"value\": 3,\r\n      \"comment\": \"Отличный вопрос, но не совсем понял формулировку\"\r\n    }\r\n  ],\r\n  \"skills\": [\r\n    {\r\n      \"skillId\": 12,\r\n      \"value\": 3.8\r\n    }\r\n  ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n  \"evaluatedId\": 456,\n  \"evaluatorId\": 789,\n  \"startTimeStamp\": 1710567890,\n  \"endTimeStamp\": 1710571490,\n  \"answers\": [\n    {\n      \"value\": 3,\n      \"comment\": \"Отличный вопрос, но не совсем понял формулировку\"\n    }\n  ],\n  \"skills\": [\n    {\n      \"skillId\": 12,\n      \"value\": 3.8\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/result",
@@ -208,13 +173,18 @@
 			]
 		},
 		{
-			"name": "respondent",
+			"name": "Respondent",
 			"item": [
 				{
 					"name": "Get Respondents for Test",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"url": {
 							"raw": "{{baseUrl}}/respondent/{{test_id}}",
 							"host": [
@@ -226,58 +196,51 @@
 							]
 						}
 					},
-					"response": [
-						{
-							"name": "Untitled Response",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/respondent/{{test_id}}",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"respondent",
-										"{{test_id}}"
-									]
-								}
-							},
-							"status": "200 OK",
-							"_postman_previewlanguage": "Text",
-							"header": [],
-							"cookie": [],
-							"body": ""
-						}
-					]
-				},
-				{
-					"name": "New Request",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"respondentsIds\": [\r\n    101,\r\n    102,\r\n    103\r\n  ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/respondent",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"respondent"
-							]
-						}
-					},
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "test_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "skillIndex",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "commentIndex",
+			"value": "0",
+			"type": "string"
 		}
 	]
 }
