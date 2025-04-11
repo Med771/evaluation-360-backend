@@ -16,4 +16,6 @@ public interface TestMapper {
     @Mappings({@Mapping(target = "respondents", source = "respondents")})
     RespondentsResponseDTO toRespondentResponseDto(TestEntity testEntity,
                                                    List<RespondentModel> respondents);
+
+
 }
