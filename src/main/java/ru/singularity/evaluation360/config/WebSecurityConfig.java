@@ -25,7 +25,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private static final String[] AUTH_WHITELIST = {
-            "/respondent/**"
+            "/respondent/**",
+            "/result/**",
+            "/test/**"
     };
 
     private static final String[] AUTH_IGNORE_WHITELIST = {

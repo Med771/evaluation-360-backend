@@ -1,11 +1,14 @@
 package ru.singularity.evaluation360.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import ru.singularity.evaluation360.dto.respondent.RespondentsResponseDTO;
 import ru.singularity.evaluation360.dto.respondent.model.RespondentModel;
+import ru.singularity.evaluation360.entity.EvaluationEntity;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
+import ru.singularity.evaluation360.repository.EvaluationRepository;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.TestRepository;
 
@@ -14,17 +17,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class RespondentService {
     private final TestRepository testRepository;
     private final ParticipantRepository participantRepository;
-
-    public RespondentService(TestRepository testRepository, ParticipantRepository participantRepository) {
-        this.testRepository = testRepository;
-        this.participantRepository = participantRepository;
-    }
+    private final EvaluationRepository evaluationRepository;
 
     public boolean setRespondents(String testId, List<Integer> respondentsIds) {
-        // TODO: add save participants
+        EvaluationEntity evaluationEntity = new EvaluationEntity();
+
+        evaluationEntity.setEvaluated(respondentsIds);
+
+        // TODO: add user id for respondent in EvaluationRepository
+
+        evaluationRepository.save(evaluationEntity);
+
         return true;
     }
 
