@@ -19,6 +19,7 @@ public class ReportEntity {
     private String id;
 
     // Unique index evaluatedId-TestId
+    // TODO: maybe delete
     private String evaluatedTestIndex;
 
     // Participant Id
