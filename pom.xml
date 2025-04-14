@@ -89,6 +89,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <imageName>evaluation-360-backend:v1.0</imageName>
+                </configuration>
             </plugin>
 
             <plugin>
