@@ -1,6 +1,8 @@
 package ru.singularity.evaluation360.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import ru.singularity.evaluation360.dto.auth.RegisterRequestDTO;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.UserEntity;
@@ -16,13 +18,17 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final ParticipantRepository participantRepository;
 
+    private final PasswordEncoder encoder;
+
     public AuthService(
             UserRepository userRepository,
             RoleRepository roleRepository,
-            ParticipantRepository participantRepository) {
+            ParticipantRepository participantRepository,
+            PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.participantRepository = participantRepository;
+        this.encoder = encoder;
     }
 
     public boolean login(String userName, String password) {
@@ -32,10 +38,7 @@ public class AuthService {
             return false;
         }
 
-        // TODO: find password by Encoder
-        // return userEntity.filter(entity -> encoder.matches(password, entity.getPassword())).isPresent();
-
-        return true;
+        return userEntity.filter(entity -> encoder.matches(password, entity.getPassword())).isPresent();
     }
 
     public boolean register(RegisterRequestDTO register) {
@@ -55,8 +58,7 @@ public class AuthService {
         ParticipantEntity participantEntity = new ParticipantEntity();
 
         userEntity.setEmail(register.email());
-        // TODO: encode password by Encoder
-        userEntity.setPassword(register.password());
+        userEntity.setPassword(encoder.encode(register.password()));
 
         participantEntity.setFullName(register.fullName());
         participantEntity.setCourse(register.course());
