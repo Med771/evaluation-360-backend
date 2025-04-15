@@ -15,7 +15,7 @@ public class EvaluationEntity {
     @Id
     private String id;
 
-    @Indexed // test_id-p_id
+    @Indexed // test_id!_|*|_!p_id
     private String index;
 
     private List<Integer> evaluated;

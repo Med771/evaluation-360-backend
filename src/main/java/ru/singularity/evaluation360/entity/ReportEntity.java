@@ -20,7 +20,9 @@ public class ReportEntity {
 
     // Unique index evaluatedId-TestId
     // TODO: maybe delete
-    private String evaluatedTestIndex;
+    // id кого оценивают id теста id кто оценивает
+    // разделитель !_|*|_!
+    private String evaluatedIdTestIdEvaluatorId;
 
     // Participant Id
     private Integer evaluatedId;

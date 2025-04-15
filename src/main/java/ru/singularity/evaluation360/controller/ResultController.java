@@ -12,6 +12,7 @@ import ru.singularity.evaluation360.dto.result.CommentEditRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
 import ru.singularity.evaluation360.dto.result.model.SkillsResultModel;
+import ru.singularity.evaluation360.service.ResultService;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ import java.util.List;
 @RequestMapping("/result")
 @RequiredArgsConstructor
 public class ResultController {
+    private final ResultService resultService;
 
     /**
      * Получить результаты теста.
@@ -34,13 +36,7 @@ public class ResultController {
     @GetMapping("/{test_id}")
     public ResponseEntity<ResultResponseDTO> getResult(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id) {
-        List<String> comment = List.of("1", "2", "3");
-        List<SkillsResultModel> skillsResultModels = List.of(new SkillsResultModel("test", 2.2, 2.2,
-                2.2, 2.2, comment));
-        ResultResponseDTO resultResponseDTO = new ResultResponseDTO("String", 2.2, 2.2,
-                2.2, 2.2, skillsResultModels, "dsfsdf");
-
-        return ResponseEntity.ok(resultResponseDTO);
+        return ResponseEntity.ok(resultService.getResultByID(test_id));
     }
 
     /**
@@ -56,7 +52,13 @@ public class ResultController {
     })
     @PostMapping()
     public ResponseEntity<HttpStatus> addResult(@RequestBody ResultRequestDTO resultRequestDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(HttpStatus.CREATED);
+        try {
+            resultService.addResult(resultRequestDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(HttpStatus.CREATED);
+
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST);
+        }
     }
 
 
@@ -69,6 +71,7 @@ public class ResultController {
      */
     @Operation(summary = "изменить комментарий", description = "меняет комментарий под нужным индексом")
     @PutMapping("/edit/comment/{skillIndex}/{commentIndex}")
+    //TODO спросить у насти надо ли это все с комментарием
     public ResponseEntity<HttpStatus> editComment(@PathVariable int skillIndex,
                                                   @PathVariable int commentIndex,
                                                   @RequestBody CommentEditRequestDTO commentEditRequestDTO) {
