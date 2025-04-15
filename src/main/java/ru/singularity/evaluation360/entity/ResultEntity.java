@@ -16,7 +16,7 @@ public class ResultEntity {
     @Id
     private String id;
 
-    // Unique UserId!_|*|_!TestId
+    // Unique UserId!_!*!_!TestId
     private String UserTestIndex;
 
     private String title;

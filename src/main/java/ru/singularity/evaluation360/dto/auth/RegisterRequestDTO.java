@@ -8,8 +8,6 @@ public record RegisterRequestDTO(
         String fullName,
         @Schema(description = "Курс пользователя")
         Integer course,
-        @Schema(description = "id роли в postgreSQL")
-        Integer roleId,
         @Schema(description = "Почта пользователя")
         String email,
         @Schema(description = "Пароль")
