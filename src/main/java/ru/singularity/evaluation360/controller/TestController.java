@@ -5,14 +5,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.singularity.evaluation360.dto.test.*;
 import ru.singularity.evaluation360.dto.test.model.QuestionTestModel;
 import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
 import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
+import ru.singularity.evaluation360.service.TestService;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ import java.util.List;
 @RequestMapping("test")
 @RequiredArgsConstructor
 public class TestController {
+
+    private final TestService testService;
 
     /**
      * Получить все тесты.
@@ -32,11 +35,7 @@ public class TestController {
     })
     @GetMapping()
     public ResponseEntity<TestsResponseDTO> getTests() {
-        List<TestTitleModel> testTitleModel = List.of(new TestTitleModel(1L, "sdf", 234L, 2346L));
-
-        TestsResponseDTO testsResponseDTO = new TestsResponseDTO("360", testTitleModel);
-
-        return ResponseEntity.ok(testsResponseDTO);
+        return ResponseEntity.ok(testService.getAllTests());
     }
 
     /**
@@ -72,12 +71,14 @@ public class TestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешное получение теста")
     })
-    @GetMapping("/{test_id}")
+    @GetMapping("/{test_id}/{evaluatedId}")
     public ResponseEntity<TestResponseDTO> getTest(
-            @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id) {
-        List<QuestionTestModel> questionTestModel = List.of(new QuestionTestModel("quest", List.of(1, 2, 3)));
-        TestResponseDTO testResponseDTO = new TestResponseDTO("fgd", 2L, 3L, questionTestModel);
-        return ResponseEntity.ok(testResponseDTO);
+            @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id,
+            @PathVariable long evaluatedId) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        //TODO получить id пользователя
+
+        return ResponseEntity.ok(testService.getTest(test_id, 1L, evaluatedId));
     }
 
     /**
@@ -91,11 +92,8 @@ public class TestController {
             @ApiResponse(responseCode = "200", description = "Успешное получение теста")
     })
     @GetMapping("admin/{test_id}")
-    // TODO написать mapper
     public ResponseEntity<TestViewResponseDTO> getTestAdmin(@PathVariable String test_id) {
-        return ResponseEntity.ok(new TestViewResponseDTO("title", null,
-                null, 45L, 45L, 45L, null, null, 1,
-                1, 1, 1));
+        return ResponseEntity.ok(testService.getTest(test_id));
     }
 
     /**
@@ -118,7 +116,6 @@ public class TestController {
      * добовление теста
      * @param testRequestDTO тест
      */
-    // TODO добавить маппер
     @PostMapping()
     @Operation(summary = "добавить тест", description = "добовляет тест")
     @ApiResponses(value = {
@@ -133,7 +130,6 @@ public class TestController {
      * получить список вопросов
      */
 
-    //TODO добавить маппер
     @Operation(summary = "получить все вопросы", description = "получить вопросы")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "получение шаблонов вопросов")

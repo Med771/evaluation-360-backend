@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.singularity.evaluation360.dto.result.model.AnswerTestModel;
 import ru.singularity.evaluation360.dto.result.model.SkillsTestModel;
@@ -18,9 +19,10 @@ public class ReportEntity {
     @Id
     private String id;
 
-    // Unique index evaluatedId-TestId
-    // TODO: maybe delete
-    private String evaluatedTestIndex;
+    // id кого оценивают id теста id кто оценивает
+    // разделитель !_!*!_!
+    @Indexed(unique = true)
+    private String evaluatedIdTestIdEvaluatorId;
 
     // Participant Id
     private Integer evaluatedId;

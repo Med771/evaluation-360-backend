@@ -1,6 +1,7 @@
 package ru.singularity.evaluation360.dto.respondent.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import ru.singularity.evaluation360.entity.model.RoleUserEnum;
 
 /**
  * Модель респондента.
@@ -11,8 +12,8 @@ public record RespondentModel(
         @Schema(description = "ID респондента", example = "123")
         Integer respondentId,
 
-        @Schema(description = "ID роли респондента", example = "2")
-        Integer roleId,
+        @Schema(description = "Роль респондента", example = "USER")
+        RoleUserEnum role,
 
         @Schema(description = "Полное имя респондента", example = "Иванов Иван Иванович")
         String fullName,

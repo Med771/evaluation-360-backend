@@ -21,10 +21,6 @@ public class ParticipantEntity {
     private Integer course;
     // Values for MVP ]
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private RoleEntity role;
-
     @OneToOne(cascade = CascadeType.ALL, mappedBy="participant")
     private UserEntity user;
 }

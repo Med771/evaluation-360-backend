@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Mappings;
 import ru.singularity.evaluation360.dto.respondent.model.RespondentModel;
+import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 
 import java.util.List;
@@ -14,8 +15,9 @@ public interface ParticipantsMapper {
 
 
     @Mappings({@Mapping(target = "respondentId", source = "id"),
-                @Mapping(target = "roleId", source = "role.id")})
+                @Mapping(target = "role", source = "user.role")})
     RespondentModel toRespondentModel(ParticipantEntity participantEntity);
 
     List<RespondentModel> toRespondentModels(List<ParticipantEntity> participantEntities);
+
 }
