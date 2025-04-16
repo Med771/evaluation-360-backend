@@ -3,8 +3,10 @@ package ru.singularity.evaluation360.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.singularity.evaluation360.dto.test.*;
+import ru.singularity.evaluation360.dto.test.model.QuestionTestModel;
 import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
 import ru.singularity.evaluation360.entity.EvaluationEntity;
+import ru.singularity.evaluation360.entity.QuestionEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
@@ -14,7 +16,7 @@ import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.QuestionRepository;
 import ru.singularity.evaluation360.repository.TestRepository;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -68,9 +70,37 @@ public class TestService {
                 testMapper.toQuestionModelList(questionRepository.findAllById(testEntity.getQuestionsIds())));
     }
 
+    private List<String> generateQuestionsIds(TestRequestDTO testRequestDTO) {
+        int totalSize = testRequestDTO.questionIds().size() + testRequestDTO.newQuestions().size();
+        String[] ids = new String[totalSize];
+
+        Map<Integer, QuestionTestModel> newQuestions = testRequestDTO.newQuestions();
+        Map<Integer, String> existingIds = testRequestDTO.questionIds();
+
+        List<QuestionEntity> entitiesToSave = new ArrayList<>();
+        for (Map.Entry<Integer, QuestionTestModel> entry : newQuestions.entrySet()) {
+            QuestionEntity entity = testMapper.toQuestionEntity(entry.getValue());
+            entity.setOriginalIndex(entry.getKey());
+            entitiesToSave.add(entity);
+        }
+
+        List<QuestionEntity> savedEntities = questionRepository.saveAll(entitiesToSave);
+
+        savedEntities.sort(Comparator.comparingInt(QuestionEntity::getOriginalIndex));
+
+        for (QuestionEntity entity : savedEntities) {
+            ids[entity.getOriginalIndex()] = entity.getId();
+        }
+
+        for (Map.Entry<Integer, String> entry : existingIds.entrySet()) {
+            ids[entry.getKey()] = entry.getValue();
+        }
+
+        return Arrays.asList(ids);
+    }
+
+
     public TestEntity addTest(TestRequestDTO testRequestDTO){
-        //TODO доделать логику сохронения вопросов
-        //  return testRepository.save(testMapper.toTestEntity(testRequestDTO));
-        return null;
+        return testRepository.save(testMapper.toTestEntity(testRequestDTO, generateQuestionsIds(testRequestDTO)));
     }
 }

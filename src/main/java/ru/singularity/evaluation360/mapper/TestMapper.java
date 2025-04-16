@@ -36,6 +36,8 @@ public interface TestMapper {
 
     QuestionTestModel toQuestionTestModel(QuestionEntity questionEntity);
 
+    QuestionEntity toQuestionEntity(QuestionTestModel questionTestModel);
+
     List<QuestionTestModel> toQuestionTestModelList(List<QuestionEntity> questionEntities);
 
     /**
