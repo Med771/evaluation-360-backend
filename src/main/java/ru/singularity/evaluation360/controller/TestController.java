@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,8 +16,10 @@ import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
 import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
 import ru.singularity.evaluation360.service.TestService;
 
+import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("test")
 @RequiredArgsConstructor
@@ -52,7 +55,7 @@ public class TestController {
     public ResponseEntity<TestMenuResponseDTO> getTestMenu(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id) {
         List<TestRespondentTitleModel> testRespondentTitleModel =
-                List.of(new TestRespondentTitleModel(1L, "String", true));
+                List.of(new TestRespondentTitleModel(1, "String", true));
 
         TestMenuResponseDTO testMenuResponseDTO = new TestMenuResponseDTO("String", true,
                 false, true, true, false,
@@ -119,10 +122,18 @@ public class TestController {
     @PostMapping()
     @Operation(summary = "добавить тест", description = "добовляет тест")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успешное добовление теста")
+            @ApiResponse(responseCode = "201", description = "Успешное добовление теста")
     })
     public ResponseEntity<HttpStatus> postTest(@RequestBody TestRequestDTO testRequestDTO){
-        return ResponseEntity.ok(HttpStatus.CREATED);
+        try {
+            testService.addTest(testRequestDTO);
+            return ResponseEntity.ok(HttpStatus.CREATED);
+        }catch (Exception e){
+            log.error(Arrays.toString(e.getStackTrace()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST);
+        }
+
+
     }
 
     /**
@@ -136,6 +147,6 @@ public class TestController {
     })
     @GetMapping("questions")
     public ResponseEntity<QuestionsResponseDTO> getQuestions() {
-        return ResponseEntity.ok(new QuestionsResponseDTO(null));
+        return ResponseEntity.ok(testService.getAllQuestions());
     }
 }

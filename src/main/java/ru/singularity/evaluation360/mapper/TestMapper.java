@@ -6,6 +6,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.Mappings;
 import ru.singularity.evaluation360.dto.respondent.RespondentsResponseDTO;
 import ru.singularity.evaluation360.dto.respondent.model.RespondentModel;
+import ru.singularity.evaluation360.dto.test.QuestionsResponseDTO;
 import ru.singularity.evaluation360.dto.test.TestRequestDTO;
 import ru.singularity.evaluation360.dto.test.TestResponseDTO;
 import ru.singularity.evaluation360.dto.test.TestViewResponseDTO;
