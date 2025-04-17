@@ -101,16 +101,19 @@ public class TestService {
         List<TestRespondentTitleModel> evaluator = new ArrayList<>();
         List<TestRespondentTitleModel> evaluated = new ArrayList<>();
         //TODO не совсем понял какой флаг в TestMenuResponseDTO отвечает за отборожение тех кого мне надо оценить
-        boolean isGetRespondents;
+        //TODO isGetRespondents проверить по типу если self тогда фолс
+        // TODO isCompleteEvaluation проверить оценил ли сам себя через репорты
+        // TODO isActiveResult пока оставить true потом дописать логику
+        boolean isSelectRespondents;
         if (!evaluatorIds.isEmpty()){
             evaluator = getEvaluatorRespondents(testId, userId, evaluatorIds);
-            isGetRespondents = true;
+            isSelectRespondents = true;
         } else {
-          isGetRespondents = false;
+            isSelectRespondents = false;
         }
 
         if (!evaluatedIds.isEmpty()){
-            evaluated = getEvaluatorRespondents(testId, userId, evaluatedIds);
+            evaluated = getEvaluatedRespondents(testId, userId, evaluatedIds);
         }
 
         boolean isCompeteEvaluator = isAllCompeted(evaluator);

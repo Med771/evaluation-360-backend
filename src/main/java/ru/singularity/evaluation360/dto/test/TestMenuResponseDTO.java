@@ -14,12 +14,15 @@ public record TestMenuResponseDTO(
         String title,
 
         @Schema(description = "Флаг получения списка респондентов", example = "true")
+        // флаг есть ли выбор респондента
         Boolean isGetRespondents,
 
         @Schema(description = "Флаг выбора респондентов", example = "false")
+        // флаг выбрали ли мы респондентов
         Boolean isSelectRespondents,
 
         @Schema(description = "Флаг завершенности процесса оценки", example = "true")
+        // если он прошел само оценку
         Boolean isCompleteEvaluation,
 
         @Schema(description = "Флаг завершенности тестирования оцениваемых", example = "true")
@@ -35,5 +38,6 @@ public record TestMenuResponseDTO(
         List<TestRespondentTitleModel> evaluatorRespondents,
 
         @Schema(description = "Флаг активности результата теста", example = "true")
+        // апрувнут ли тест
         Boolean isActiveResult) {
 }
