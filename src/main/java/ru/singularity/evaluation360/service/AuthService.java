@@ -7,6 +7,7 @@ import ru.singularity.evaluation360.dto.auth.RegisterRequestDTO;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.UserEntity;
 import ru.singularity.evaluation360.entity.model.RoleUserEnum;
+import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.UserRepository;
 
@@ -69,4 +70,12 @@ public class AuthService {
         }
 
         return true;
-    }}
+    }
+
+    public UserEntity findUserByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(() -> new DontFoundException("email"));
+    }
+
+}
+
+

@@ -246,4 +246,10 @@ public class TestService {
     public QuestionsResponseDTO getAllQuestions() {
         return new QuestionsResponseDTO(testMapper.toQuestionModelList(questionRepository.findAll()));
     }
+
+    public TestEntity editTestStatus(String testID, TestStatusRequestDTO testStatusRequestDTO){
+        TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new DontFoundException(testID));
+        testEntity.setStatus(testStatusRequestDTO.status());
+        return testRepository.save(testEntity);
+    }
 }

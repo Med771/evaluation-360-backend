@@ -14,6 +14,7 @@ import ru.singularity.evaluation360.dto.test.*;
 import ru.singularity.evaluation360.dto.test.model.QuestionTestModel;
 import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
 import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
+import ru.singularity.evaluation360.service.AuthService;
 import ru.singularity.evaluation360.service.TestService;
 
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import java.util.List;
 public class TestController {
 
     private final TestService testService;
+    private final AuthService authService;
 
     /**
      * Получить все тесты.
@@ -54,14 +56,12 @@ public class TestController {
     @GetMapping("menu/{test_id}")
     public ResponseEntity<TestMenuResponseDTO> getTestMenu(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id) {
-        List<TestRespondentTitleModel> testRespondentTitleModel =
-                List.of(new TestRespondentTitleModel(1, "String", true));
-
-        TestMenuResponseDTO testMenuResponseDTO = new TestMenuResponseDTO("String", true,
-                false, true, true, false,
-                testRespondentTitleModel, testRespondentTitleModel, true);
-
-        return ResponseEntity.ok(testMenuResponseDTO);
+        int userId = authService.
+                findUserByEmail(SecurityContextHolder.
+                        getContext().
+                        getAuthentication().
+                        getName()).getParticipant().getId();
+        return ResponseEntity.ok(testService.getTestMenu(test_id, userId));
     }
 
     /**
@@ -111,7 +111,13 @@ public class TestController {
             @ApiResponse(responseCode = "200", description = "Успешное получение теста")
     })
     public ResponseEntity<HttpStatus> updateTestStatus(@PathVariable String test_id,@RequestBody TestStatusRequestDTO testStatusRequestDTO){
-        return ResponseEntity.ok(HttpStatus.OK);
+        try {
+            testService.editTestStatus(test_id, testStatusRequestDTO);
+            return ResponseEntity.ok(HttpStatus.CREATED);
+        }catch (Exception e){
+            log.error(Arrays.toString(e.getStackTrace()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**
