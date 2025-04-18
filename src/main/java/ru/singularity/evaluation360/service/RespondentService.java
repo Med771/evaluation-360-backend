@@ -3,6 +3,7 @@ package ru.singularity.evaluation360.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import ru.singularity.evaluation360.dto.respondent.RespondentsRequestDTO;
 import ru.singularity.evaluation360.dto.respondent.RespondentsResponseDTO;
 import ru.singularity.evaluation360.dto.respondent.model.RespondentModel;
 import ru.singularity.evaluation360.entity.EvaluationEntity;
@@ -40,6 +41,7 @@ public class RespondentService {
         int i2 = 0;
 
         while (i2 < evaluationEntities.size()) {
+            //TODO возникает ошибка Index Error ru.singularity.evaluation360.service.RespondentService.generateAndAppendUser(RespondentService.java:44)
             if (respondentsIds.get(i1) == Integer.parseInt(evaluationEntities.get(i2).getIndex().split(splitter)[1])) {
                 evaluationEntities.get(i2).getEvaluated().add(userId);
 
@@ -74,8 +76,10 @@ public class RespondentService {
         return newEvaluationEntities;
     }
 
-    public void setRespondents(Integer userId, String testId, List<Integer> respondentsIds) {
+    public void setRespondents(Integer userId, String testId, RespondentsRequestDTO respondentsRequestDTO) {
         String index = testId + splitter + userId;
+
+        List<Integer> respondentsIds = respondentsRequestDTO.respondentsIds();
 
         Optional<EvaluationEntity> evaluationEntity = evaluationRepository.findByIndex(index);
 

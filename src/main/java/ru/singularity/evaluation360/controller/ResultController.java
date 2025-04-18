@@ -35,7 +35,7 @@ public class ResultController {
     })
     @GetMapping("/{test_id}")
     public ResponseEntity<ResultResponseDTO> getResult(
-            @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id) {
+            @Parameter(description = "Идентификатор результата", required = true) @PathVariable String test_id) {
         return ResponseEntity.ok(resultService.getResultByID(test_id));
     }
 

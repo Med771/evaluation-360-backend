@@ -5,23 +5,29 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.singularity.evaluation360.dto.respondent.RespondentsRequestDTO;
 import ru.singularity.evaluation360.dto.respondent.RespondentsResponseDTO;
 import ru.singularity.evaluation360.dto.respondent.model.RespondentModel;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.service.AuthService;
 import ru.singularity.evaluation360.service.RespondentService;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/respondent")
 @RequiredArgsConstructor
 public class RespondentController {
     private final RespondentService respondentService;
+    private final AuthService authService;
 
     /**
      * Получить список респондентов для указанного теста.
@@ -64,5 +70,27 @@ public class RespondentController {
         // TODO: get User id by Context Manager
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    /**
+     *
+     */
+    @PostMapping("set-respondent/{test_id}")
+    public ResponseEntity<HttpStatus> setRespondent(@PathVariable String test_id,
+                                                    @RequestBody RespondentsRequestDTO respondentsRequestDTO) {
+        Integer userId = authService.
+                findUserByEmail(SecurityContextHolder.
+                        getContext().
+                        getAuthentication().
+                        getName()).getParticipant().getId();
+
+        try {
+            respondentService.setRespondents(userId, test_id, respondentsRequestDTO);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch(Exception e) {
+            log.error(e.getMessage());
+            Arrays.stream(e.getStackTrace()).forEach(o -> log.error(o.toString()));
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

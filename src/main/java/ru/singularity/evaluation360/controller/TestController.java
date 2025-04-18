@@ -11,14 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.singularity.evaluation360.dto.test.*;
-import ru.singularity.evaluation360.dto.test.model.QuestionTestModel;
-import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
-import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
 import ru.singularity.evaluation360.service.AuthService;
 import ru.singularity.evaluation360.service.TestService;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 @RestController
