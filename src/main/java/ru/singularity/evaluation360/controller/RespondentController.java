@@ -67,22 +67,12 @@ public class RespondentController {
     public ResponseEntity<HttpStatus> createRespondent(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable("test_id") String test_id,
             @RequestBody RespondentsRequestDTO respondentsRequestDTO) {
-        // TODO: get User id by Context Manager
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    /**
-     *
-     */
-    @PostMapping("set-respondent/{test_id}")
-    public ResponseEntity<HttpStatus> setRespondent(@PathVariable String test_id,
-                                                    @RequestBody RespondentsRequestDTO respondentsRequestDTO) {
         Integer userId = authService.
                 findUserByEmail(SecurityContextHolder.
                         getContext().
                         getAuthentication().
                         getName()).getParticipant().getId();
+
 
         try {
             respondentService.setRespondents(userId, test_id, respondentsRequestDTO);

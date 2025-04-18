@@ -14,9 +14,8 @@ import ru.singularity.evaluation360.repository.EvaluationRepository;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.TestRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -76,29 +75,45 @@ public class RespondentService {
         return newEvaluationEntities;
     }
 
-    public void setRespondents(Integer userId, String testId, RespondentsRequestDTO respondentsRequestDTO) {
-        String index = testId + splitter + userId;
+    private List<EvaluationEntity> generateAndAppendUser2(int userId, String testId, List<Integer> respondentsIds, List<EvaluationEntity> evaluationEntities) {
+        Map<String, EvaluationEntity> evaluationEntityMap = evaluationEntities.stream().collect(Collectors.toMap(EvaluationEntity::getIndex, e -> e));
+        List<EvaluationEntity> newEvaluationEntities = new ArrayList<>();
 
-        List<Integer> respondentsIds = respondentsRequestDTO.respondentsIds();
-
-        Optional<EvaluationEntity> evaluationEntity = evaluationRepository.findByIndex(index);
-
-        EvaluationEntity evaluation;
-
-        if (evaluationEntity.isPresent()) {
-            evaluation = evaluationEntity.get();
-        }
-        else {
-            evaluation = new EvaluationEntity();
-
-            evaluation.setIndex(index);
+        String myIndex = testId + splitter + userId;
+        if(evaluationEntityMap.containsKey(myIndex)){
+            EvaluationEntity evaluationEntity = evaluationEntityMap.get(myIndex);
+            evaluationEntity.getEvaluated().add(userId);
+            newEvaluationEntities.add(evaluationEntity);
+        }else{
+            EvaluationEntity evaluationEntity = new EvaluationEntity();
+            evaluationEntity.setIndex(testId + splitter + userId);
+            evaluationEntity.getEvaluated().add(userId);
+            newEvaluationEntities.add(evaluationEntity);
         }
 
-        evaluation.setEvaluator(respondentsIds);
+        for (Integer respondentId : respondentsIds) {
+            if(evaluationEntityMap.containsKey(testId + splitter + respondentId)){
+                EvaluationEntity evaluationEntity = evaluationEntityMap.get(testId + splitter + respondentId);
+                evaluationEntity.getEvaluator().add(userId);
+                newEvaluationEntities.add(evaluationEntity);
+            }else {
+                EvaluationEntity evaluationEntity = new EvaluationEntity();
+                evaluationEntity.setIndex(testId + splitter + respondentId);
+                evaluationEntity.getEvaluator().add(userId);
+                newEvaluationEntities.add(evaluationEntity);
+            }
+        }
+        return newEvaluationEntities;
 
-        List<EvaluationEntity> evaluations = evaluationRepository.findAllByIndexIsStartingWith(testId);
+    }
 
-        evaluationRepository.saveAll(this.generateAndAppendUser(userId, testId, respondentsIds, evaluations));
+        public void setRespondents(Integer userId, String testId, RespondentsRequestDTO respondentsRequestDTO) {
+
+            List<Integer> respondentsIds = respondentsRequestDTO.respondentsIds();
+
+            List<EvaluationEntity> evaluations = evaluationRepository.findAllByIndexIsStartingWith(testId);
+
+            evaluationRepository.saveAll(this.generateAndAppendUser2(userId, testId, respondentsIds, evaluations));
     }
 
     public RespondentsResponseDTO getRespondents(String testId) {

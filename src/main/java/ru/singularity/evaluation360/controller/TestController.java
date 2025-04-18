@@ -11,10 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.singularity.evaluation360.dto.test.*;
+import ru.singularity.evaluation360.entity.SkillEntity;
 import ru.singularity.evaluation360.service.AuthService;
 import ru.singularity.evaluation360.service.TestService;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -150,5 +152,28 @@ public class TestController {
     @GetMapping("questions")
     public ResponseEntity<QuestionsResponseDTO> getQuestions() {
         return ResponseEntity.ok(testService.getAllQuestions());
+    }
+
+    /**
+     *добавление скила
+     */
+    @PostMapping("skill")
+    public ResponseEntity<SkillEntity> addSkill(@RequestBody SkillRequestDto skillRequestDto){
+        return ResponseEntity.ok(testService.addSkill(skillRequestDto));
+    }
+
+    /**
+     *добавление скилов
+     */
+    @PostMapping("skills")
+    public ResponseEntity<List<SkillEntity>> addSkills(@RequestBody List<SkillRequestDto> skillRequestDtos){
+        return ResponseEntity.ok(testService.addSkills(skillRequestDtos));
+    }
+    /**
+     * получить скилы
+     */
+    @GetMapping("skills")
+    public ResponseEntity<List<SkillEntity>> getSkills() {
+        return ResponseEntity.ok(testService.getSkills());
     }
 }

@@ -26,6 +26,7 @@ public class TestService {
     private final QuestionRepository questionRepository;
     private final ReportRepository reportRepository;
     private final String splitter = "!_!*!_!";
+    private final SkillRepository skillRepository;
 
     /**
      * метод для нахождения TestRespondentTitleModel с полем оценил ли его пользователь
@@ -251,5 +252,17 @@ public class TestService {
         TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new DontFoundException(testID));
         testEntity.setStatus(testStatusRequestDTO.status());
         return testRepository.save(testEntity);
+    }
+
+    public SkillEntity addSkill(SkillRequestDto skillRequestDto){
+        return skillRepository.save(testMapper.toSkillEntity(skillRequestDto));
+    }
+
+    public List<SkillEntity> addSkills(List<SkillRequestDto> skillRequestDtoList){
+        return skillRepository.saveAll(testMapper.toSkillsEntity(skillRequestDtoList));
+    }
+
+    public List<SkillEntity> getSkills() {
+        return skillRepository.findAll();
     }
 }
