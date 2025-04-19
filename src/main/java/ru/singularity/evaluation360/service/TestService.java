@@ -137,12 +137,21 @@ public class TestService {
     public TestMenuResponseDTO getTestMenu(String testId, int userId) {
         // формирование составного индекса и получение по нему EvaluationEntity
         String index = String.format("%s%s%d", testId, splitter, userId);
-        EvaluationEntity evaluation = evaluationRepository.findByIndex(index)
-                .orElseThrow(() -> new DontFoundException(String.format("not found test menu %s", index)));
+        Optional<EvaluationEntity> evaluation = evaluationRepository.findByIndex(index);
 
-        // списки id тех кто оценивает и тех кого оценивают
-        List<Integer> evaluatorIds = evaluation.getEvaluator();
-        List<Integer> evaluatedIds = evaluation.getEvaluated();
+        List<Integer> evaluatorIds;
+        List<Integer> evaluatedIds;
+
+
+        if(evaluation.isPresent()) {
+            // списки id тех кто оценивает и тех кого оценивают
+            evaluatorIds = evaluation.get().getEvaluator();
+            evaluatedIds = evaluation.get().getEvaluated();
+        }else {
+            evaluatorIds = new ArrayList<>();
+            evaluatedIds = new ArrayList<>();
+        }
+
 
         TestEntity testEntity = testRepository.findById(testId).orElseThrow(() -> new DontFoundException(testId));
 

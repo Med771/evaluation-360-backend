@@ -1,7 +1,7 @@
 services:
   # Spring Boot приложение
   evaluation-360-backend:
-    image: daniltikhomirov/360-backend:1.0
+    image: daniltikhomirov/360-backend:1.2
     container_name: evaluation-360-backend
     ports:
       - "8080:8080"

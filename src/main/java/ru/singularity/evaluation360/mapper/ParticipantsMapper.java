@@ -20,7 +20,10 @@ public interface ParticipantsMapper {
 
     List<RespondentModel> toRespondentModels(List<ParticipantEntity> participantEntities);
 
-    @Mappings({@Mapping(target = "isComplete", source = "isComplete")})
+    @Mappings({
+            @Mapping(target = "isComplete", source = "isComplete"),
+            @Mapping(target = "respondentId", source = "participantEntity.id")
+    })
     TestRespondentTitleModel toTestRespondentTitleModel(ParticipantEntity participantEntity,
                                                         boolean isComplete);
 

@@ -10,6 +10,7 @@ import ru.singularity.evaluation360.entity.EvaluationEntity;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.exeptions.Repeat;
 import ru.singularity.evaluation360.repository.EvaluationRepository;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.TestRepository;
@@ -78,13 +79,16 @@ public class RespondentService {
     private List<EvaluationEntity> generateAndAppendUser2(int userId, String testId, List<Integer> respondentsIds, List<EvaluationEntity> evaluationEntities) {
         Map<String, EvaluationEntity> evaluationEntityMap = evaluationEntities.stream().collect(Collectors.toMap(EvaluationEntity::getIndex, e -> e));
         List<EvaluationEntity> newEvaluationEntities = new ArrayList<>();
+        Set<String> evaluationIndexes = new HashSet<>();
 
         String myIndex = testId + splitter + userId;
         if(evaluationEntityMap.containsKey(myIndex)){
+            evaluationIndexes.add(myIndex);
             EvaluationEntity evaluationEntity = evaluationEntityMap.get(myIndex);
             evaluationEntity.getEvaluated().add(userId);
             newEvaluationEntities.add(evaluationEntity);
         }else{
+            evaluationIndexes.add(myIndex);
             EvaluationEntity evaluationEntity = new EvaluationEntity();
             evaluationEntity.setIndex(testId + splitter + userId);
             evaluationEntity.getEvaluated().add(userId);
@@ -92,15 +96,20 @@ public class RespondentService {
         }
 
         for (Integer respondentId : respondentsIds) {
+            String index = testId + splitter + respondentId;
             if(evaluationEntityMap.containsKey(testId + splitter + respondentId)){
-                EvaluationEntity evaluationEntity = evaluationEntityMap.get(testId + splitter + respondentId);
-                evaluationEntity.getEvaluator().add(userId);
-                newEvaluationEntities.add(evaluationEntity);
+                if(evaluationIndexes.add(index)){
+                    EvaluationEntity evaluationEntity = evaluationEntityMap.get(index);
+                    evaluationEntity.getEvaluator().add(userId);
+                    newEvaluationEntities.add(evaluationEntity);
+                }
             }else {
-                EvaluationEntity evaluationEntity = new EvaluationEntity();
-                evaluationEntity.setIndex(testId + splitter + respondentId);
-                evaluationEntity.getEvaluator().add(userId);
-                newEvaluationEntities.add(evaluationEntity);
+                if(evaluationIndexes.add(index)){
+                    EvaluationEntity evaluationEntity = new EvaluationEntity();
+                    evaluationEntity.setIndex(index);
+                    evaluationEntity.getEvaluator().add(userId);
+                    newEvaluationEntities.add(evaluationEntity);
+                }
             }
         }
         return newEvaluationEntities;
@@ -108,6 +117,10 @@ public class RespondentService {
     }
 
         public void setRespondents(Integer userId, String testId, RespondentsRequestDTO respondentsRequestDTO) {
+
+            if(evaluationRepository.findByIndex(testId+splitter+userId).isPresent()){
+                throw new Repeat("you repeat self-evaluation");
+            }
 
             List<Integer> respondentsIds = respondentsRequestDTO.respondentsIds();
 
