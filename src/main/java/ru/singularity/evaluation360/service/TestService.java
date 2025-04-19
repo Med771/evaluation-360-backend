@@ -175,13 +175,13 @@ public class TestService {
         boolean isSelectRespondents;
         if (!evaluatorIds.isEmpty()) {
             evaluator = getEvaluatorRespondents(testId, userId, evaluatorIds);
-            isSelectRespondents = true;
-        } else {
-            isSelectRespondents = false;
         }
 
         if (!evaluatedIds.isEmpty()) {
             evaluated = getEvaluatedRespondents(testId, userId, evaluatedIds);
+            isSelectRespondents = true;
+        }else {
+            isSelectRespondents = false;
         }
 
         // проверка все ли выполнили свои задачи
