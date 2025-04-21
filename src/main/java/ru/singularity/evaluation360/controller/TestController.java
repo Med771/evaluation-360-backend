@@ -77,9 +77,9 @@ public class TestController {
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id,
             @PathVariable long evaluatedId) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        //TODO получить id пользователя
+        int userId = authService.findUserByEmail(name).getParticipant().getId();
 
-        return ResponseEntity.ok(testService.getTest(test_id, 1L, evaluatedId));
+        return ResponseEntity.ok(testService.getTest(test_id, userId, evaluatedId));
     }
 
     /**

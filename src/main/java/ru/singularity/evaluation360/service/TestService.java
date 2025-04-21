@@ -18,15 +18,17 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class TestService {
-    private final TestRepository testRepository;
     private final TestMapper testMapper;
+    private final ParticipantsMapper participantsMapper;
+
+    private final TestRepository testRepository;
     private final EvaluationRepository evaluationRepository;
     private final ParticipantRepository participantRepository;
-    private final ParticipantsMapper participantsMapper;
     private final QuestionRepository questionRepository;
     private final ReportRepository reportRepository;
-    private final String splitter = "!_!*!_!";
     private final SkillRepository skillRepository;
+
+    private final String splitter;
 
     /**
      * метод для нахождения TestRespondentTitleModel с полем оценил ли его пользователь

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +15,10 @@ import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
 import ru.singularity.evaluation360.dto.result.model.SkillsResultModel;
 import ru.singularity.evaluation360.service.ResultService;
 
+import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/result")
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class ResultController {
      * @param test_id Идентификатор теста.
      * @return Результаты теста.
      */
+    // TODO: add security (Access only for users from the test and only after being opened by an administrator)
     @Operation(summary = "Получить результаты теста", description = "Возвращает результаты прохождения теста для указанного test_id.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешное получение результатов теста"),
@@ -45,6 +49,7 @@ public class ResultController {
      * @param resultRequestDTO Данные о результате.
      * @return Статус HTTP 201 (Создано).
      */
+    // TODO: add security (Access for test users only)
     @Operation(summary = "Добавить результат", description = "Добавляет результат для прохождения теста.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Результат успешно добавлен"),
@@ -54,9 +59,13 @@ public class ResultController {
     public ResponseEntity<HttpStatus> addResult(@RequestBody ResultRequestDTO resultRequestDTO) {
         try {
             resultService.addResult(resultRequestDTO);
+
             return ResponseEntity.status(HttpStatus.CREATED).body(HttpStatus.CREATED);
 
         }catch (Exception e) {
+            log.error(e.getMessage());
+            Arrays.stream(e.getStackTrace()).forEach(o -> log.error(o.toString()));
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST);
         }
     }
@@ -69,6 +78,7 @@ public class ResultController {
      * @param commentIndex индекс комментария
      * @param commentEditRequestDTO измененный комментарий
      */
+    // TODO: add security (Access for admins only)
     @Operation(summary = "изменить комментарий", description = "меняет комментарий под нужным индексом")
     @PutMapping("/edit/comment/{skillIndex}/{commentIndex}")
     //TODO спросить у насти надо ли это все с комментарием

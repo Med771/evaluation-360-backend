@@ -24,9 +24,7 @@ public class ResultService {
                 orElseThrow(() -> new DontFoundException(String.format("Result with id %s not found", id))));
     }
 
-    public ReportEntity addResult(ResultRequestDTO result) {
-        return reportRepository.save(reportMapper.toReportEntity(result));
+    public void addResult(ResultRequestDTO result) {
+        reportRepository.save(reportMapper.toReportEntity(result));
     }
-
-
 }
