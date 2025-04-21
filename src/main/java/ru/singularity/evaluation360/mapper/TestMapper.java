@@ -6,13 +6,12 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.Mappings;
 import ru.singularity.evaluation360.dto.respondent.RespondentsResponseDTO;
 import ru.singularity.evaluation360.dto.respondent.model.RespondentModel;
-import ru.singularity.evaluation360.dto.test.TestRequestDTO;
-import ru.singularity.evaluation360.dto.test.TestResponseDTO;
-import ru.singularity.evaluation360.dto.test.TestViewResponseDTO;
+import ru.singularity.evaluation360.dto.test.*;
 import ru.singularity.evaluation360.dto.test.model.QuestionModel;
 import ru.singularity.evaluation360.dto.test.model.QuestionTestModel;
 import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
 import ru.singularity.evaluation360.entity.QuestionEntity;
+import ru.singularity.evaluation360.entity.SkillEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 
 import java.util.List;
@@ -35,6 +34,8 @@ public interface TestMapper {
 
 
     QuestionTestModel toQuestionTestModel(QuestionEntity questionEntity);
+
+    QuestionEntity toQuestionEntity(QuestionTestModel questionTestModel);
 
     List<QuestionTestModel> toQuestionTestModelList(List<QuestionEntity> questionEntities);
 
@@ -72,4 +73,8 @@ public interface TestMapper {
     TestTitleModel toTitleModel(TestEntity testEntity);
 
     List<TestTitleModel> toTitleModelList(List<TestEntity> testEntities);
+
+    SkillEntity toSkillEntity(SkillRequestDto skillResponseDto);
+
+    List<SkillEntity> toSkillsEntity(List<SkillRequestDto> skillRequestDtos);
 }

@@ -1,96 +1,87 @@
 package ru.singularity.evaluation360.service;
 
 import lombok.AllArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
+import ru.singularity.evaluation360.dto.respondent.RespondentsRequestDTO;
 import ru.singularity.evaluation360.dto.respondent.RespondentsResponseDTO;
 import ru.singularity.evaluation360.dto.respondent.model.RespondentModel;
+
 import ru.singularity.evaluation360.entity.EvaluationEntity;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
+
 import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.exeptions.RepeatException;
+
 import ru.singularity.evaluation360.repository.EvaluationRepository;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.TestRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class RespondentService {
-    private static final String splitter = "!_!*!_!";
+    private final String splitter;
 
     private final TestRepository testRepository;
     private final ParticipantRepository participantRepository;
     private final EvaluationRepository evaluationRepository;
 
     private List<EvaluationEntity> generateAndAppendUser(int userId, String testId, List<Integer> respondentsIds, List<EvaluationEntity> evaluationEntities) {
-        evaluationEntities.sort(
-                (evaluation1, evaluation2) ->
-                        Integer.compare(
-                                Integer.parseInt(evaluation1.getIndex().split(splitter)[1]),
-                                Integer.parseInt(evaluation2.getIndex().split(splitter)[1])
-                        ));
+        // Перевод массива сущностей в Map<Индекс; сущность>
+        Map<String, EvaluationEntity> evaluationEntityMap = evaluationEntities.stream().collect(Collectors.toMap(EvaluationEntity::getIndex, e -> e));
 
+        // Новый массив сущностей для сохранения
         List<EvaluationEntity> newEvaluationEntities = new ArrayList<>();
 
-        int i1 = 0;
-        int i2 = 0;
+        // Множество для индексов
+        Set<String> evaluationIndexes = new HashSet<>();
 
-        while (i2 < evaluationEntities.size()) {
-            if (respondentsIds.get(i1) == Integer.parseInt(evaluationEntities.get(i2).getIndex().split(splitter)[1])) {
-                evaluationEntities.get(i2).getEvaluated().add(userId);
+        // Индекс для пользователя
+        String myIndex = testId + splitter + userId;
 
-                i1++;
-                i2++;
+        // Переменная для работы с сущностью
+        EvaluationEntity evaluationEntity = evaluationEntityMap.getOrDefault(myIndex, new EvaluationEntity());
 
-                newEvaluationEntities.add(evaluationEntities.get(i2));
-            }
-            else{
-                EvaluationEntity evaluationEntity = new EvaluationEntity();
-
-                evaluationEntity.setIndex(testId + splitter + userId);
-                evaluationEntity.getEvaluated().add(userId);
-
-                i1++;
-
-                newEvaluationEntities.add(evaluationEntity);
-            }
+        // Проверка на сущствование индекса пользователя
+        if(evaluationEntity.getIndex() == null){
+            evaluationEntity.setIndex(testId + splitter + userId);
         }
 
-        while (i1 < respondentsIds.size()) {
-            EvaluationEntity evaluationEntity = new EvaluationEntity();
+        // Обновление сущности с пользователем
+        evaluationEntity.getEvaluated().add(userId);
+        evaluationIndexes.add(myIndex);
+        newEvaluationEntities.add(evaluationEntity);
 
-            evaluationEntity.setIndex(testId + splitter + userId);
-            evaluationEntity.getEvaluated().add(userId);
+        for (Integer respondentId : respondentsIds) {
+            String index = testId + splitter + respondentId;
 
-            newEvaluationEntities.add(evaluationEntity);
+            if (evaluationIndexes.add(index)) {
+               evaluationEntity = evaluationEntityMap.getOrDefault(index, new EvaluationEntity());
 
-            i1++;
+                if (evaluationEntity.getIndex() == null) {
+                    evaluationEntity.setIndex(index);
+                }
+
+                evaluationEntity.getEvaluator().add(userId);
+                newEvaluationEntities.add(evaluationEntity);
+            }
         }
 
         return newEvaluationEntities;
     }
 
-    public void setRespondents(Integer userId, String testId, List<Integer> respondentsIds) {
-        String index = testId + splitter + userId;
-
-        Optional<EvaluationEntity> evaluationEntity = evaluationRepository.findByIndex(index);
-
-        EvaluationEntity evaluation;
-
-        if (evaluationEntity.isPresent()) {
-            evaluation = evaluationEntity.get();
-        }
-        else {
-            evaluation = new EvaluationEntity();
-
-            evaluation.setIndex(index);
+    public void setRespondents(Integer userId, String testId, RespondentsRequestDTO respondentsRequestDTO) {
+        EvaluationEntity evaluationEntity = evaluationRepository.findByIndex(testId+splitter+userId).orElse(null);
+        if(evaluationEntity != null && !evaluationEntity.getEvaluated().isEmpty()){
+            throw new RepeatException("you repeat self-evaluation");
         }
 
-        evaluation.setEvaluator(respondentsIds);
+        List<Integer> respondentsIds = respondentsRequestDTO.respondentsIds();
 
         List<EvaluationEntity> evaluations = evaluationRepository.findAllByIndexIsStartingWith(testId);
 

@@ -5,24 +5,27 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.singularity.evaluation360.dto.test.*;
-import ru.singularity.evaluation360.dto.test.model.QuestionTestModel;
-import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
-import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
+import ru.singularity.evaluation360.entity.SkillEntity;
+import ru.singularity.evaluation360.service.AuthService;
 import ru.singularity.evaluation360.service.TestService;
 
+import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("test")
 @RequiredArgsConstructor
 public class TestController {
 
     private final TestService testService;
+    private final AuthService authService;
 
     /**
      * Получить все тесты.
@@ -51,14 +54,12 @@ public class TestController {
     @GetMapping("menu/{test_id}")
     public ResponseEntity<TestMenuResponseDTO> getTestMenu(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id) {
-        List<TestRespondentTitleModel> testRespondentTitleModel =
-                List.of(new TestRespondentTitleModel(1L, "String", true));
-
-        TestMenuResponseDTO testMenuResponseDTO = new TestMenuResponseDTO("String", true,
-                false, true, true, false,
-                testRespondentTitleModel, testRespondentTitleModel, true);
-
-        return ResponseEntity.ok(testMenuResponseDTO);
+        int userId = authService.
+                findUserByEmail(SecurityContextHolder.
+                        getContext().
+                        getAuthentication().
+                        getName()).getParticipant().getId();
+        return ResponseEntity.ok(testService.getTestMenu(test_id, userId));
     }
 
     /**
@@ -76,9 +77,9 @@ public class TestController {
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id,
             @PathVariable long evaluatedId) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        //TODO получить id пользователя
+        int userId = authService.findUserByEmail(name).getParticipant().getId();
 
-        return ResponseEntity.ok(testService.getTest(test_id, 1L, evaluatedId));
+        return ResponseEntity.ok(testService.getTest(test_id, userId, evaluatedId));
     }
 
     /**
@@ -108,7 +109,13 @@ public class TestController {
             @ApiResponse(responseCode = "200", description = "Успешное получение теста")
     })
     public ResponseEntity<HttpStatus> updateTestStatus(@PathVariable String test_id,@RequestBody TestStatusRequestDTO testStatusRequestDTO){
-        return ResponseEntity.ok(HttpStatus.OK);
+        try {
+            testService.editTestStatus(test_id, testStatusRequestDTO);
+            return ResponseEntity.ok(HttpStatus.CREATED);
+        }catch (Exception e){
+            log.error(Arrays.toString(e.getStackTrace()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**
@@ -119,10 +126,18 @@ public class TestController {
     @PostMapping()
     @Operation(summary = "добавить тест", description = "добовляет тест")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Успешное добовление теста")
+            @ApiResponse(responseCode = "201", description = "Успешное добовление теста")
     })
     public ResponseEntity<HttpStatus> postTest(@RequestBody TestRequestDTO testRequestDTO){
-        return ResponseEntity.ok(HttpStatus.CREATED);
+        try {
+            testService.addTest(testRequestDTO);
+            return ResponseEntity.ok(HttpStatus.CREATED);
+        }catch (Exception e){
+            log.error(Arrays.toString(e.getStackTrace()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST);
+        }
+
+
     }
 
     /**
@@ -136,6 +151,29 @@ public class TestController {
     })
     @GetMapping("questions")
     public ResponseEntity<QuestionsResponseDTO> getQuestions() {
-        return ResponseEntity.ok(new QuestionsResponseDTO(null));
+        return ResponseEntity.ok(testService.getAllQuestions());
+    }
+
+    /**
+     *добавление скила
+     */
+    @PostMapping("skill")
+    public ResponseEntity<SkillEntity> addSkill(@RequestBody SkillRequestDto skillRequestDto){
+        return ResponseEntity.ok(testService.addSkill(skillRequestDto));
+    }
+
+    /**
+     *добавление скилов
+     */
+    @PostMapping("skills")
+    public ResponseEntity<List<SkillEntity>> addSkills(@RequestBody List<SkillRequestDto> skillRequestDtos){
+        return ResponseEntity.ok(testService.addSkills(skillRequestDtos));
+    }
+    /**
+     * получить скилы
+     */
+    @GetMapping("skills")
+    public ResponseEntity<List<SkillEntity>> getSkills() {
+        return ResponseEntity.ok(testService.getSkills());
     }
 }

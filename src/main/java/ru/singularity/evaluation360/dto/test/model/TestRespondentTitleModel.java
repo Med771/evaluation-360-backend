@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Модель заголовка респондента в тесте")
 public record TestRespondentTitleModel(
         @Schema(description = "Идентификатор респондента", example = "101")
-        Long respondentId,
+        int respondentId,
 
         @Schema(description = "Полное имя респондента", example = "Иван Иванов")
         String fullName,

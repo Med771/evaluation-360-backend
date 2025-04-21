@@ -1,12 +1,14 @@
 package ru.singularity.evaluation360.entity;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode
 @Table(name = "participants")
 public class ParticipantEntity {
     @Id
