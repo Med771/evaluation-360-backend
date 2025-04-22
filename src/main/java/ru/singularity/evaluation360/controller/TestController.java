@@ -31,7 +31,6 @@ public class TestController {
 
     private final TestService testService;
     private final AuthService authService;
-    private final UserRepository userRepository;
 
     /**
      * Получить все тесты.
@@ -68,7 +67,7 @@ public class TestController {
                 findUserByEmail(SecurityContextHolder.
                         getContext().
                         getAuthentication().
-                        getName()).getParticipant().getId();
+                        getName()).getId();
         return ResponseEntity.ok(testService.getTestMenu(test_id, userId));
     }
 
@@ -88,7 +87,7 @@ public class TestController {
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable String test_id,
             @PathVariable long evaluatedId) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        int userId = authService.findUserByEmail(name).getParticipant().getId();
+        int userId = authService.findUserByEmail(name).getId();
 
         return ResponseEntity.ok(testService.getTest(test_id, userId, evaluatedId));
     }
