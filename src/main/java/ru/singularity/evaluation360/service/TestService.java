@@ -265,12 +265,12 @@ public class TestService {
         return testRepository.save(testEntity);
     }
 
-    public SkillEntity addSkill(SkillRequestDto skillRequestDto){
+    public SkillEntity addSkill(SkillRequestDTO skillRequestDto){
         return skillRepository.save(testMapper.toSkillEntity(skillRequestDto));
     }
 
-    public List<SkillEntity> addSkills(List<SkillRequestDto> skillRequestDtoList){
-        return skillRepository.saveAll(testMapper.toSkillsEntity(skillRequestDtoList));
+    public List<SkillEntity> addSkills(List<SkillRequestDTO> skillRequestDTOList){
+        return skillRepository.saveAll(testMapper.toSkillsEntity(skillRequestDTOList));
     }
 
     public List<SkillEntity> getSkills() {

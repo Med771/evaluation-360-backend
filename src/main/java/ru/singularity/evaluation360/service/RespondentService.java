@@ -94,6 +94,7 @@ public class RespondentService {
 
         List<RespondentModel> respondents = new ArrayList<>();
 
+        // NOTE: delete Participant
         List<ParticipantEntity> participants = participantRepository.findAllById(test.getParticipantsIds());
 
         for (ParticipantEntity participant: participants) {
