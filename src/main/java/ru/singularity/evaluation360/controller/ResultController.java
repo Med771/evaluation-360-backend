@@ -4,19 +4,23 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import ru.singularity.evaluation360.dto.result.CommentEditRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
-import ru.singularity.evaluation360.dto.result.model.SkillsResultModel;
+
 import ru.singularity.evaluation360.service.ResultService;
 
 import java.util.Arrays;
-import java.util.List;
+
 
 @Slf4j
 @RestController
@@ -55,10 +59,12 @@ public class ResultController {
             @ApiResponse(responseCode = "201", description = "Результат успешно добавлен"),
             @ApiResponse(responseCode = "400", description = "Некорректные данные запроса")
     })
-    @PostMapping()
-    public ResponseEntity<HttpStatus> addResult(@RequestBody ResultRequestDTO resultRequestDTO) {
+    @PostMapping("/{test_id}")
+    @PreAuthorize("@testAuthFilter.hasTestAccess(#test_id, authentication.principal.id, authentication.principal.role)")
+    public ResponseEntity<HttpStatus> addResult(@PathVariable String test_id,
+                                                @RequestBody ResultRequestDTO resultRequestDTO) {
         try {
-            resultService.addResult(resultRequestDTO);
+            resultService.addResult(test_id, resultRequestDTO);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(HttpStatus.CREATED);
 

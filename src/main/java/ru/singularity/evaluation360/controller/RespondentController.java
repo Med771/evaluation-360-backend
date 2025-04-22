@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,7 @@ public class RespondentController {
             @ApiResponse(responseCode = "404", description = "Тест не найден")
     })
     @GetMapping("/{test_id}")
+    @PreAuthorize("@testAuthFilter.hasTestAccess(#test_id, authentication.principal.id, authentication.principal.role)")
     public ResponseEntity<RespondentsResponseDTO> respondent(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable("test_id") String test_id) {
         try {
@@ -68,6 +70,7 @@ public class RespondentController {
             @ApiResponse(responseCode = "400", description = "Некорректные данные запроса")
     })
     @PostMapping("/{test_id}")
+    @PreAuthorize("@testAuthFilter.hasTestAccess(#test_id, authentication.principal.id, authentication.principal.role)")
     public ResponseEntity<HttpStatus> createRespondent(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable("test_id") String test_id,
             @RequestBody RespondentsRequestDTO respondentsRequestDTO) {
