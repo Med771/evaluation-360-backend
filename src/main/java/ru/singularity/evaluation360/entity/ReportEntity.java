@@ -24,6 +24,7 @@ public class ReportEntity {
     @Indexed(unique = true)
     private String evaluatedIdTestIdEvaluatorId;
 
+    @Indexed
     private String testId;
 
     // Participant Id
