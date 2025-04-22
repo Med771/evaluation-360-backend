@@ -45,7 +45,8 @@ public class TestController {
     @GetMapping()
     public ResponseEntity<TestsResponseDTO> getTests() {
         int userId = authService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
-                .getParticipant().getId();
+                .getId();
+
         return ResponseEntity.ok(testService.getAllTests(userId));
     }
 

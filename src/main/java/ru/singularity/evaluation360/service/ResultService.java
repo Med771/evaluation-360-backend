@@ -6,13 +6,17 @@ import org.springframework.stereotype.Service;
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
 
+import ru.singularity.evaluation360.entity.ReportEntity;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
 
+import ru.singularity.evaluation360.exeptions.RepeatException;
 import ru.singularity.evaluation360.mapper.ReportMapper;
 import ru.singularity.evaluation360.mapper.ResultMapper;
 
 import ru.singularity.evaluation360.repository.ReportRepository;
 import ru.singularity.evaluation360.repository.ResultRepository;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +33,13 @@ public class ResultService {
     }
 
     public void addResult(String testId, ResultRequestDTO result) {
-        // TODO: update mapper for save
+
+        Optional<ReportEntity> report =
+                reportRepository
+                        .findByEvaluatedIdTestIdEvaluatorId(result.evaluatedId() + testId + result.evaluatorId());
+        if (report.isPresent()) {
+            throw new RepeatException("dont Repeat report");
+        }
         reportRepository.save(reportMapper.toReportEntity(result, testId));
     }
 }
