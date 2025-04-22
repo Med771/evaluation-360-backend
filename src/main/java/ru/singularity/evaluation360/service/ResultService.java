@@ -27,6 +27,8 @@ public class ResultService {
     private final ReportMapper reportMapper;
     private final ResultMapper resultMapper;
 
+    private final String splitter;
+
     public ResultResponseDTO getResultByID(String id) {
         return resultMapper.toResultResponseDTO(resultRepository.findById(id).
                 orElseThrow(() -> new DontFoundException(String.format("Result with id %s not found", id))));
@@ -36,10 +38,10 @@ public class ResultService {
 
         Optional<ReportEntity> report =
                 reportRepository
-                        .findByEvaluatedIdTestIdEvaluatorId(result.evaluatedId() + testId + result.evaluatorId());
+                        .findByEvaluatedIdTestIdEvaluatorId(result.evaluatedId() + splitter + testId + splitter + result.evaluatorId());
         if (report.isPresent()) {
             throw new RepeatException("dont Repeat report");
         }
-        reportRepository.save(reportMapper.toReportEntity(result, testId));
+        reportRepository.save(reportMapper.toReportEntity(result, testId, splitter));
     }
 }
