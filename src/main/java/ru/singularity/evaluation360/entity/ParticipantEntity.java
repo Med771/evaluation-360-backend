@@ -19,7 +19,7 @@ public class ParticipantEntity {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(name = "course", nullable = false, columnDefinition = "INTEGER default -10")
+    @Column(name = "course", nullable = false, columnDefinition = "INTEGER default -1")
     private Integer course;
     // Values for MVP ]
 
