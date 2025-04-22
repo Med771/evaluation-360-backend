@@ -53,7 +53,6 @@ public class ResultController {
      * @param resultRequestDTO Данные о результате.
      * @return Статус HTTP 201 (Создано).
      */
-    // TODO: add security (Access for test users only)
     @Operation(summary = "Добавить результат", description = "Добавляет результат для прохождения теста.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Результат успешно добавлен"),
@@ -84,9 +83,9 @@ public class ResultController {
      * @param commentIndex индекс комментария
      * @param commentEditRequestDTO измененный комментарий
      */
-    // TODO: add security (Access for admins only)
     @Operation(summary = "изменить комментарий", description = "меняет комментарий под нужным индексом")
     @PutMapping("/edit/comment/{skillIndex}/{commentIndex}")
+    @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
     //TODO спросить у насти надо ли это все с комментарием
     public ResponseEntity<HttpStatus> editComment(@PathVariable int skillIndex,
                                                   @PathVariable int commentIndex,
