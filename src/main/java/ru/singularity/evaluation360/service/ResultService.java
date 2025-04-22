@@ -30,6 +30,6 @@ public class ResultService {
 
     public void addResult(String testId, ResultRequestDTO result) {
         // TODO: update mapper for save
-        reportRepository.save(reportMapper.toReportEntity(result));
+        reportRepository.save(reportMapper.toReportEntity(result, testId));
     }
 }
