@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import ru.singularity.evaluation360.dto.test.*;
 import ru.singularity.evaluation360.entity.SkillEntity;
+import ru.singularity.evaluation360.repository.UserRepository;
 import ru.singularity.evaluation360.service.AuthService;
 import ru.singularity.evaluation360.service.TestService;
 
@@ -30,6 +31,7 @@ public class TestController {
 
     private final TestService testService;
     private final AuthService authService;
+    private final UserRepository userRepository;
 
     /**
      * Получить все тесты.
@@ -42,7 +44,9 @@ public class TestController {
     })
     @GetMapping()
     public ResponseEntity<TestsResponseDTO> getTests() {
-        return ResponseEntity.ok(testService.getAllTests());
+        int userId = authService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .getParticipant().getId();
+        return ResponseEntity.ok(testService.getAllTests(userId));
     }
 
     /**

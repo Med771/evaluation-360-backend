@@ -125,8 +125,8 @@ public class TestService {
         return true;
     }
 
-    public TestsResponseDTO getAllTests() {
-        List<TestTitleModel> tests = testMapper.toTitleModelList(testRepository.findAll());
+    public TestsResponseDTO getAllTests(Integer userId) {
+        List<TestTitleModel> tests = testMapper.toTitleModelList(testRepository.findByParticipantsIdsContaining(userId));
         return new TestsResponseDTO("360", tests);
     }
 
