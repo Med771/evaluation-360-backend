@@ -73,7 +73,7 @@ public class AuthService {
     }
 
     public UserEntity findUserByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(() -> new DontFoundException("email"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new DontFoundException("Don't found user"));
     }
 
 }
