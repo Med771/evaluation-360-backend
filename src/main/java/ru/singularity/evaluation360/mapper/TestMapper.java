@@ -74,7 +74,7 @@ public interface TestMapper {
 
     List<TestTitleModel> toTitleModelList(List<TestEntity> testEntities);
 
-    SkillEntity toSkillEntity(SkillRequestDto skillResponseDto);
+    SkillEntity toSkillEntity(SkillRequestDTO skillResponseDto);
 
-    List<SkillEntity> toSkillsEntity(List<SkillRequestDto> skillRequestDtos);
+    List<SkillEntity> toSkillsEntity(List<SkillRequestDTO> skillRequestDTOS);
 }
