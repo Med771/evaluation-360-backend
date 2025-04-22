@@ -11,7 +11,7 @@ import ru.singularity.evaluation360.dto.result.model.SkillsTestModel;
 
 import java.util.List;
 
-@Document
+@Document(collection = "reports")
 @Getter
 @Setter
 public class ReportEntity {

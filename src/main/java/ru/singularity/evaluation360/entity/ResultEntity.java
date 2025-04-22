@@ -9,7 +9,7 @@ import ru.singularity.evaluation360.dto.result.model.SkillsResultModel;
 
 import java.util.List;
 
-@Document
+@Document(collection = "results")
 @Getter
 @Setter
 public class ResultEntity {
