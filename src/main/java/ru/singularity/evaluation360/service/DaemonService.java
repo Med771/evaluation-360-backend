@@ -95,7 +95,7 @@ public class DaemonService {
                     log.info("first if{}", results.toString());
                 }
 
-                if (!skills.containsKey(skill.skillId())) {
+                if (!results.get(value.getEvaluatorId()).containsKey(skill.skillId())) {
                     results.get(value.getEvaluatorId()).put(skill.skillId(), new ResultModel());
                 }
 
