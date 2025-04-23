@@ -43,5 +43,10 @@ public record TestRequestDTO(
         Integer minHighRoleRespondents,
 
         @Schema(description = "минимум других курсов")
-        Integer minOtherCourseRespondents) {
-}
+        Integer minOtherCourseRespondents,
+
+        @Schema(description = "новые скиллы")
+        List<SkillRequestDTO> newSkills
+        )
+
+{ }

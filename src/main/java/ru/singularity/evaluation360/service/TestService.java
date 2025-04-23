@@ -252,8 +252,9 @@ public class TestService {
     }
 
 
-    public TestEntity addTest(TestRequestDTO testRequestDTO) {
-        return testRepository.save(testMapper.toTestEntity(testRequestDTO,
+    public void addTest(TestRequestDTO testRequestDTO) {
+        skillRepository.saveAll(testMapper.toSkillsEntity(testRequestDTO.newSkills()));
+        testRepository.save(testMapper.toTestEntity(testRequestDTO,
                 generateQuestionsIds(testRequestDTO),
                 StatusTestEnum.CREATED));
     }
@@ -262,10 +263,10 @@ public class TestService {
         return new QuestionsResponseDTO(testMapper.toQuestionModelList(questionRepository.findAll()));
     }
 
-    public TestEntity editTestStatus(String testID, TestStatusRequestDTO testStatusRequestDTO){
+    public void editTestStatus(String testID, TestStatusRequestDTO testStatusRequestDTO){
         TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new DontFoundException(testID));
         testEntity.setStatus(testStatusRequestDTO.status());
-        return testRepository.save(testEntity);
+        testRepository.save(testEntity);
     }
 
     public SkillEntity addSkill(SkillRequestDTO skillRequestDto){
