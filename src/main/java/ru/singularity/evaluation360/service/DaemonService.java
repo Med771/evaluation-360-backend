@@ -1,6 +1,7 @@
 package ru.singularity.evaluation360.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.singularity.evaluation360.dto.result.model.AnswerTestModel;
@@ -9,6 +10,8 @@ import ru.singularity.evaluation360.dto.result.model.SkillsTestModel;
 import ru.singularity.evaluation360.entity.*;
 import ru.singularity.evaluation360.entity.model.ResultModel;
 import ru.singularity.evaluation360.entity.model.RoleUserEnum;
+import ru.singularity.evaluation360.entity.model.StatusTestEnum;
+import ru.singularity.evaluation360.entity.model.TypeTestEnum;
 import ru.singularity.evaluation360.repository.*;
 
 import java.util.*;
@@ -27,10 +30,17 @@ public class DaemonService {
 
     @Scheduled(fixedRate = 60000)
     public void checkTests() {
+        List<TestEntity> testEntities = testRepository.findAllByStatus(StatusTestEnum.STARTED);
 
+        for (TestEntity testEntity : testEntities) {
+            if (testEntity.getEndTimeStamp() <= (System.currentTimeMillis() / 1000)) {
+                calculateResults(testEntity);
+            }
+        }
     }
 
-    private void calculateResults(TestEntity test) {
+    @Async
+    protected void calculateResults(TestEntity test) {
         List<ReportEntity> reports = reportRepository.findAllByTestId(test.getId());
 
         Map<Integer, SkillEntity> skills = skillRepository.findAll()
@@ -79,6 +89,11 @@ public class DaemonService {
             resultEntity.setComment("Final comment");
             resultEntity.setResults(new ArrayList<>());
 
+            List<Double> averageResult = new ArrayList<>();
+            List<Double> selfResult = new ArrayList<>();
+            List<Double> commandsResult = new ArrayList<>();
+            List<Double> expertsResult = new ArrayList<>();
+
             for (Map.Entry<Integer, ResultModel> resultEntry: entry.getValue().entrySet()) {
                 double selfValue = resultEntry.getValue().getSelf();
                 double commandValue = resultEntry.getValue().getCommandsValues().stream()
@@ -87,18 +102,42 @@ public class DaemonService {
                 double expertValue = resultEntry.getValue().getExpertsValues().stream()
                         .mapToDouble(Double::doubleValue)
                         .average().orElse(0);
-                double averageValue = (selfValue + commandValue + expertValue) / 3;
+                double averageValue;
 
-                        SkillsResultModel skillsResultModel = new SkillsResultModel(
+                if (test.getType() == TypeTestEnum.SELF) {
+                    averageValue = selfValue;
+                }
+                else if (test.getType() == TypeTestEnum.COMMAND) {
+                    averageValue = selfValue * 0.2 + commandValue * 0.8;
+                }
+                else {
+                    averageValue = selfValue * 0.2 + commandValue * 0.3 + expertValue * 0.5;
+                }
+
+                selfResult.add(selfValue);
+                commandsResult.add(commandValue);
+                expertsResult.add(expertValue);
+                averageResult.add(averageValue);
+
+                SkillsResultModel skillsResultModel = new SkillsResultModel(
                         resultEntry.getValue().getSkillText(),
                         averageValue,
                         selfValue,
                         commandValue,
                         expertValue,
                         new ArrayList<>());
+
+                resultEntity.getResults().add(skillsResultModel);
             }
+
+            resultEntity.setAverageResult(averageResult.stream().mapToDouble(Double::doubleValue).average().orElse(0));
+            resultEntity.setThisResult(selfResult.stream().mapToDouble(Double::doubleValue).average().orElse(0));
+            resultEntity.setCommandResult(commandsResult.stream().mapToDouble(Double::doubleValue).average().orElse(0));
+            resultEntity.setExpertResult(expertsResult.stream().mapToDouble(Double::doubleValue).average().orElse(0));
 
             resultsEntities.add(resultEntity);
         }
+
+        resultRepository.saveAll(resultsEntities);
     }
 }
