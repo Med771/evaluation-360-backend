@@ -7,6 +7,7 @@ import ru.singularity.evaluation360.dto.test.model.QuestionTestModel;
 import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
 import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
 import ru.singularity.evaluation360.entity.*;
+import ru.singularity.evaluation360.entity.model.StatusTestEnum;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
@@ -252,7 +253,9 @@ public class TestService {
 
 
     public TestEntity addTest(TestRequestDTO testRequestDTO) {
-        return testRepository.save(testMapper.toTestEntity(testRequestDTO, generateQuestionsIds(testRequestDTO)));
+        return testRepository.save(testMapper.toTestEntity(testRequestDTO,
+                generateQuestionsIds(testRequestDTO),
+                StatusTestEnum.CREATED));
     }
 
     public QuestionsResponseDTO getAllQuestions() {

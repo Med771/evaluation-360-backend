@@ -13,6 +13,7 @@ import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
 import ru.singularity.evaluation360.entity.QuestionEntity;
 import ru.singularity.evaluation360.entity.SkillEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
+import ru.singularity.evaluation360.entity.model.StatusTestEnum;
 
 import java.util.List;
 
@@ -63,9 +64,11 @@ public interface TestMapper {
     @Mappings({
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "questionsIds", source = "questionsIds"),
+            @Mapping(target = "status", source = "status")
     })
     TestEntity toTestEntity(TestRequestDTO testRequestDTO,
-                            List<String> questionsIds);
+                            List<String> questionsIds,
+                            StatusTestEnum status);
 
     @Mappings({
             @Mapping(target = "testId", source = "testEntity.id")

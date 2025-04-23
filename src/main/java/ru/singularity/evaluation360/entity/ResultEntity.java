@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.singularity.evaluation360.dto.result.model.SkillsResultModel;
 
@@ -17,6 +18,7 @@ public class ResultEntity {
     private String id;
 
     // Unique UserId!_!*!_!TestId
+    @Indexed(unique = true)
     private String UserTestIndex;
 
     private String title;
