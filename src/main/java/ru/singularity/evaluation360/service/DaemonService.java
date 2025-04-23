@@ -86,7 +86,7 @@ public class DaemonService {
                 continue;
             }
 
-            UserEntity user = users.get(value.getEvaluatorId());
+            UserEntity user = users.get(value.getEvaluatedId());
             List<SkillsTestModel> reportSkills = value.getSkills();
 
             for (SkillsTestModel skill: reportSkills) {
