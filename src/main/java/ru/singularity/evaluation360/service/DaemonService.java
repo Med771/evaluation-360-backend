@@ -90,9 +90,13 @@ public class DaemonService {
             List<SkillsTestModel> reportSkills = value.getSkills();
 
             for (SkillsTestModel skill: reportSkills) {
-                if (!results.containsKey(value.getEvaluatorId()) || !skills.containsKey(skill.skillId())) {
-                    results.put(value.getEvaluatorId(), Map.of(skill.skillId(), new ResultModel()));
+                if (!results.containsKey(value.getEvaluatorId())) {
+                    results.put(value.getEvaluatorId(), new HashMap<>());
                     log.info("first if{}", results.toString());
+                }
+
+                if (!skills.containsKey(skill.skillId())) {
+                    results.get(value.getEvaluatorId()).put(skill.skillId(), new ResultModel());
                 }
 
                 ResultModel result = results.get(value.getEvaluatorId()).get(skill.skillId());
