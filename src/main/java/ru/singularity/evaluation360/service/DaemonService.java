@@ -1,6 +1,7 @@
 package ru.singularity.evaluation360.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import ru.singularity.evaluation360.repository.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class DaemonService {
@@ -30,14 +32,40 @@ public class DaemonService {
 
     @Scheduled(fixedRate = 60000)
     public void checkTests() {
-        List<TestEntity> testEntities = testRepository.findAllByStatus(StatusTestEnum.STARTED);
+        log.info("Checking tests...");
+        List<TestEntity> testEntities = testRepository.findAll();
+        long currentTimeInSeconds = System.currentTimeMillis();
+        List<TestEntity> updEntities = new ArrayList<>();
+
+        log.info("{}", currentTimeInSeconds);
 
         for (TestEntity testEntity : testEntities) {
-            if (testEntity.getEndTimeStamp() <= (System.currentTimeMillis() / 1000)) {
+            boolean isUpdated = false;
+
+            if (testEntity.getStatus() == StatusTestEnum.CREATED &&
+                    testEntity.getStartTimeStamp() <= currentTimeInSeconds) {
+                log.info("edit status to started");
+                testEntity.setStatus(StatusTestEnum.STARTED);
+                isUpdated = true;
+            }
+
+            if (testEntity.getStatus() == StatusTestEnum.STARTED &&
+                    testEntity.getEndTimeStamp() <= currentTimeInSeconds) {
                 calculateResults(testEntity);
+                log.info("edit status to archived");
+                testEntity.setStatus(StatusTestEnum.ARCHIVED);
+                isUpdated = true;
+            }
+
+            if (isUpdated) {
+                log.info("update status");
+                updEntities.add(testEntity);
             }
         }
+
+        testRepository.saveAll(updEntities);
     }
+
 
     @Async
     protected void calculateResults(TestEntity test) {
@@ -47,6 +75,9 @@ public class DaemonService {
                 .stream().collect(Collectors.toMap(SkillEntity::getId, skill -> skill));
         Map<Integer, UserEntity> users = userRepository.findAll()
                 .stream().collect(Collectors.toMap(UserEntity::getId, user -> user));
+
+        log.info(skills.toString());
+        log.info(users.toString());
 
         HashMap<Integer, Map<Integer, ResultModel>> results = new HashMap<>();
 
@@ -61,11 +92,13 @@ public class DaemonService {
             for (SkillsTestModel skill: reportSkills) {
                 if (!results.containsKey(value.getEvaluatorId()) || !skills.containsKey(skill.skillId())) {
                     results.put(value.getEvaluatorId(), Map.of(skill.skillId(), new ResultModel()));
+                    log.info("first if{}", results.toString());
                 }
 
                 ResultModel result = results.get(value.getEvaluatorId()).get(skill.skillId());
 
                 result.setSkillText(skills.get(skill.skillId()).getSkillsText());
+                log.info(result.toString());
 
                 if (Objects.equals(value.getEvaluatedId(), value.getEvaluatorId())) {
                     result.setSelf(skill.value() / 4 * 10);
@@ -76,6 +109,7 @@ public class DaemonService {
                 else {
                     result.getExpertsValues().add(skill.value() / 4 * 10);
                 }
+
             }
         }
 
@@ -130,6 +164,11 @@ public class DaemonService {
                 resultEntity.getResults().add(skillsResultModel);
             }
 
+            log.info(averageResult.toString());
+            log.info(selfResult.toString());
+            log.info(commandsResult.toString());
+            log.info(expertsResult.toString());
+
             resultEntity.setAverageResult(averageResult.stream().mapToDouble(Double::doubleValue).average().orElse(0));
             resultEntity.setThisResult(selfResult.stream().mapToDouble(Double::doubleValue).average().orElse(0));
             resultEntity.setCommandResult(commandsResult.stream().mapToDouble(Double::doubleValue).average().orElse(0));
@@ -137,6 +176,8 @@ public class DaemonService {
 
             resultsEntities.add(resultEntity);
         }
+
+        log.info(resultsEntities.toString());
 
         resultRepository.saveAll(resultsEntities);
     }

@@ -53,7 +53,7 @@ public class RespondentService {
         }
 
         // Обновление сущности с пользователем
-        evaluationEntity.getEvaluated().add(userId);
+        evaluationEntity.setEvaluated(respondentsIds);
         evaluationIndexes.add(myIndex);
         newEvaluationEntities.add(evaluationEntity);
 
