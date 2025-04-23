@@ -37,8 +37,6 @@ public class DaemonService {
         long currentTimeInSeconds = System.currentTimeMillis();
         List<TestEntity> updEntities = new ArrayList<>();
 
-        log.info("{}", currentTimeInSeconds);
-
         for (TestEntity testEntity : testEntities) {
             boolean isUpdated = false;
 
@@ -76,9 +74,6 @@ public class DaemonService {
         Map<Integer, UserEntity> users = userRepository.findAll()
                 .stream().collect(Collectors.toMap(UserEntity::getId, user -> user));
 
-        log.info(skills.toString());
-        log.info(users.toString());
-
         HashMap<Integer, Map<Integer, ResultModel>> results = new HashMap<>();
 
         for (ReportEntity value: reports) {
@@ -92,7 +87,6 @@ public class DaemonService {
             for (SkillsTestModel skill: reportSkills) {
                 if (!results.containsKey(value.getEvaluatorId())) {
                     results.put(value.getEvaluatorId(), new HashMap<>());
-                    log.info("first if{}", results.toString());
                 }
 
                 if (!results.get(value.getEvaluatorId()).containsKey(skill.skillId())) {
@@ -168,10 +162,6 @@ public class DaemonService {
                 resultEntity.getResults().add(skillsResultModel);
             }
 
-            log.info(averageResult.toString());
-            log.info(selfResult.toString());
-            log.info(commandsResult.toString());
-            log.info(expertsResult.toString());
 
             resultEntity.setAverageResult(averageResult.stream().mapToDouble(Double::doubleValue).average().orElse(0));
             resultEntity.setThisResult(selfResult.stream().mapToDouble(Double::doubleValue).average().orElse(0));
@@ -180,8 +170,6 @@ public class DaemonService {
 
             resultsEntities.add(resultEntity);
         }
-
-        log.info(resultsEntities.toString());
 
         resultRepository.saveAll(resultsEntities);
     }
