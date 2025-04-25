@@ -7,7 +7,7 @@ import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
 
 import ru.singularity.evaluation360.entity.ReportEntity;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.exeptions.BadRequestException;
 
 import ru.singularity.evaluation360.exeptions.RepeatException;
 import ru.singularity.evaluation360.mapper.ReportMapper;
@@ -31,7 +31,7 @@ public class ResultService {
 
     public ResultResponseDTO getResultByIndex(String id, int userId) {
         return resultMapper.toResultResponseDTO(resultRepository.findByUserTestIndex(id + splitter + userId).
-                orElseThrow(() -> new DontFoundException(String.format("Result with id %s not found", id))));
+                orElseThrow(() -> new BadRequestException(String.format("Result with id %s not found", id))));
     }
 
     public void addResult(String testId, ResultRequestDTO result) {

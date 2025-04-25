@@ -11,7 +11,7 @@ import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
 import ru.singularity.evaluation360.entity.QuestionEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.entity.model.StatusTestEnum;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.exeptions.BadRequestException;
 
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
 import ru.singularity.evaluation360.mapper.QuestionMapper;
@@ -40,7 +40,7 @@ public class TestManagementService {
     private final ParticipantsMapper participantsMapper;
 
     private TestResponseDTO toTestResponseDTO(long elevatorId, long evaluatedId, String testId) {
-        TestEntity testEntity = testRepository.findById(testId).orElseThrow(() -> new DontFoundException(testId));
+        TestEntity testEntity = testRepository.findById(testId).orElseThrow(() -> new BadRequestException(testId));
         String title = testEntity.getTitle();
         return new TestResponseDTO(title, evaluatedId, elevatorId,
                 questionMapper.
@@ -90,7 +90,7 @@ public class TestManagementService {
     }
 
     public void editTestStatus(String testID, TestStatusRequestDTO testStatusRequestDTO){
-        TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new DontFoundException(testID));
+        TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new BadRequestException(testID));
         testEntity.setStatus(testStatusRequestDTO.status());
         testRepository.save(testEntity);
     }
@@ -105,7 +105,7 @@ public class TestManagementService {
     }
 
     public TestViewResponseDTO getTest(String testID) {
-        TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new DontFoundException(testID));
+        TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new BadRequestException(testID));
         return testMapper.toTestViewResponseDTO(testEntity,
                 participantsMapper.
                         toRespondentModels(participantRepository.findAllById(testEntity.getParticipantsIds())),

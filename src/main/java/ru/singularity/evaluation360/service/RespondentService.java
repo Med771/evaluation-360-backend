@@ -12,7 +12,7 @@ import ru.singularity.evaluation360.entity.EvaluationEntity;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 
-import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.exeptions.BadRequestException;
 import ru.singularity.evaluation360.exeptions.RepeatException;
 
 import ru.singularity.evaluation360.repository.EvaluationRepository;
@@ -90,7 +90,7 @@ public class RespondentService {
 
     public RespondentsResponseDTO getRespondents(String testId) {
         Optional<TestEntity> testEntity = testRepository.findById(testId);
-        TestEntity test = testEntity.orElseThrow(() -> new DontFoundException("Test not found"));
+        TestEntity test = testEntity.orElseThrow(() -> new BadRequestException("Test not found"));
 
         List<RespondentModel> respondents = new ArrayList<>();
 

@@ -18,12 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.singularity.evaluation360.dto.respondent.RespondentsRequestDTO;
 import ru.singularity.evaluation360.dto.respondent.RespondentsResponseDTO;
 
-import ru.singularity.evaluation360.exeptions.DontFoundException;
-
 import ru.singularity.evaluation360.service.AuthService;
 import ru.singularity.evaluation360.service.RespondentService;
-
-import java.util.Arrays;
 
 @Slf4j
 @RestController
@@ -49,12 +45,7 @@ public class RespondentController {
     @PreAuthorize("@testAuthFilter.hasTestAccess(#test_id, authentication.principal.id, authentication.principal.role)")
     public ResponseEntity<RespondentsResponseDTO> respondent(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable("test_id") String test_id) {
-        try {
-            return ResponseEntity.ok(respondentService.getRespondents(test_id));
-        }
-        catch (DontFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok(respondentService.getRespondents(test_id));
     }
 
     /**
@@ -80,16 +71,8 @@ public class RespondentController {
                         getAuthentication().
                         getName()).getParticipant().getId();
 
+        respondentService.setRespondents(userId, test_id, respondentsRequestDTO);
 
-        try {
-            respondentService.setRespondents(userId, test_id, respondentsRequestDTO);
-
-            return new ResponseEntity<>(HttpStatus.OK);
-        }catch(Exception e) {
-            log.error(e.getMessage());
-            Arrays.stream(e.getStackTrace()).forEach(o -> log.error(o.toString()));
-
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

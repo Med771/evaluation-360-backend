@@ -7,7 +7,7 @@ import ru.singularity.evaluation360.dto.auth.RegisterRequestDTO;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.UserEntity;
 import ru.singularity.evaluation360.entity.model.RoleUserEnum;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.exeptions.UnauthorizedException;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.UserRepository;
 
@@ -73,7 +73,7 @@ public class AuthService {
     }
 
     public UserEntity findUserByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(() -> new DontFoundException("Don't found user"));
+        return userRepository.findByEmail(email).orElseThrow(() -> new UnauthorizedException("Don't found user"));
     }
 
 }

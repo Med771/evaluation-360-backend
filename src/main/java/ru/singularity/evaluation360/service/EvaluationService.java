@@ -10,7 +10,7 @@ import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.ReportEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.exeptions.BadRequestException;
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
 import ru.singularity.evaluation360.repository.EvaluationRepository;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
@@ -132,7 +132,7 @@ public class EvaluationService {
         }
 
 
-        TestEntity testEntity = testRepository.findById(testId).orElseThrow(() -> new DontFoundException(testId));
+        TestEntity testEntity = testRepository.findById(testId).orElseThrow(() -> new BadRequestException(testId));
 
         // получение флага нужно ли выбирать кого оценивать
         boolean isGetRespondents = !(testEntity.getType() == TypeTestEnum.SELF);
