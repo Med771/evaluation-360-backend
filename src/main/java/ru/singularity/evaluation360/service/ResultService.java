@@ -29,8 +29,8 @@ public class ResultService {
 
     private final String splitter;
 
-    public ResultResponseDTO getResultByID(String id) {
-        return resultMapper.toResultResponseDTO(resultRepository.findById(id).
+    public ResultResponseDTO getResultByIndex(String id, int userId) {
+        return resultMapper.toResultResponseDTO(resultRepository.findByUserTestIndex(id + splitter + userId).
                 orElseThrow(() -> new DontFoundException(String.format("Result with id %s not found", id))));
     }
 

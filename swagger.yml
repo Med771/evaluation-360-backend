@@ -3,10 +3,10 @@ info:
   version: 1.0.0
   title: Swagger Commons
 servers:
-  - url: 'http://localhost:8080'
+  - url: http://localhost:8080
     description: Generated server url
 paths:
-  '/test/status/{test_id}':
+  /test/status/{test_id}:
     put:
       tags:
         - test-controller
@@ -102,7 +102,7 @@ paths:
                   - 509 BANDWIDTH_LIMIT_EXCEEDED
                   - 510 NOT_EXTENDED
                   - 511 NETWORK_AUTHENTICATION_REQUIRED
-  '/result/edit/comment/{skillIndex}/{commentIndex}':
+  /result/edit/comment/{skillIndex}/{commentIndex}:
     put:
       tags:
         - result-controller
@@ -223,7 +223,7 @@ paths:
       tags:
         - test-controller
       summary: добавить тест
-      description: добовляет тест
+      description: добавляет тест
       operationId: postTest
       requestBody:
         content:
@@ -233,7 +233,7 @@ paths:
         required: true
       responses:
         '201':
-          description: Успешное добовление теста
+          description: Успешное добавление теста
           content:
             '*/*':
               schema:
@@ -332,7 +332,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/SkillRequestDto'
+                $ref: '#/components/schemas/SkillRequestDTO'
         required: true
       responses:
         '200':
@@ -352,7 +352,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SkillRequestDto'
+              $ref: '#/components/schemas/SkillRequestDTO'
         required: true
       responses:
         '200':
@@ -361,13 +361,45 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/SkillEntity'
-  /result:
+  /result/{test_id}:
+    get:
+      tags:
+        - result-controller
+      summary: Получить результаты теста
+      description: Возвращает результаты прохождения теста для указанного test_id.
+      operationId: getResult
+      parameters:
+        - name: test_id
+          in: path
+          description: Идентификатор результата
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешное получение результатов теста
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultResponseDTO'
+        '404':
+          description: Результаты не найдены
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResultResponseDTO'
     post:
       tags:
         - result-controller
       summary: Добавить результат
       description: Добавляет результат для прохождения теста.
       operationId: addResult
+      parameters:
+        - name: test_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
@@ -527,7 +559,7 @@ paths:
                   - 509 BANDWIDTH_LIMIT_EXCEEDED
                   - 510 NOT_EXTENDED
                   - 511 NETWORK_AUTHENTICATION_REQUIRED
-  '/respondent/{test_id}':
+  /respondent/{test_id}:
     get:
       tags:
         - respondent-controller
@@ -897,7 +929,9 @@ paths:
       tags:
         - auth-controller
       summary: Вход в систему
-      description: Позволяет пользователю войти в систему с использованием имени пользователя и пароля.
+      description: >-
+        Позволяет пользователю войти в систему с использованием имени
+        пользователя и пароля.
       operationId: login
       requestBody:
         content:
@@ -1058,7 +1092,7 @@ paths:
                   - 509 BANDWIDTH_LIMIT_EXCEEDED
                   - 510 NOT_EXTENDED
                   - 511 NETWORK_AUTHENTICATION_REQUIRED
-  '/test/{test_id}/{evaluatedId}':
+  /test/{test_id}/{evaluatedId}:
     get:
       tags:
         - test-controller
@@ -1099,7 +1133,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/QuestionsResponseDTO'
-  '/test/menu/{test_id}':
+  /test/menu/{test_id}:
     get:
       tags:
         - test-controller
@@ -1120,7 +1154,7 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/TestMenuResponseDTO'
-  '/test/admin/{test_id}':
+  /test/admin/{test_id}:
     get:
       tags:
         - test-controller
@@ -1140,33 +1174,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/TestViewResponseDTO'
-  '/result/{test_id}':
-    get:
-      tags:
-        - result-controller
-      summary: Получить результаты теста
-      description: Возвращает результаты прохождения теста для указанного test_id.
-      operationId: getResult
-      parameters:
-        - name: test_id
-          in: path
-          description: Идентификатор результата
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Успешное получение результатов теста
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/ResultResponseDTO'
-        '404':
-          description: Результаты не найдены
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/ResultResponseDTO'
 components:
   schemas:
     TestStatusRequestDTO:
@@ -1204,6 +1211,12 @@ components:
             description: Список идентификаторов навыков
             format: int32
       description: Модель вопроса теста
+    SkillRequestDTO:
+      type: object
+      properties:
+        skillsText:
+          type: string
+      description: новые скиллы
     TestRequestDTO:
       type: object
       properties:
@@ -1263,12 +1276,12 @@ components:
           type: integer
           description: минимум других курсов
           format: int32
+        newSkills:
+          type: array
+          description: новые скиллы
+          items:
+            $ref: '#/components/schemas/SkillRequestDTO'
       description: создание теста
-    SkillRequestDto:
-      type: object
-      properties:
-        skillsText:
-          type: string
     SkillEntity:
       type: object
       properties:
@@ -1288,7 +1301,7 @@ components:
         comment:
           type: string
           description: Комментарий к ответу
-          example: 'Отличный вопрос, но не совсем понял формулировку'
+          example: Отличный вопрос, но не совсем понял формулировку
       description: Ответ на тестовый вопрос
     ResultRequestDTO:
       type: object
@@ -1352,7 +1365,7 @@ components:
             type: integer
             description: Список ID респондентов
             format: int32
-      description: 'Респонденты, которые оценивают пользователя'
+      description: Респонденты, которые оценивают пользователя
     RegisterRequestDTO:
       type: object
       properties:
@@ -1645,7 +1658,7 @@ components:
         resultComment:
           type: string
           description: Финальный комментарий
-          example: 'В целом хороший результат, но есть куда расти'
+          example: В целом хороший результат, но есть куда расти
       description: Результаты теста
     SkillsResultModel:
       type: object
@@ -1683,7 +1696,9 @@ components:
           items:
             type: string
             description: Комментарии
-            example: '["Очень хорошо работает в команде","Немного медлит в принятии решений"]'
+            example: >-
+              ["Очень хорошо работает в команде","Немного медлит в принятии
+              решений"]
       description: Результаты по навыкам
     RespondentsResponseDTO:
       type: object
@@ -1700,7 +1715,7 @@ components:
           example: 10
         minHighRoleRespondents:
           type: integer
-          description: 'Минимальное количество администраторов, экспертов или кураторов'
+          description: Минимальное количество администраторов, экспертов или кураторов
           format: int32
           example: 1
         minOtherCourseRespondents:

@@ -11,12 +11,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import ru.singularity.evaluation360.dto.result.CommentEditRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
 
+import ru.singularity.evaluation360.service.AuthService;
 import ru.singularity.evaluation360.service.ResultService;
 
 import java.util.Arrays;
@@ -28,6 +30,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class ResultController {
     private final ResultService resultService;
+    private final AuthService authService;
 
     /**
      * Получить результаты теста.
@@ -44,7 +47,11 @@ public class ResultController {
     @GetMapping("/{test_id}")
     public ResponseEntity<ResultResponseDTO> getResult(
             @Parameter(description = "Идентификатор результата", required = true) @PathVariable String test_id) {
-        return ResponseEntity.ok(resultService.getResultByID(test_id));
+
+        int userId = authService.findUserByEmail(SecurityContextHolder.
+                getContext().getAuthentication().getName()).getId();
+
+        return ResponseEntity.ok(resultService.getResultByIndex(test_id, userId));
     }
 
     /**
