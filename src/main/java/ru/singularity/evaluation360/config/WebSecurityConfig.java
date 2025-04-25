@@ -16,11 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import ru.singularity.evaluation360.filter.BasicAuthCorsFilter;
-import ru.singularity.evaluation360.filter.RateLimitFilter;
 import ru.singularity.evaluation360.service.CustomUserDetailsService;
 
 import java.util.List;
@@ -50,7 +48,6 @@ public class WebSecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
     private final BasicAuthCorsFilter basicAuthCorsFilter;
-    private final RateLimitFilter rateLimitFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -87,7 +84,6 @@ public class WebSecurityConfig {
                 )
                 .httpBasic(withDefaults())
                 .addFilterBefore(basicAuthCorsFilter, UsernamePasswordAuthenticationFilter.class)
-                //.addFilterBefore(rateLimitFilter, BasicAuthCorsFilter.class)
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp
                                 .policyDirectives("default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';")
