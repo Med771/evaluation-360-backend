@@ -33,7 +33,9 @@ public class WebSecurityConfig {
     private static final String[] AUTH_WHITELIST = {
             "/respondent/**",
             "/result/**",
-            "/test/**"
+            "/test/**",
+            "/skill/**",
+            "/admin/**",
     };
 
     private static final String[] AUTH_IGNORE_WHITELIST = {

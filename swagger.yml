@@ -6,28 +6,35 @@ servers:
   - url: http://localhost:8080
     description: Generated server url
 paths:
-  /test/status/{test_id}:
+  /result/edit/comment/{skillIndex}/{commentIndex}:
     put:
       tags:
-        - test-controller
-      summary: изменить статус
-      description: меняет статус
-      operationId: updateTestStatus
+        - result-controller
+      summary: изменить комментарий
+      description: меняет комментарий под нужным индексом
+      operationId: editComment
       parameters:
-        - name: test_id
+        - name: skillIndex
           in: path
           required: true
           schema:
-            type: string
+            type: integer
+            format: int32
+        - name: commentIndex
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TestStatusRequestDTO'
+              $ref: '#/components/schemas/CommentEditRequestDTO'
         required: true
       responses:
         '200':
-          description: Успешное получение теста
+          description: OK
           content:
             '*/*':
               schema:
@@ -102,35 +109,28 @@ paths:
                   - 509 BANDWIDTH_LIMIT_EXCEEDED
                   - 510 NOT_EXTENDED
                   - 511 NETWORK_AUTHENTICATION_REQUIRED
-  /result/edit/comment/{skillIndex}/{commentIndex}:
+  /admin/status/{test_id}:
     put:
       tags:
-        - result-controller
-      summary: изменить комментарий
-      description: меняет комментарий под нужным индексом
-      operationId: editComment
+        - admin-controller
+      summary: изменить статус
+      description: меняет статус
+      operationId: updateTestStatus
       parameters:
-        - name: skillIndex
+        - name: test_id
           in: path
           required: true
           schema:
-            type: integer
-            format: int32
-        - name: commentIndex
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
+            type: string
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CommentEditRequestDTO'
+              $ref: '#/components/schemas/TestStatusRequestDTO'
         required: true
       responses:
         '200':
-          description: OK
+          description: Успешное получение теста
           content:
             '*/*':
               schema:
@@ -308,10 +308,10 @@ paths:
                   - 509 BANDWIDTH_LIMIT_EXCEEDED
                   - 510 NOT_EXTENDED
                   - 511 NETWORK_AUTHENTICATION_REQUIRED
-  /test/skills:
+  /skill/skills:
     get:
       tags:
-        - test-controller
+        - skill-controller
       operationId: getSkills
       responses:
         '200':
@@ -324,7 +324,7 @@ paths:
                   $ref: '#/components/schemas/SkillEntity'
     post:
       tags:
-        - test-controller
+        - skill-controller
       operationId: addSkills
       requestBody:
         content:
@@ -343,10 +343,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SkillEntity'
-  /test/skill:
+  /skill/skill:
     post:
       tags:
-        - test-controller
+        - skill-controller
       operationId: addSkill
       requestBody:
         content:
@@ -929,9 +929,7 @@ paths:
       tags:
         - auth-controller
       summary: Вход в систему
-      description: >-
-        Позволяет пользователю войти в систему с использованием имени
-        пользователя и пароля.
+      description: Позволяет пользователю войти в систему с использованием имени пользователя и пароля.
       operationId: login
       requestBody:
         content:
@@ -1119,20 +1117,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/TestResponseDTO'
-  /test/questions:
-    get:
-      tags:
-        - test-controller
-      summary: получить все вопросы
-      description: получить вопросы
-      operationId: getQuestions
-      responses:
-        '200':
-          description: получение шаблонов вопросов
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/QuestionsResponseDTO'
   /test/menu/{test_id}:
     get:
       tags:
@@ -1154,10 +1138,10 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/TestMenuResponseDTO'
-  /test/admin/{test_id}:
+  /admin/test/{test_id}:
     get:
       tags:
-        - test-controller
+        - admin-controller
       summary: Получить тест
       description: Возвращает тест.
       operationId: getTestAdmin
@@ -1174,8 +1158,28 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/TestViewResponseDTO'
+  /admin/questions:
+    get:
+      tags:
+        - admin-controller
+      summary: получить все вопросы
+      description: получить вопросы
+      operationId: getQuestions
+      responses:
+        '200':
+          description: получение шаблонов вопросов
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/QuestionsResponseDTO'
 components:
   schemas:
+    CommentEditRequestDTO:
+      type: object
+      properties:
+        newComment:
+          type: string
+          description: новый комментарий
     TestStatusRequestDTO:
       type: object
       properties:
@@ -1186,12 +1190,6 @@ components:
             - STARTED
             - ARCHIVED
       description: обновление статуса
-    CommentEditRequestDTO:
-      type: object
-      properties:
-        newComment:
-          type: string
-          description: новый комментарий
     QuestionTestModel:
       type: object
       properties:
@@ -1451,34 +1449,6 @@ components:
           items:
             $ref: '#/components/schemas/QuestionTestModel'
       description: DTO для получения информации о тесте
-    QuestionModel:
-      type: object
-      properties:
-        id:
-          type: string
-        questionText:
-          type: string
-          description: Текст вопроса
-          example: Каковы ваши сильные стороны?
-        skillsIds:
-          type: array
-          description: Список идентификаторов навыков
-          example:
-            - 1
-            - 2
-            - 3
-          items:
-            type: integer
-            description: Список идентификаторов навыков
-            format: int32
-    QuestionsResponseDTO:
-      type: object
-      properties:
-        questions:
-          type: array
-          items:
-            $ref: '#/components/schemas/QuestionModel'
-      description: существующие вопросы
     TestMenuResponseDTO:
       type: object
       properties:
@@ -1538,91 +1508,6 @@ components:
           description: Флаг завершенности теста респондентом
           example: true
       description: Модель заголовка респондента в тесте
-    RespondentModel:
-      type: object
-      properties:
-        respondentId:
-          type: integer
-          description: ID респондента
-          format: int32
-          example: 123
-        role:
-          type: string
-          description: Роль респондента
-          example: USER
-          enum:
-            - USER
-            - EXPERT
-            - ADMIN
-        fullName:
-          type: string
-          description: Полное имя респондента
-          example: Иванов Иван Иванович
-        course:
-          type: integer
-          description: Курс респондента
-          format: int32
-          example: 3
-      description: Респондент
-    TestViewResponseDTO:
-      type: object
-      properties:
-        title:
-          type: string
-          description: Название теста
-        type:
-          type: string
-          description: Тип теста
-          enum:
-            - SELF
-            - COMMAND
-            - FULL
-        status:
-          type: string
-          description: Статус теста
-          enum:
-            - CREATED
-            - STARTED
-            - ARCHIVED
-        createTimeStamp:
-          type: integer
-          description: Время создания теста
-          format: int64
-        startTimeStamp:
-          type: integer
-          description: Время начала теста
-          format: int64
-        endTimeStamp:
-          type: integer
-          description: Время конца теста
-          format: int64
-        respondents:
-          type: array
-          description: Респонденты
-          items:
-            $ref: '#/components/schemas/RespondentModel'
-        questions:
-          type: array
-          description: Вопросы теста
-          items:
-            $ref: '#/components/schemas/QuestionModel'
-        minRespondents:
-          type: integer
-          description: минимум респондентов
-          format: int32
-        maxRespondents:
-          type: integer
-          description: максимум респондентов
-          format: int32
-        minHighRoleRespondents:
-          type: integer
-          description: минимум высоких ролей
-          format: int32
-        minOtherCourseRespondents:
-          type: integer
-          description: минимум других курсов
-          format: int32
-      description: просмотр теста от администратора
     ResultResponseDTO:
       type: object
       properties:
@@ -1696,10 +1581,34 @@ components:
           items:
             type: string
             description: Комментарии
-            example: >-
-              ["Очень хорошо работает в команде","Немного медлит в принятии
-              решений"]
+            example: '["Очень хорошо работает в команде","Немного медлит в принятии решений"]'
       description: Результаты по навыкам
+    RespondentModel:
+      type: object
+      properties:
+        respondentId:
+          type: integer
+          description: ID респондента
+          format: int32
+          example: 123
+        role:
+          type: string
+          description: Роль респондента
+          example: USER
+          enum:
+            - USER
+            - EXPERT
+            - ADMIN
+        fullName:
+          type: string
+          description: Полное имя респондента
+          example: Иванов Иван Иванович
+        course:
+          type: integer
+          description: Курс респондента
+          format: int32
+          example: 3
+      description: Респондент
     RespondentsResponseDTO:
       type: object
       properties:
@@ -1729,3 +1638,91 @@ components:
           items:
             $ref: '#/components/schemas/RespondentModel'
       description: Информация о выборе респондентов
+    QuestionModel:
+      type: object
+      properties:
+        id:
+          type: string
+        questionText:
+          type: string
+          description: Текст вопроса
+          example: Каковы ваши сильные стороны?
+        skillsIds:
+          type: array
+          description: Список идентификаторов навыков
+          example:
+            - 1
+            - 2
+            - 3
+          items:
+            type: integer
+            description: Список идентификаторов навыков
+            format: int32
+      description: Вопросы теста
+    TestViewResponseDTO:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Название теста
+        type:
+          type: string
+          description: Тип теста
+          enum:
+            - SELF
+            - COMMAND
+            - FULL
+        status:
+          type: string
+          description: Статус теста
+          enum:
+            - CREATED
+            - STARTED
+            - ARCHIVED
+        createTimeStamp:
+          type: integer
+          description: Время создания теста
+          format: int64
+        startTimeStamp:
+          type: integer
+          description: Время начала теста
+          format: int64
+        endTimeStamp:
+          type: integer
+          description: Время конца теста
+          format: int64
+        respondents:
+          type: array
+          description: Респонденты
+          items:
+            $ref: '#/components/schemas/RespondentModel'
+        questions:
+          type: array
+          description: Вопросы теста
+          items:
+            $ref: '#/components/schemas/QuestionModel'
+        minRespondents:
+          type: integer
+          description: минимум респондентов
+          format: int32
+        maxRespondents:
+          type: integer
+          description: максимум респондентов
+          format: int32
+        minHighRoleRespondents:
+          type: integer
+          description: минимум высоких ролей
+          format: int32
+        minOtherCourseRespondents:
+          type: integer
+          description: минимум других курсов
+          format: int32
+      description: просмотр теста от администратора
+    QuestionsResponseDTO:
+      type: object
+      properties:
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionModel'
+      description: существующие вопросы

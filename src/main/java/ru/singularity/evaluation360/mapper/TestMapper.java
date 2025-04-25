@@ -28,18 +28,6 @@ public interface TestMapper {
     @Mappings({@Mapping(target = "respondents", source = "respondents")})
     RespondentsResponseDTO toRespondentResponseDto(TestEntity testEntity,
                                                    List<RespondentModel> respondents);
-
-    QuestionModel toQuestionModel(QuestionEntity questionEntity);
-
-    List<QuestionModel> toQuestionModelList(List<QuestionEntity> questionEntities);
-
-
-    QuestionTestModel toQuestionTestModel(QuestionEntity questionEntity);
-
-    QuestionEntity toQuestionEntity(QuestionTestModel questionTestModel);
-
-    List<QuestionTestModel> toQuestionTestModelList(List<QuestionEntity> questionEntities);
-
     /**
      *
      * @param testEntity модель теста
@@ -76,8 +64,4 @@ public interface TestMapper {
     TestTitleModel toTitleModel(TestEntity testEntity);
 
     List<TestTitleModel> toTitleModelList(List<TestEntity> testEntities);
-
-    SkillEntity toSkillEntity(SkillRequestDTO skillResponseDto);
-
-    List<SkillEntity> toSkillsEntity(List<SkillRequestDTO> skillRequestDTOS);
 }
