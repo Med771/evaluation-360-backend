@@ -13,6 +13,9 @@ import ru.singularity.evaluation360.entity.model.ResultModel;
 import ru.singularity.evaluation360.entity.model.RoleUserEnum;
 import ru.singularity.evaluation360.entity.model.StatusTestEnum;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
+import ru.singularity.evaluation360.log.annotation.LogEntryExit;
+import ru.singularity.evaluation360.log.annotation.LogException;
+import ru.singularity.evaluation360.log.annotation.LogMethod;
 import ru.singularity.evaluation360.repository.*;
 
 import java.util.*;
@@ -31,6 +34,9 @@ public class DaemonService {
     private final String splitter;
 
     @Scheduled(fixedRate = 60000)
+    @LogEntryExit
+    @LogException
+    @LogMethod
     public void checkTests() {
         log.info("Checking tests...");
         List<TestEntity> testEntities = testRepository.findAll();
@@ -66,6 +72,8 @@ public class DaemonService {
 
 
     @Async
+    @LogEntryExit
+    @LogException
     protected void calculateResults(TestEntity test) {
         List<ReportEntity> reports = reportRepository.findAllByTestId(test.getId());
 

@@ -10,6 +10,8 @@ import ru.singularity.evaluation360.entity.ReportEntity;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
 
 import ru.singularity.evaluation360.exeptions.RepeatException;
+import ru.singularity.evaluation360.log.annotation.LogEntryExit;
+import ru.singularity.evaluation360.log.annotation.LogException;
 import ru.singularity.evaluation360.mapper.ReportMapper;
 import ru.singularity.evaluation360.mapper.ResultMapper;
 
@@ -29,11 +31,15 @@ public class ResultService {
 
     private final String splitter;
 
+    @LogException
+    @LogEntryExit
     public ResultResponseDTO getResultByIndex(String id, int userId) {
         return resultMapper.toResultResponseDTO(resultRepository.findByUserTestIndex(id + splitter + userId).
                 orElseThrow(() -> new DontFoundException(String.format("Result with id %s not found", id))));
     }
 
+    @LogException
+    @LogEntryExit
     public void addResult(String testId, ResultRequestDTO result) {
 
         Optional<ReportEntity> report =

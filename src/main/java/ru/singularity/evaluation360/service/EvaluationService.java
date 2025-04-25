@@ -11,6 +11,8 @@ import ru.singularity.evaluation360.entity.ReportEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.log.annotation.LogEntryExit;
+import ru.singularity.evaluation360.log.annotation.LogException;
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
 import ru.singularity.evaluation360.repository.EvaluationRepository;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
@@ -40,6 +42,8 @@ public class EvaluationService {
      * @param evaluated список id тех кого должен оценить пользователь
      * @return список TestRespondentTitleModel с полем оценил ли он пользователя
      */
+    @LogEntryExit
+    @LogException
     private List<TestRespondentTitleModel> getEvaluatedRespondents(String testId, int userId, List<Integer> evaluated) {
         // нахождение всех репортов которые соответствуют условию
         // testId == testId and elevatorId == userId and evaluatedId in evaluated
@@ -65,6 +69,8 @@ public class EvaluationService {
      * @param evaluator id оценщиков
      * @return список TestRespondentTitleModel с указанием оценил ли он пользователя
      */
+    @LogEntryExit
+    @LogException
     private List<TestRespondentTitleModel> getEvaluatorRespondents(String testId, int userId, List<Integer> evaluator) {
         // нахождение всех репортов которые соответствуют условию
         // testId == testId and elevatorId in evaluator and evaluatedId == userId
@@ -83,6 +89,8 @@ public class EvaluationService {
      * @param evaluationUtils все кого должны оценить или те кто должен оценить
      * @return список TestRespondentTitleModel где указано выполнил ли он оценку
      */
+    @LogEntryExit
+    @LogException
     private List<TestRespondentTitleModel> generateTestRespondentModels(EvaluationUtils evaluationUtils) {
 
         // создания сета для дальнейшего нахождения всех кто не оценил
@@ -113,6 +121,8 @@ public class EvaluationService {
      * @param userId id пользователя
      * @return TestMenuResponseDTO
      */
+    @LogEntryExit
+    @LogException
     public TestMenuResponseDTO getTestMenu(String testId, int userId) {
         // формирование составного индекса и получение по нему EvaluationEntity
         String index = String.format("%s%s%d", testId, splitter, userId);
