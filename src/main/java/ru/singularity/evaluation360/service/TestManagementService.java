@@ -13,6 +13,7 @@ import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.entity.model.StatusTestEnum;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
 
+import ru.singularity.evaluation360.exeptions.FalsiesDtoFormatException;
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
 import ru.singularity.evaluation360.mapper.QuestionMapper;
 import ru.singularity.evaluation360.mapper.SkillMapper;
@@ -91,6 +92,9 @@ public class TestManagementService {
 
     public void editTestStatus(String testID, TestStatusRequestDTO testStatusRequestDTO){
         TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new DontFoundException(testID));
+        if(testStatusRequestDTO.status() == null){
+            throw new FalsiesDtoFormatException("test status is null");
+        }
         testEntity.setStatus(testStatusRequestDTO.status());
         testRepository.save(testEntity);
     }

@@ -120,24 +120,19 @@ class TestManagementServiceTest {
 
     @Test
     void editTestStatus_Success() {
-        // Arrange
         when(testRepository.findById(testId)).thenReturn(Optional.of(testEntity));
         when(testRepository.save(any(TestEntity.class))).thenReturn(testEntity);
 
-        // Act
         testManagementService.editTestStatus(testId, testStatusRequestDTO);
 
-        // Assert
         verify(testRepository).findById(testId);
         verify(testRepository).save(any(TestEntity.class));
     }
 
     @Test
     void editTestStatus_TestNotFound() {
-        // Arrange
         when(testRepository.findById(testId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(DontFoundException.class, () -> testManagementService.editTestStatus(testId, testStatusRequestDTO));
         verify(testRepository).findById(testId);
         verify(testRepository, never()).save(any());
@@ -145,17 +140,14 @@ class TestManagementServiceTest {
 
     @Test
     void getAllTests_Success() {
-        // Arrange
         List<TestEntity> tests = Collections.singletonList(testEntity);
         List<TestTitleModel> titleModels = Collections.singletonList(testTitleModel);
 
         when(testRepository.findByParticipantsIdsContaining(userId)).thenReturn(tests);
         when(testMapper.toTitleModelList(tests)).thenReturn(titleModels);
 
-        // Act
         TestsResponseDTO result = testManagementService.getAllTests(userId);
 
-        // Assert
         assertNotNull(result);
         assertEquals("360", result.nameGroup());
         assertEquals(titleModels, result.tests());
@@ -165,15 +157,12 @@ class TestManagementServiceTest {
 
     @Test
     void getTest_Success() {
-        // Arrange
         when(testRepository.findById(testId)).thenReturn(Optional.of(testEntity));
         when(questionRepository.findAllById(testEntity.getQuestionsIds())).thenReturn(Collections.singletonList(questionEntity));
         when(questionMapper.toQuestionTestModelList(any())).thenReturn(Collections.singletonList(questionTestModel));
 
-        // Act
         TestResponseDTO result = testManagementService.getTest(testId, userId, evaluatedId);
 
-        // Assert
         assertNotNull(result);
         assertEquals(testEntity.getTitle(), result.title());
         assertEquals(evaluatedId, result.evaluatedId());
@@ -184,10 +173,8 @@ class TestManagementServiceTest {
 
     @Test
     void getTest_TestNotFound() {
-        // Arrange
         when(testRepository.findById(testId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(DontFoundException.class, () -> testManagementService.getTest(testId, userId, evaluatedId));
         verify(testRepository).findById(testId);
         verify(questionRepository, never()).findAllById(any());

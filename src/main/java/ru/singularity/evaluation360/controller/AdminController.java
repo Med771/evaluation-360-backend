@@ -53,7 +53,14 @@ public class AdminController {
     @GetMapping("test/{test_id}")
     @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
     public ResponseEntity<TestViewResponseDTO> getTestAdmin(@PathVariable String test_id) {
-        return ResponseEntity.ok(testManagementService.getTest(test_id));
+        try {
+            return ResponseEntity.ok(testManagementService.getTest(test_id));
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
     }
 
     /**
@@ -69,7 +76,12 @@ public class AdminController {
     })
     @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
     public ResponseEntity<HttpStatus> updateTestStatus(@PathVariable String test_id, @RequestBody TestStatusRequestDTO testStatusRequestDTO) {
-        testManagementService.editTestStatus(test_id, testStatusRequestDTO);
-        return ResponseEntity.ok(HttpStatus.CREATED);
+        try {
+            testManagementService.editTestStatus(test_id, testStatusRequestDTO);
+            return ResponseEntity.ok(HttpStatus.CREATED);
+        }catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }

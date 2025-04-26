@@ -78,7 +78,7 @@ public class RespondentController {
                 findUserByEmail(SecurityContextHolder.
                         getContext().
                         getAuthentication().
-                        getName()).getParticipant().getId();
+                        getName()).getId();
 
 
         try {
