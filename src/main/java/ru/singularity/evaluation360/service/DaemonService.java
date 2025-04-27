@@ -43,8 +43,8 @@ public class DaemonService {
 
         toStart.forEach(t -> t.setStatus(StatusTestEnum.STARTED));
         toArchive.forEach(t -> {
-            t.setStatus(StatusTestEnum.ARCHIVED);
             calculateResults(t);
+            t.setStatus(StatusTestEnum.ARCHIVED);
         });
 
         List<TestEntity> all = Stream.concat(toStart.stream(), toArchive.stream())
