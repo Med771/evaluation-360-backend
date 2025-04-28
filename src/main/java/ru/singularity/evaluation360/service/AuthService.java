@@ -1,5 +1,6 @@
 package ru.singularity.evaluation360.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -8,27 +9,22 @@ import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.UserEntity;
 import ru.singularity.evaluation360.entity.model.RoleUserEnum;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.log.annotation.LogEntryExit;
+import ru.singularity.evaluation360.log.annotation.LogException;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.UserRepository;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
-
     private final PasswordEncoder encoder;
 
-    public AuthService(
-            UserRepository userRepository,
-            ParticipantRepository participantRepository,
-            PasswordEncoder encoder) {
-        this.userRepository = userRepository;
-        this.participantRepository = participantRepository;
-        this.encoder = encoder;
-    }
-
+    @LogEntryExit
+    @LogException
     public boolean login(String userName, String password) {
         Optional<UserEntity> userEntity = userRepository.findByEmail(userName);
 
@@ -39,6 +35,8 @@ public class AuthService {
         return userEntity.filter(entity -> encoder.matches(password, entity.getPassword())).isPresent();
     }
 
+    @LogEntryExit
+    @LogException
     public boolean register(RegisterRequestDTO register) {
         if (register == null) {
             return false;

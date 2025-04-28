@@ -8,6 +8,8 @@ import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
 import ru.singularity.evaluation360.entity.*;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.log.annotation.LogEntryExit;
+import ru.singularity.evaluation360.log.annotation.LogException;
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
 import ru.singularity.evaluation360.repository.*;
 
@@ -27,6 +29,8 @@ public class EvaluationService {
 
     private final String splitter;
 
+    @LogEntryExit
+    @LogException
     private boolean isAllCompleted(
             List<TestRespondentTitleModel> testRespondentTitleModels,
             List<String> indexes,
@@ -52,6 +56,14 @@ public class EvaluationService {
         return isAllCompleted;
     }
 
+    /**
+     * получение и формирование TestMenu
+     * @param testId id теста
+     * @param userId id пользователя
+     * @return TestMenuResponseDTO
+     */
+    @LogEntryExit
+    @LogException
     public TestMenuResponseDTO getTestMenu(String testId, int userId) {
         String index = testId + splitter + userId;
 

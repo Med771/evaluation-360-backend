@@ -12,6 +12,9 @@ import ru.singularity.evaluation360.entity.model.ResultModel;
 import ru.singularity.evaluation360.entity.model.RoleUserEnum;
 import ru.singularity.evaluation360.entity.model.StatusTestEnum;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
+import ru.singularity.evaluation360.log.annotation.LogEntryExit;
+import ru.singularity.evaluation360.log.annotation.LogException;
+import ru.singularity.evaluation360.log.annotation.LogMethod;
 import ru.singularity.evaluation360.repository.*;
 
 import java.util.*;
@@ -31,6 +34,9 @@ public class DaemonService {
     private final String splitter;
     private final Double conversionRate;
 
+    @LogEntryExit
+    @LogException
+    @LogMethod
     @Scheduled(fixedRateString = "${daemon.fixedRate:60000}")
     public void checkTests() {
         log.info("DaemonService.checkTests()");
@@ -75,17 +81,6 @@ public class DaemonService {
 
             result.setSkillText(skills.get(skill.skillId()).getSkillsText());
             log.info(result.toString());
-
-            if (Objects.equals(value.getEvaluatedId(), value.getEvaluatorId())) {
-                result.setSelf(skill.value() * conversionRate);
-            } else if (role == RoleUserEnum.USER) {
-                result.getCommandsValues().add(skill.value() * conversionRate);
-            } else {
-                result.getExpertsValues().add(skill.value() * conversionRate);
-            }
-
-        }
-    }
 
     private HashMap<Integer, Map<Integer, ResultModel>> getResults(List<ReportEntity> reports, Map<Integer, UserEntity> users) {
         Map<Integer, SkillEntity> skills = skillRepository.findAll()
