@@ -79,16 +79,13 @@ public class EvaluationService {
 
         EvaluationEntity evaluation = evaluationEntity.get();
 
-        List<String> edReportIndexes = new ArrayList<>();
-        List<String> orReportIndexes = new ArrayList<>();
+        List<String> edReportIndexes = evaluation.getEvaluated().stream()
+                .map(id -> id + splitter + testId + splitter + userId)
+                .collect(Collectors.toList());
 
-        for (Integer evaluatedId : evaluation.getEvaluated()) {
-            edReportIndexes.add(evaluatedId + splitter + testId + splitter + userId);
-        }
-
-        for (Integer evaluatorId : evaluation.getEvaluator()) {
-            orReportIndexes.add(userId + splitter + testId + splitter + evaluatorId);
-        }
+        List<String> orReportIndexes = evaluation.getEvaluator().stream()
+                .map(id -> userId + splitter + testId + splitter + id)
+                .collect(Collectors.toList());
 
         Map<String, ReportEntity> edReportMap = reportRepository.findByTestIdAndEvaluatedIdTestIdEvaluatorIdIn(testId, edReportIndexes)
                 .stream().collect(Collectors.toMap(ReportEntity::getEvaluatedIdTestIdEvaluatorId, reportEntity -> reportEntity));
