@@ -72,11 +72,4 @@ public class AdminController {
         testManagementService.editTestStatus(test_id, testStatusRequestDTO);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
-
-    /**
-     *
-     * ИЗапуск csrf
-     */
-    @PostMapping("csrf")
-    @ResponseStatus ( HttpStatus.OK ) public void CsrfToken ( ) {     }
 }
