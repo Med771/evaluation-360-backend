@@ -9,4 +9,9 @@ public class BasicConfig {
     public String splitter() {
         return "!_!*!_!";
     }
+
+    @Bean
+    public Double conversionRate() {
+        return 2.5;
+    }
 }

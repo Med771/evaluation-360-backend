@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface TestRepository extends MongoRepository<TestEntity, String> {
     List<TestEntity> findByParticipantsIdsContaining(Integer id);
-    List<TestEntity> findAllByStatus(StatusTestEnum status);
+    List<TestEntity> findByStatusAndStartTimeStampLessThanEqual(StatusTestEnum status, long now);
+    List<TestEntity> findByStatusAndEndTimeStampLessThanEqual(StatusTestEnum status, long now);
 }

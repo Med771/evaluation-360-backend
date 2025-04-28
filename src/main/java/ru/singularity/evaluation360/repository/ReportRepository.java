@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReportRepository extends MongoRepository<ReportEntity, String> {
-    List<ReportEntity> findByTestIdAndEvaluatorIdAndEvaluatedIdIn(String testId, Integer evaluatorId, Collection<Integer> evaluatedId);
-    List<ReportEntity> findByTestIdAndEvaluatorIdInAndEvaluatedId(String testId, Collection<Integer> evaluatorId, Integer evaluatedId);
+    List<ReportEntity> findByTestIdAndEvaluatedIdTestIdEvaluatorIdIn(String testId, Collection<String> evaluatedIdTestIdEvaluatorIds);
     List<ReportEntity> findAllByTestId(String testId);
     Optional<ReportEntity> findByEvaluatedIdTestIdEvaluatorId(String evaluatedIdTestIdEvaluatorId);
+
+    boolean existsByEvaluatedIdTestIdEvaluatorId(String evaluatedIdTestIdEvaluatorId);
 }
