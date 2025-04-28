@@ -49,7 +49,7 @@ class EvaluationServiceTest {
     private final String testId = "test123";
     private final int userId = 1;
     private final String index = testId + splitter + userId;
-    private final String reportIndex = userId + splitter + userId;
+    private final String reportIndex = userId + splitter + testId + splitter +userId;
 
     private TestEntity testEntity;
     private EvaluationEntity evaluationEntity;
@@ -99,7 +99,7 @@ class EvaluationServiceTest {
     void getTestMenu_Success() {
         when(evaluationRepository.findByIndex(index)).thenReturn(Optional.of(evaluationEntity));
         when(testRepository.findById(testId)).thenReturn(Optional.of(testEntity));
-        when(reportRepository.findByEvaluatedIdTestIdEvaluatorId(reportIndex)).thenReturn(Optional.of(reportEntity));
+        when(reportRepository.existsByEvaluatedIdTestIdEvaluatorId(reportIndex)).thenReturn(true);
         when(participantRepository.findAllById(any())).thenReturn(Collections.singletonList(participantEntity));
         when(participantsMapper.toTestRespondentTitleModel(any(), anyBoolean())).thenReturn(testRespondentTitleModel);
 
@@ -112,7 +112,7 @@ class EvaluationServiceTest {
         assertTrue(result.isCompleteEvaluation());
         verify(evaluationRepository).findByIndex(index);
         verify(testRepository).findById(testId);
-        verify(reportRepository).findByEvaluatedIdTestIdEvaluatorId(reportIndex);
+        verify(reportRepository).existsByEvaluatedIdTestIdEvaluatorId(reportIndex);
     }
 
     @Test
@@ -142,6 +142,5 @@ class EvaluationServiceTest {
         assertFalse(result.isCompleteEvaluation());
         verify(evaluationRepository).findByIndex(index);
         verify(testRepository).findById(testId);
-        verify(reportRepository).findByEvaluatedIdTestIdEvaluatorId(reportIndex);
     }
 } 

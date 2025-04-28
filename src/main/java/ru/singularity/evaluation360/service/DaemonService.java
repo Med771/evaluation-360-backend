@@ -36,7 +36,6 @@ public class DaemonService {
 
     @LogEntryExit
     @LogException
-    @LogMethod
     @Scheduled(fixedRateString = "${daemon.fixedRate:60000}")
     public void checkTests() {
         log.info("DaemonService.checkTests()");
@@ -62,6 +61,8 @@ public class DaemonService {
         }
     }
 
+    @LogEntryExit
+    @LogException
     private void setResult(
             HashMap<Integer, Map<Integer, ResultModel>> results,
             Map<Integer, SkillEntity> skills,
@@ -82,6 +83,19 @@ public class DaemonService {
             result.setSkillText(skills.get(skill.skillId()).getSkillsText());
             log.info(result.toString());
 
+            if (Objects.equals(value.getEvaluatedId(), value.getEvaluatorId())) {
+                result.setSelf(skill.value() * conversionRate);
+            } else if (role == RoleUserEnum.USER) {
+                result.getCommandsValues().add(skill.value() * conversionRate);
+            } else {
+                result.getExpertsValues().add(skill.value() * conversionRate);
+            }
+
+        }
+    }
+
+    @LogEntryExit
+    @LogException
     private HashMap<Integer, Map<Integer, ResultModel>> getResults(List<ReportEntity> reports, Map<Integer, UserEntity> users) {
         Map<Integer, SkillEntity> skills = skillRepository.findAll()
                 .stream().collect(Collectors.toMap(SkillEntity::getId, skill -> skill));
@@ -101,6 +115,8 @@ public class DaemonService {
         return results;
     }
 
+    @LogEntryExit
+    @LogException
     private double average(List<Double> values) {
         return values.stream()
                 .mapToDouble(Double::doubleValue)
@@ -108,6 +124,8 @@ public class DaemonService {
                 .orElse(0.0);
     }
 
+    @LogEntryExit
+    @LogException
     private ResultEntity setResultEntity(Map.Entry<Integer, Map<Integer, ResultModel>> entry, TestEntity test) {
         ResultEntity resultEntity = new ResultEntity();
 
@@ -160,6 +178,7 @@ public class DaemonService {
     }
 
     @Async
+    @LogMethod
     protected void calculateResults(TestEntity test) {
         List<ReportEntity> reports = reportRepository.findAllByTestId(test.getId());
 

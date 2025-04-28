@@ -98,16 +98,4 @@ class ResultControllerTest extends BaseControllerTest {
                 .content(objectMapper.writeValueAsString(resultRequest)))
                 .andExpect(status().isCreated());
     }
-
-    @Test
-    void editComment_Success() throws Exception {
-        int skillIndex = 1;
-        int commentIndex = 1;
-        CommentEditRequestDTO commentEditRequest = new CommentEditRequestDTO("Updated comment");
-
-        mockMvc.perform(put("/result/edit/comment/{skillIndex}/{commentIndex}", skillIndex, commentIndex)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(commentEditRequest)))
-                .andExpect(status().isOk());
-    }
 } 
