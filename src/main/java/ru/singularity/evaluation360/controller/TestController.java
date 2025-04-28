@@ -15,12 +15,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import ru.singularity.evaluation360.dto.test.*;
-import ru.singularity.evaluation360.entity.SkillEntity;
-import ru.singularity.evaluation360.repository.UserRepository;
 import ru.singularity.evaluation360.service.*;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 @RestController

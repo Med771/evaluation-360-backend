@@ -5,22 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.singularity.evaluation360.dto.test.TestMenuResponseDTO;
 import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
-import ru.singularity.evaluation360.entity.EvaluationEntity;
-import ru.singularity.evaluation360.entity.ParticipantEntity;
-import ru.singularity.evaluation360.entity.ReportEntity;
-import ru.singularity.evaluation360.entity.TestEntity;
+import ru.singularity.evaluation360.entity.*;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.log.annotation.LogEntryExit;
 import ru.singularity.evaluation360.log.annotation.LogException;
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
-import ru.singularity.evaluation360.repository.EvaluationRepository;
-import ru.singularity.evaluation360.repository.ParticipantRepository;
-import ru.singularity.evaluation360.repository.ReportRepository;
-import ru.singularity.evaluation360.repository.TestRepository;
-import ru.singularity.evaluation360.utils.EvaluationUtils;
+import ru.singularity.evaluation360.repository.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,84 +29,31 @@ public class EvaluationService {
 
     private final String splitter;
 
-    /**
-     * метод для нахождения TestRespondentTitleModel с полем оценил ли его пользователь
-     * @param testId id теста
-     * @param userId id пользователя
-     * @param evaluated список id тех кого должен оценить пользователь
-     * @return список TestRespondentTitleModel с полем оценил ли он пользователя
-     */
     @LogEntryExit
     @LogException
-    private List<TestRespondentTitleModel> getEvaluatedRespondents(String testId, int userId, List<Integer> evaluated) {
-        // нахождение всех репортов которые соответствуют условию
-        // testId == testId and elevatorId == userId and evaluatedId in evaluated
-        // для того чтобы найти репорты в которых пользователь оценил кого то и далее вытянуть из них кого он оценил
-        List<ReportEntity> reportEntities = reportRepository.
-                findByTestIdAndEvaluatorIdAndEvaluatedIdIn(testId, userId, evaluated);
+    private boolean isAllCompleted(
+            List<TestRespondentTitleModel> testRespondentTitleModels,
+            List<String> indexes,
+            Map<String, ReportEntity> reportMap,
+            boolean isEvaluated) {
 
-        // список id кого пользователь оценил
-        List<Integer> evaluatedIds = reportEntities.stream().map(ReportEntity::getEvaluatedId).toList();
+        boolean isAllCompleted = true;
 
+        for (String reportIndex : indexes) {
+            if (isAllCompleted && !reportMap.containsKey(reportIndex)) { isAllCompleted = false; }
 
-        // поиск ParticipantEntity которых оценил пользователь и всех
-        return generateTestRespondentModels(new EvaluationUtils(
-                participantRepository.findAllById(evaluatedIds),
-                participantRepository.findAllById(evaluated)));
+            int userId = Integer.getInteger(reportIndex.split(splitter)[(isEvaluated) ? 0: 2]);
 
-    }
+            TestRespondentTitleModel testRespondentTitleModel = new TestRespondentTitleModel(
+                    userId,
+                    "",
+                    reportMap.containsKey(reportIndex)
+            );
 
-    /**
-     * метод для нахождения TestRespondentTitleModel с полем оценил ли он пользователя
-     * @param testId тест id
-     * @param userId id пользователя
-     * @param evaluator id оценщиков
-     * @return список TestRespondentTitleModel с указанием оценил ли он пользователя
-     */
-    @LogEntryExit
-    @LogException
-    private List<TestRespondentTitleModel> getEvaluatorRespondents(String testId, int userId, List<Integer> evaluator) {
-        // нахождение всех репортов которые соответствуют условию
-        // testId == testId and elevatorId in evaluator and evaluatedId == userId
-        // для того чтобы найти репорты в которых пользователя оценили
-        List<ReportEntity> reportEntities = reportRepository.
-                findByTestIdAndEvaluatorIdInAndEvaluatedId(testId, evaluator, userId);
-        List<Integer> evaluatorIds = reportEntities.stream().map(ReportEntity::getEvaluatorId).toList();
-
-        return generateTestRespondentModels(new EvaluationUtils(
-                participantRepository.findAllById(evaluatorIds),
-                participantRepository.findAllById(evaluator)));
-    }
-
-    /**
-     * метод для нахождения кто оценил кого оценил а кто кого не оценил
-     * @param evaluationUtils все кого должны оценить или те кто должен оценить
-     * @return список TestRespondentTitleModel где указано выполнил ли он оценку
-     */
-    @LogEntryExit
-    @LogException
-    private List<TestRespondentTitleModel> generateTestRespondentModels(EvaluationUtils evaluationUtils) {
-
-        // создания сета для дальнейшего нахождения всех кто не оценил
-        Set<ParticipantEntity> incompleteParticipants = new HashSet<>(evaluationUtils.evaluatesAll());
-        evaluationUtils.evaluatesComplete().forEach(incompleteParticipants::remove);
-
-        // создания списка для добавления
-        List<TestRespondentTitleModel> testRespondentTitleModels = new ArrayList<>();
-
-        // те кто оценил
-        for (ParticipantEntity participantEntity : evaluationUtils.evaluatesComplete()) {
-            testRespondentTitleModels.add(participantsMapper.
-                    toTestRespondentTitleModel(participantEntity, true));
+            testRespondentTitleModels.add(testRespondentTitleModel);
         }
 
-        // те кто не оценил
-        for (ParticipantEntity participantEntity : incompleteParticipants) {
-            testRespondentTitleModels.add(participantsMapper.
-                    toTestRespondentTitleModel(participantEntity, false));
-        }
-
-        return testRespondentTitleModels;
+        return isAllCompleted;
     }
 
     /**
@@ -124,61 +65,50 @@ public class EvaluationService {
     @LogEntryExit
     @LogException
     public TestMenuResponseDTO getTestMenu(String testId, int userId) {
-        // формирование составного индекса и получение по нему EvaluationEntity
-        String index = String.format("%s%s%d", testId, splitter, userId);
-        Optional<EvaluationEntity> evaluation = evaluationRepository.findByIndex(index);
+        String index = testId + splitter + userId;
 
-        List<Integer> evaluatorIds;
-        List<Integer> evaluatedIds;
+        Optional<EvaluationEntity> evaluationEntity = evaluationRepository.findByIndex(index);
+        TestEntity test = testRepository.findById(testId).orElseThrow(() -> new DontFoundException(testId));
 
+        String selfReportIndex = userId + splitter + testId + splitter + userId;
 
-        if(evaluation.isPresent()) {
-            // списки id тех кто оценивает и тех кого оценивают
-            evaluatorIds = evaluation.get().getEvaluator();
-            evaluatedIds = evaluation.get().getEvaluated();
-        }else {
-            evaluatorIds = new ArrayList<>();
-            evaluatedIds = new ArrayList<>();
-        }
-
-
-        TestEntity testEntity = testRepository.findById(testId).orElseThrow(() -> new DontFoundException(testId));
-
-        // получение флага нужно ли выбирать кого оценивать
-        boolean isGetRespondents = !(testEntity.getType() == TypeTestEnum.SELF);
-
-        // формирование составного индекса и получение флага оценил ли пользователь сам себя по репорту
-        String reportIndex = String.format("%d%s%d",userId, splitter, userId);
-
-        boolean isCompleteEvaluation = reportRepository.findByEvaluatedIdTestIdEvaluatorId(reportIndex).isPresent();
-
-        // TODO isActiveResult пока оставить true потом дописать логику
-        boolean isActiveResult = true;
-
-        // составление списков оценщиков и оцениваемых с моделью TestRespondentTitleModel
-        // которая учитывает выполнил ли он тест
-        List<TestRespondentTitleModel> evaluator = new ArrayList<>();
+        boolean isGetRespondents = !(test.getType() == TypeTestEnum.SELF);
+        boolean isSelectRespondents = evaluationEntity.isPresent();
+        boolean isCompleteEvaluation = reportRepository.existsByEvaluatedIdTestIdEvaluatorId(selfReportIndex);
+        boolean isCompleteEvaluated = false;
+        boolean isCompleteEvaluator = false;
         List<TestRespondentTitleModel> evaluated = new ArrayList<>();
+        List<TestRespondentTitleModel> evaluator = new ArrayList<>();
+        boolean isActiveResult = false; // TODO: change isResultApprove
 
-        // выбраны ли оцениваемые
-        boolean isSelectRespondents;
-        if (!evaluatorIds.isEmpty()) {
-            evaluator = getEvaluatorRespondents(testId, userId, evaluatorIds);
+        if (!isGetRespondents || !isSelectRespondents || !isCompleteEvaluation) {
+            return new TestMenuResponseDTO(test.getTitle(),
+                    isGetRespondents, isSelectRespondents,
+                    isCompleteEvaluation, isCompleteEvaluated, isCompleteEvaluator,
+                    evaluated, evaluator, isActiveResult);
         }
 
-        if (!evaluatedIds.isEmpty()) {
-            evaluated = getEvaluatedRespondents(testId, userId, evaluatedIds);
-            isSelectRespondents = true;
-        }else {
-            isSelectRespondents = false;
-        }
+        EvaluationEntity evaluation = evaluationEntity.get();
 
-        boolean isCompeteEvaluator = EvaluationUtils.isAllCompeted(evaluator);
-        boolean isCompeteEvaluated = EvaluationUtils.isAllCompeted(evaluated);
+        List<String> edReportIndexes = evaluation.getEvaluated().stream()
+                .map(id -> id + splitter + testId + splitter + userId)
+                .collect(Collectors.toList());
 
-        return new TestMenuResponseDTO(testEntity.getTitle(), isGetRespondents,
-                isSelectRespondents, isCompleteEvaluation,
-                isCompeteEvaluated, isCompeteEvaluator,
+        List<String> orReportIndexes = evaluation.getEvaluator().stream()
+                .map(id -> userId + splitter + testId + splitter + id)
+                .collect(Collectors.toList());
+
+        Map<String, ReportEntity> edReportMap = reportRepository.findByTestIdAndEvaluatedIdTestIdEvaluatorIdIn(testId, edReportIndexes)
+                .stream().collect(Collectors.toMap(ReportEntity::getEvaluatedIdTestIdEvaluatorId, reportEntity -> reportEntity));
+        Map<String, ReportEntity> orReportMap = reportRepository.findByTestIdAndEvaluatedIdTestIdEvaluatorIdIn(testId, orReportIndexes)
+                .stream().collect(Collectors.toMap(ReportEntity::getEvaluatedIdTestIdEvaluatorId, reportEntity -> reportEntity));
+
+        isCompleteEvaluated = isAllCompleted(evaluated, edReportIndexes, edReportMap, true);
+        isCompleteEvaluator = isAllCompleted(evaluator, orReportIndexes, orReportMap, false);
+
+        return new TestMenuResponseDTO(test.getTitle(),
+                isGetRespondents, isSelectRespondents,
+                isCompleteEvaluation, isCompleteEvaluated, isCompleteEvaluator,
                 evaluated, evaluator, isActiveResult);
     }
 }

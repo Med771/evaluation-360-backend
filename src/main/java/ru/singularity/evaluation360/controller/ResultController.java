@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import ru.singularity.evaluation360.dto.result.CommentEditRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
 
@@ -80,23 +79,5 @@ public class ResultController {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST);
         }
-    }
-
-
-    /**
-     * Изменить комментарий.
-     *
-     * @param skillIndex индекс скилла у которого мы меняем комментарий
-     * @param commentIndex индекс комментария
-     * @param commentEditRequestDTO измененный комментарий
-     */
-    @Operation(summary = "изменить комментарий", description = "меняет комментарий под нужным индексом")
-    @PutMapping("/edit/comment/{skillIndex}/{commentIndex}")
-    @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
-    //TODO спросить у насти надо ли это все с комментарием
-    public ResponseEntity<HttpStatus> editComment(@PathVariable int skillIndex,
-                                                  @PathVariable int commentIndex,
-                                                  @RequestBody CommentEditRequestDTO commentEditRequestDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK);
     }
 }
