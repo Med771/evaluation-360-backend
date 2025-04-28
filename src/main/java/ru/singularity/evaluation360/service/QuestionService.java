@@ -7,6 +7,8 @@ import ru.singularity.evaluation360.dto.test.QuestionsResponseDTO;
 import ru.singularity.evaluation360.dto.test.TestRequestDTO;
 import ru.singularity.evaluation360.dto.test.model.QuestionTestModel;
 import ru.singularity.evaluation360.entity.QuestionEntity;
+import ru.singularity.evaluation360.log.annotation.LogEntryExit;
+import ru.singularity.evaluation360.log.annotation.LogException;
 import ru.singularity.evaluation360.mapper.QuestionMapper;
 import ru.singularity.evaluation360.mapper.TestMapper;
 import ru.singularity.evaluation360.repository.QuestionRepository;
@@ -21,6 +23,8 @@ public class QuestionService {
 
     private final QuestionMapper questionMapper;
 
+    @LogEntryExit
+    @LogException
     public QuestionsResponseDTO getAllQuestions() {
         return new QuestionsResponseDTO(questionMapper.toQuestionModelList(questionRepository.findAll()));
     }

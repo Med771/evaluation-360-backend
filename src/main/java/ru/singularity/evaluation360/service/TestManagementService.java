@@ -13,7 +13,13 @@ import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.entity.model.StatusTestEnum;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
 
+
 import ru.singularity.evaluation360.exeptions.FalsiesDtoFormatException;
+
+import ru.singularity.evaluation360.log.annotation.LogEntryExit;
+import ru.singularity.evaluation360.log.annotation.LogException;
+import ru.singularity.evaluation360.log.annotation.LogMethod;
+
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
 import ru.singularity.evaluation360.mapper.QuestionMapper;
 import ru.singularity.evaluation360.mapper.SkillMapper;
@@ -40,6 +46,8 @@ public class TestManagementService {
     private final SkillMapper skillMapper;
     private final ParticipantsMapper participantsMapper;
 
+    @LogEntryExit
+    @LogException
     private TestResponseDTO toTestResponseDTO(long elevatorId, long evaluatedId, String testId) {
         TestEntity testEntity = testRepository.findById(testId).orElseThrow(() -> new DontFoundException(testId));
         String title = testEntity.getTitle();
@@ -54,6 +62,8 @@ public class TestManagementService {
      * @param testRequestDTO дто в котором есть вопросы
      * @return лист с id вопросов в правильном порядке
      */
+    @LogEntryExit
+    @LogException
     private List<String> generateQuestionsIds(TestRequestDTO testRequestDTO) {
 
         // составляем массив в котором будем располагать вопросы
@@ -90,6 +100,8 @@ public class TestManagementService {
         return Arrays.asList(ids);
     }
 
+    @LogException
+    @LogEntryExit
     public void editTestStatus(String testID, TestStatusRequestDTO testStatusRequestDTO){
         TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new DontFoundException(testID));
         if(testStatusRequestDTO.status() == null){
@@ -99,15 +111,21 @@ public class TestManagementService {
         testRepository.save(testEntity);
     }
 
+    @LogEntryExit
+    @LogException
     public TestsResponseDTO getAllTests(Integer userId) {
         List<TestTitleModel> tests = testMapper.toTitleModelList(testRepository.findByParticipantsIdsContaining(userId));
         return new TestsResponseDTO("360", tests);
     }
 
+    @LogException
+    @LogEntryExit
     public TestResponseDTO getTest(String testID, long userId, long evaluatedId) {
         return toTestResponseDTO(userId, evaluatedId, testID);
     }
 
+    @LogException
+    @LogEntryExit
     public TestViewResponseDTO getTest(String testID) {
         TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new DontFoundException(testID));
         return testMapper.toTestViewResponseDTO(testEntity,
@@ -116,6 +134,8 @@ public class TestManagementService {
                 questionMapper.toQuestionModelList(questionRepository.findAllById(testEntity.getQuestionsIds())));
     }
 
+    @LogException
+    @LogEntryExit
     public void addTest(TestRequestDTO testRequestDTO) {
         skillRepository.saveAll(skillMapper.toSkillsEntity(testRequestDTO.newSkills()));
         testRepository.save(testMapper.toTestEntity(testRequestDTO,

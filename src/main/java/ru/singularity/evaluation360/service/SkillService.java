@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.singularity.evaluation360.dto.test.SkillRequestDTO;
 import ru.singularity.evaluation360.entity.SkillEntity;
+import ru.singularity.evaluation360.log.annotation.LogEntryExit;
+import ru.singularity.evaluation360.log.annotation.LogException;
 import ru.singularity.evaluation360.mapper.SkillMapper;
 import ru.singularity.evaluation360.mapper.TestMapper;
 import ru.singularity.evaluation360.repository.QuestionRepository;
@@ -20,14 +22,20 @@ public class SkillService {
 
     private final SkillMapper skillMapper;
 
+    @LogEntryExit
+    @LogException
     public SkillEntity addSkill(SkillRequestDTO skillRequestDto){
         return skillRepository.save(skillMapper.toSkillEntity(skillRequestDto));
     }
 
+    @LogEntryExit
+    @LogException
     public List<SkillEntity> addSkills(List<SkillRequestDTO> skillRequestDTOList){
         return skillRepository.saveAll(skillMapper.toSkillsEntity(skillRequestDTOList));
     }
 
+    @LogEntryExit
+    @LogException
     public List<SkillEntity> getSkills() {
         return skillRepository.findAll();
     }

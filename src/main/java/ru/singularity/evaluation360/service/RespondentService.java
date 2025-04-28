@@ -15,6 +15,8 @@ import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.exeptions.RepeatException;
 
+import ru.singularity.evaluation360.log.annotation.LogEntryExit;
+import ru.singularity.evaluation360.log.annotation.LogException;
 import ru.singularity.evaluation360.repository.EvaluationRepository;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.TestRepository;
@@ -31,6 +33,8 @@ public class RespondentService {
     private final ParticipantRepository participantRepository;
     private final EvaluationRepository evaluationRepository;
 
+    @LogEntryExit
+    @LogException
     private List<EvaluationEntity> generateAndAppendUser(int userId, String testId, List<Integer> respondentsIds, List<EvaluationEntity> evaluationEntities) {
         // Перевод массива сущностей в Map<Индекс; сущность>
         Map<String, EvaluationEntity> evaluationEntityMap = evaluationEntities.stream().collect(Collectors.toMap(EvaluationEntity::getIndex, e -> e));
@@ -75,6 +79,8 @@ public class RespondentService {
         return newEvaluationEntities;
     }
 
+    @LogEntryExit
+    @LogException
     public void setRespondents(Integer userId, String testId, RespondentsRequestDTO respondentsRequestDTO) {
         EvaluationEntity evaluationEntity = evaluationRepository.findByIndex(testId+splitter+userId).orElse(null);
         if(evaluationEntity != null && !evaluationEntity.getEvaluated().isEmpty()){
@@ -88,6 +94,8 @@ public class RespondentService {
         evaluationRepository.saveAll(this.generateAndAppendUser(userId, testId, respondentsIds, evaluations));
     }
 
+    @LogEntryExit
+    @LogException
     public RespondentsResponseDTO getRespondents(String testId) {
         Optional<TestEntity> testEntity = testRepository.findById(testId);
         TestEntity test = testEntity.orElseThrow(() -> new DontFoundException("Test not found"));
