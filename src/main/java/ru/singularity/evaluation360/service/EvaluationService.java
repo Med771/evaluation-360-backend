@@ -32,12 +32,11 @@ public class EvaluationService {
             List<String> indexes,
             Map<String, ReportEntity> reportMap,
             boolean isEvaluated) {
+
         boolean isAllCompleted = true;
 
         for (String reportIndex : indexes) {
-            if (isAllCompleted && !reportMap.containsKey(reportIndex)) {
-                isAllCompleted = false;
-            }
+            if (isAllCompleted && !reportMap.containsKey(reportIndex)) { isAllCompleted = false; }
 
             int userId = Integer.getInteger(reportIndex.split(splitter)[(isEvaluated) ? 0: 2]);
 
