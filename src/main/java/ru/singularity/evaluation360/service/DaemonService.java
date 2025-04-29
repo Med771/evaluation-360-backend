@@ -164,7 +164,7 @@ public class DaemonService {
                     selfValue,
                     commandValue,
                     expertValue,
-                    new ArrayList<>());
+                    "skill");
 
             resultEntity.getResults().add(skillsResultModel);
         }
