@@ -44,7 +44,7 @@ public class ResultService {
 
         Optional<ReportEntity> report =
                 reportRepository
-                        .findByEvaluatedIdTestIdEvaluatorId(result.evaluatedId() + splitter + testId + splitter + result.evaluatorId());
+                        .findByIndex(result.evaluatedId() + splitter + testId + splitter + result.evaluatorId());
         if (report.isPresent()) {
             throw new RepeatException("dont Repeat report");
         }

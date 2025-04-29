@@ -18,7 +18,7 @@ public interface ReportMapper {
                                    ResultRequestDTO dto,
                                    String testId,
                                    @Context String splitter) {
-        report.setEvaluatedIdTestIdEvaluatorId(dto.evaluatedId() + splitter + testId + splitter + dto.evaluatorId());
+        report.setIndex(dto.evaluatedId() + splitter + testId + splitter + dto.evaluatorId());
     }
 
 }
