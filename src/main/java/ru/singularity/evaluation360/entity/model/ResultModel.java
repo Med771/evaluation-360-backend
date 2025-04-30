@@ -11,7 +11,7 @@ import java.util.List;
 public class ResultModel {
     String skillText;
 
-    Double self;
+    Double self = 0.0;
     List<Double> commandsValues = new ArrayList<>();
     List<String> commandsComments = new ArrayList<>();
     List<Double> expertsValues = new ArrayList<>();

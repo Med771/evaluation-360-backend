@@ -1,6 +1,7 @@
 package ru.singularity.evaluation360.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.springframework.stereotype.Service;
 
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
@@ -22,6 +23,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@ToString
 public class ResultService {
     private final ResultRepository resultRepository;
     private final ReportRepository reportRepository;
