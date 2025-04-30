@@ -22,7 +22,7 @@ public class ReportEntity {
     // id кого оценивают id теста id кто оценивает
     // разделитель !_!*!_!
     @Indexed(unique = true)
-    private String evaluatedIdTestIdEvaluatorId;
+    private String index;
 
     @Indexed
     private String testId;

@@ -125,13 +125,13 @@ class ResultServiceTest {
         String reportIndex = resultRequestDTO.evaluatedId() + splitter + testId + splitter + resultRequestDTO.evaluatorId();
         ReportEntity reportEntity = new ReportEntity();
 
-        when(reportRepository.findByEvaluatedIdTestIdEvaluatorId(reportIndex)).thenReturn(Optional.empty());
+        when(reportRepository.findByIndex(reportIndex)).thenReturn(Optional.empty());
         when(reportMapper.toReportEntity(resultRequestDTO, testId, splitter)).thenReturn(reportEntity);
         when(reportRepository.save(reportEntity)).thenReturn(reportEntity);
 
         resultService.addResult(testId, resultRequestDTO);
 
-        verify(reportRepository).findByEvaluatedIdTestIdEvaluatorId(reportIndex);
+        verify(reportRepository).findByIndex(reportIndex);
         verify(reportMapper).toReportEntity(resultRequestDTO, testId, splitter);
         verify(reportRepository).save(reportEntity);
     }
@@ -140,10 +140,10 @@ class ResultServiceTest {
     void addResult_RepeatException() {
         String reportIndex = resultRequestDTO.evaluatedId() + splitter + testId + splitter + resultRequestDTO.evaluatorId();
 
-        when(reportRepository.findByEvaluatedIdTestIdEvaluatorId(reportIndex)).thenReturn(Optional.of(new ReportEntity()));
+        when(reportRepository.findByIndex(reportIndex)).thenReturn(Optional.of(new ReportEntity()));
 
         assertThrows(RepeatException.class, () -> resultService.addResult(testId, resultRequestDTO));
-        verify(reportRepository).findByEvaluatedIdTestIdEvaluatorId(reportIndex);
+        verify(reportRepository).findByIndex(reportIndex);
         verify(reportMapper, never()).toReportEntity(any(), any(), any());
         verify(reportRepository, never()).save(any());
     }

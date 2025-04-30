@@ -21,11 +21,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class EvaluationService {
     private final EvaluationRepository evaluationRepository;
-    private final ParticipantRepository participantRepository;
     private final ReportRepository reportRepository;
     private final TestRepository testRepository;
 
-    private final ParticipantsMapper participantsMapper;
 
     private final String splitter;
 
@@ -40,9 +38,11 @@ public class EvaluationService {
         boolean isAllCompleted = true;
 
         for (String reportIndex : indexes) {
-            if (isAllCompleted && !reportMap.containsKey(reportIndex)) { isAllCompleted = false; }
+            if (isAllCompleted && !reportMap.containsKey(reportIndex)) {
+                isAllCompleted = false;
+            }
 
-            int userId = Integer.getInteger(reportIndex.split(splitter)[(isEvaluated) ? 0: 2]);
+            int userId = Integer.getInteger(reportIndex.split(splitter)[(isEvaluated) ? 0 : 2]);
 
             TestRespondentTitleModel testRespondentTitleModel = new TestRespondentTitleModel(
                     userId,
@@ -58,6 +58,7 @@ public class EvaluationService {
 
     /**
      * получение и формирование TestMenu
+     *
      * @param testId id теста
      * @param userId id пользователя
      * @return TestMenuResponseDTO
@@ -74,7 +75,7 @@ public class EvaluationService {
 
         boolean isGetRespondents = !(test.getType() == TypeTestEnum.SELF);
         boolean isSelectRespondents = evaluationEntity.isPresent();
-        boolean isCompleteEvaluation = reportRepository.existsByEvaluatedIdTestIdEvaluatorId(selfReportIndex);
+        boolean isCompleteEvaluation = reportRepository.existsByIndex(selfReportIndex);
         boolean isCompleteEvaluated = false;
         boolean isCompleteEvaluator = false;
         List<TestRespondentTitleModel> evaluated = new ArrayList<>();
@@ -98,10 +99,10 @@ public class EvaluationService {
                 .map(id -> userId + splitter + testId + splitter + id)
                 .collect(Collectors.toList());
 
-        Map<String, ReportEntity> edReportMap = reportRepository.findByTestIdAndEvaluatedIdTestIdEvaluatorIdIn(testId, edReportIndexes)
-                .stream().collect(Collectors.toMap(ReportEntity::getEvaluatedIdTestIdEvaluatorId, reportEntity -> reportEntity));
-        Map<String, ReportEntity> orReportMap = reportRepository.findByTestIdAndEvaluatedIdTestIdEvaluatorIdIn(testId, orReportIndexes)
-                .stream().collect(Collectors.toMap(ReportEntity::getEvaluatedIdTestIdEvaluatorId, reportEntity -> reportEntity));
+        Map<String, ReportEntity> edReportMap = reportRepository.findByTestIdAndIndexIn(testId, edReportIndexes)
+                .stream().collect(Collectors.toMap(ReportEntity::getIndex, reportEntity -> reportEntity));
+        Map<String, ReportEntity> orReportMap = reportRepository.findByTestIdAndIndexIn(testId, orReportIndexes)
+                .stream().collect(Collectors.toMap(ReportEntity::getIndex, reportEntity -> reportEntity));
 
         isCompleteEvaluated = isAllCompleted(evaluated, edReportIndexes, edReportMap, true);
         isCompleteEvaluator = isAllCompleted(evaluator, orReportIndexes, orReportMap, false);
