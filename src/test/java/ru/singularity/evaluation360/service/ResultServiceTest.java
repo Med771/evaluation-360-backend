@@ -7,13 +7,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import ru.singularity.evaluation360.dto.result.ResultApproveRequestDto;
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
 import ru.singularity.evaluation360.dto.result.model.AnswerTestModel;
+import ru.singularity.evaluation360.dto.result.model.SkillsResultModel;
 import ru.singularity.evaluation360.dto.result.model.SkillsTestModel;
 import ru.singularity.evaluation360.entity.ReportEntity;
 import ru.singularity.evaluation360.entity.ResultEntity;
 import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.exeptions.FalsiesDtoFormatException;
 import ru.singularity.evaluation360.exeptions.RepeatException;
 import ru.singularity.evaluation360.mapper.ReportMapper;
 import ru.singularity.evaluation360.mapper.ResultMapper;
@@ -22,6 +25,7 @@ import ru.singularity.evaluation360.repository.ResultRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,6 +62,8 @@ class ResultServiceTest {
 
     private final String index = testId + splitter + userId;
 
+    ResultApproveRequestDto resultApproveRequestDto;
+
 
 
     @BeforeEach
@@ -91,6 +97,8 @@ class ResultServiceTest {
                 Arrays.asList(new AnswerTestModel(3, "Good answer"),
                         new AnswerTestModel(4, "Excellent answer")), Arrays.asList(
                 new SkillsTestModel(1, 3.5), new SkillsTestModel(2, 4.0)));
+
+        resultApproveRequestDto = new ResultApproveRequestDto(true, "comment", new ArrayList<>());
 
 
     }
@@ -146,5 +154,36 @@ class ResultServiceTest {
         verify(reportRepository).findByIndex(reportIndex);
         verify(reportMapper, never()).toReportEntity(any(), any(), any());
         verify(reportRepository, never()).save(any());
+    }
+
+    @Test
+    void editResult_Success() {
+        when(resultRepository.findById(anyString())).thenReturn(Optional.of(resultEntity));
+        when(resultRepository.save(any(ResultEntity.class))).thenReturn(resultEntity);
+
+
+
+        resultService.editResult(testId, resultApproveRequestDto);
+
+        verify(resultRepository).findById(testId);
+        verify(resultRepository).save(resultEntity);
+    }
+
+    @Test
+    void editResult_FalsiesDtoFormatException() {
+        when(resultRepository.findById(anyString())).thenReturn(Optional.of(resultEntity));
+        when(resultRepository.save(any(ResultEntity.class))).thenReturn(resultEntity);
+
+        resultApproveRequestDto.results().add(new SkillsResultModel(
+                "test",
+                2.0,
+                2.0,
+                2.0,
+                2.0,
+                "test"
+                )
+        );
+
+        assertThrows(FalsiesDtoFormatException.class, () -> resultService.editResult(testId, resultApproveRequestDto));
     }
 } 

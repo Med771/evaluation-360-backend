@@ -94,7 +94,7 @@ public class AdminController {
      * Добавление теста
      * @param testRequestDTO тест
      */
-    @PostMapping()
+    @PostMapping("addTest")
     @Operation(summary = "добавить тест", description = "добавляет тест")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Успешное добавление теста")

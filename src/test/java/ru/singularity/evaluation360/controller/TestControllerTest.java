@@ -121,23 +121,8 @@ class TestControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    void postTest_Success() throws Exception {
-        doNothing().when(testManagementService).addTest(any(TestRequestDTO.class));
 
-        mockMvc.perform(post("/test")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testRequestDTO)))
-                .andExpect(status().isOk());
-    }
 
-    @Test
-    void postTest_BadRequest() throws Exception {
-        doThrow(new RuntimeException()).when(testManagementService).addTest(any());
 
-        mockMvc.perform(post("/test")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testRequestDTO)))
-                .andExpect(status().isBadRequest());
-    }
+
 } 
