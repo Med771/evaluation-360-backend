@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
 
-import ru.singularity.evaluation360.service.AuthService;
+import ru.singularity.evaluation360.entity.UserEntity;
+
+import ru.singularity.evaluation360.service.CustomUserDetailsService;
 import ru.singularity.evaluation360.service.ResultService;
 
 import java.util.Arrays;
@@ -29,7 +31,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class ResultController {
     private final ResultService resultService;
-    private final AuthService authService;
+    private final CustomUserDetailsService userDetails;
 
     /**
      * Получить результаты теста.
@@ -47,8 +49,11 @@ public class ResultController {
     public ResponseEntity<ResultResponseDTO> getResult(
             @Parameter(description = "Идентификатор результата", required = true) @PathVariable String test_id) {
 
-        int userId = authService.findUserByEmail(SecurityContextHolder.
-                getContext().getAuthentication().getName()).getId();
+        Integer userId = ((UserEntity) userDetails.
+                loadUserByUsername(SecurityContextHolder.
+                        getContext().
+                        getAuthentication().
+                        getName())).getId();
 
         return ResponseEntity.ok(resultService.getResultByIndex(test_id, userId));
     }

@@ -6,11 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.singularity.evaluation360.dto.auth.RegisterRequestDTO;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.UserEntity;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.UserRepository;
 
@@ -149,7 +149,7 @@ class AuthServiceTest {
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
-        assertThrows(DontFoundException.class, () -> authService.findUserByEmail(email));
+        assertThrows(UsernameNotFoundException.class, () -> authService.findUserByEmail(email));
         verify(userRepository).findByEmail(email);
     }
 } 

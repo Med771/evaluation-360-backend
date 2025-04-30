@@ -13,7 +13,6 @@ import ru.singularity.evaluation360.entity.SkillEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.entity.model.StatusTestEnum;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
 import ru.singularity.evaluation360.mapper.QuestionMapper;
 import ru.singularity.evaluation360.mapper.SkillMapper;

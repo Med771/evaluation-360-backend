@@ -1,49 +1,75 @@
 package ru.singularity.evaluation360.service;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 
+import ru.singularity.evaluation360.config.JwtCore;
+
+import ru.singularity.evaluation360.dto.auth.JwtAuthenticationResponseDTO;
 import ru.singularity.evaluation360.dto.auth.RegisterRequestDTO;
+
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.UserEntity;
 import ru.singularity.evaluation360.entity.model.RoleUserEnum;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
+
+import ru.singularity.evaluation360.exeptions.FalsiesDtoFormatException;
+
 import ru.singularity.evaluation360.log.annotation.LogEntryExit;
 import ru.singularity.evaluation360.log.annotation.LogException;
+
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.UserRepository;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
     private final ParticipantRepository participantRepository;
+
+    private final CustomUserDetailsService customUserDetailsService;
+
     private final PasswordEncoder encoder;
+
+    private final JwtCore jwtCore;
 
     @LogEntryExit
     @LogException
-    public boolean login(String userName, String password) {
-        Optional<UserEntity> userEntity = userRepository.findByEmail(userName);
+    public JwtAuthenticationResponseDTO login(String userName, String password) {
+        UserEntity userEntity = (UserEntity) customUserDetailsService.loadUserByUsername(userName);
 
-        if (userEntity.isEmpty()) {
-            return false;
+        if (!encoder.matches(password, userEntity.getPassword())) {
+            throw new BadCredentialsException("Bad credentials");
         }
 
-        return userEntity.filter(entity -> encoder.matches(password, entity.getPassword())).isPresent();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userEntity,
+                null,
+                userEntity.getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtCore.generateToken(authentication);
+
+        return new JwtAuthenticationResponseDTO(jwt);
     }
 
     @LogEntryExit
     @LogException
-    public boolean register(RegisterRequestDTO register) {
+    public JwtAuthenticationResponseDTO register(RegisterRequestDTO register) {
         if (register == null) {
-            return false;
+            throw new FalsiesDtoFormatException("Invalid username or password");
         }
 
         if (userRepository.existsByEmail(register.email())) {
-            return false;
+            throw new BadCredentialsException("Invalid username or password");
         }
 
         UserEntity userEntity = new UserEntity();
@@ -64,16 +90,15 @@ public class AuthService {
             userRepository.save(userEntity);
         }
         catch (Exception e) {
-            return false;
+            throw new UsernameNotFoundException("Invalid username or password");
         }
 
-        return true;
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userEntity,
+                null,
+                userEntity.getAuthorities());
+        return new JwtAuthenticationResponseDTO(jwtCore.generateToken(authentication));
     }
-
-    public UserEntity findUserByEmail(String email){
-        return userRepository.findByEmail(email).orElseThrow(() -> new DontFoundException("Don't found user"));
-    }
-
 }
 
 

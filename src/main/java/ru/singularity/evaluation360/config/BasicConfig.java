@@ -14,4 +14,6 @@ public class BasicConfig {
     public Double conversionRate() {
         return 2.5;
     }
+
+
 }

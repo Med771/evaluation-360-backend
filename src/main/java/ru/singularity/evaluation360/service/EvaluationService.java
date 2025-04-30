@@ -2,12 +2,12 @@ package ru.singularity.evaluation360.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import ru.singularity.evaluation360.dto.test.TestMenuResponseDTO;
 import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
 import ru.singularity.evaluation360.entity.*;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.log.annotation.LogEntryExit;
 import ru.singularity.evaluation360.log.annotation.LogException;
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
@@ -68,7 +68,7 @@ public class EvaluationService {
         String index = testId + splitter + userId;
 
         Optional<EvaluationEntity> evaluationEntity = evaluationRepository.findByIndex(index);
-        TestEntity test = testRepository.findById(testId).orElseThrow(() -> new DontFoundException(testId));
+        TestEntity test = testRepository.findById(testId).orElseThrow(() -> new BadCredentialsException(testId));
 
         String selfReportIndex = userId + splitter + testId + splitter + userId;
 

@@ -1,14 +1,20 @@
 package ru.singularity.evaluation360.config;
 
 import lombok.AllArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.boot.CommandLineRunner;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.UserEntity;
 import ru.singularity.evaluation360.entity.model.RoleUserEnum;
+
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.UserRepository;
 

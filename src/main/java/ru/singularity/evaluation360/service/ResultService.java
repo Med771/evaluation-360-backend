@@ -1,13 +1,13 @@
 package ru.singularity.evaluation360.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
 
 import ru.singularity.evaluation360.entity.ReportEntity;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
 
 import ru.singularity.evaluation360.exeptions.RepeatException;
 import ru.singularity.evaluation360.log.annotation.LogEntryExit;
@@ -35,7 +35,7 @@ public class ResultService {
     @LogEntryExit
     public ResultResponseDTO getResultByIndex(String id, int userId) {
         return resultMapper.toResultResponseDTO(resultRepository.findByUserTestIndex(id + splitter + userId).
-                orElseThrow(() -> new DontFoundException(String.format("Result with id %s not found", id))));
+                orElseThrow(() -> new BadCredentialsException(String.format("Result with id %s not found", id))));
     }
 
     @LogException
