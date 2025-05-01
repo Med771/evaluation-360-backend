@@ -1,5 +1,8 @@
 package ru.singularity.evaluation360.config;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -11,29 +14,32 @@ import ru.singularity.evaluation360.entity.UserEntity;
 
 import javax.crypto.SecretKey;
 
+import java.time.Instant;
 import java.util.Date;
 
 @Component
 public class JwtCore {
-    @Value("${jwt.secret.token}")
-    private String jwtSecret;
-
-    @Value("${jwt.time.live}")
-    private Long timeLive;
+    private final Long timeLive;
 
     private final SecretKey key;
 
-    public JwtCore() {
+    public JwtCore(
+            @Value("${jwt.secret.token}") String jwtSecret,
+            @Value("${jwt.time.live}") Long timeLive) {
+        this.timeLive = timeLive;
+
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
     public String generateToken(Authentication auth) {
         UserEntity user = (UserEntity) auth.getPrincipal();
 
+        Date now = new Date();
+
         return Jwts.builder()
                 .subject((user.getUsername()))
-                .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + timeLive))
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + timeLive))
                 .signWith(key)
                 .compact();
     }
@@ -45,5 +51,21 @@ public class JwtCore {
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jws<Claims> claimsJws = Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token);
+
+            Date expiration = claimsJws.getPayload().getExpiration();
+
+            return expiration != null && expiration.after(Date.from(Instant.now()));
+        } catch (JwtException | IllegalArgumentException ex) {
+            System.out.println(ex.getMessage());
+            return false;
+        }
     }
 }

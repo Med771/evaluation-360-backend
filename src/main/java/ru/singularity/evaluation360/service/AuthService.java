@@ -43,7 +43,7 @@ public class AuthService {
 
     @LogEntryExit
     @LogException
-    public JwtAuthenticationResponseDTO login(String userName, String password) {
+    public String login(String userName, String password) {
         UserEntity userEntity = (UserEntity) customUserDetailsService.loadUserByUsername(userName);
 
         if (!encoder.matches(password, userEntity.getPassword())) {
@@ -56,14 +56,13 @@ public class AuthService {
                 userEntity.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtCore.generateToken(authentication);
 
-        return new JwtAuthenticationResponseDTO(jwt);
+        return jwtCore.generateToken(authentication);
     }
 
     @LogEntryExit
     @LogException
-    public JwtAuthenticationResponseDTO register(RegisterRequestDTO register) {
+    public String register(RegisterRequestDTO register) {
         if (register == null) {
             throw new FalsiesDtoFormatException("Invalid username or password");
         }
@@ -97,7 +96,8 @@ public class AuthService {
                 userEntity,
                 null,
                 userEntity.getAuthorities());
-        return new JwtAuthenticationResponseDTO(jwtCore.generateToken(authentication));
+
+        return jwtCore.generateToken(authentication);
     }
 }
 
