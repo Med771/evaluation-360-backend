@@ -45,6 +45,10 @@ public class AuthService {
     public String login(String userName, String password) {
         UserEntity userEntity = (UserEntity) customUserDetailsService.loadUserByUsername(userName);
 
+        if (userEntity == null) {
+            throw new UsernameNotFoundException(userName);
+        }
+
         if (!encoder.matches(password, userEntity.getPassword())) {
             throw new BadCredentialsException("Bad credentials");
         }

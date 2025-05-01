@@ -27,11 +27,8 @@ import ru.singularity.evaluation360.mapper.ResultMapper;
 import ru.singularity.evaluation360.repository.ReportRepository;
 import ru.singularity.evaluation360.repository.ResultRepository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

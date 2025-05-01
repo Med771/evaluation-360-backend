@@ -3,10 +3,12 @@ package ru.singularity.evaluation360.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -55,6 +57,8 @@ class AdminControllerTest extends BaseControllerTest {
     QuestionTestModel questionTestModel;
 
     ResultApproveRequestDto resultApproveRequestDto;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
 
     @BeforeEach
@@ -64,7 +68,7 @@ class AdminControllerTest extends BaseControllerTest {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(1);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        when(authService.findUserByEmail(anyString())).thenReturn(userEntity);
+        when(customUserDetailsService.loadUserByUsername(anyString())).thenReturn(userEntity);
 
         questionTestModel = new QuestionTestModel("test", List.of(1));
 
@@ -173,7 +177,7 @@ class AdminControllerTest extends BaseControllerTest {
 
     @Test
     void getTestAdmin_NotFound() throws Exception {
-        when(testManagementService.getTest(anyString())).thenThrow(new DontFoundException("Test not found"));
+        when(testManagementService.getTest(anyString())).thenThrow(new BadCredentialsException("Test not found"));
 
         mockMvc.perform(get("/admin/test/invalidTestId"))
                 .andExpect(status().isNotFound());  // Проверка на сообщение ошибки

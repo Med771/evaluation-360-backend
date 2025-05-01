@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.BadCredentialsException;
 import ru.singularity.evaluation360.dto.respondent.RespondentsRequestDTO;
 import ru.singularity.evaluation360.dto.respondent.RespondentsResponseDTO;
 import ru.singularity.evaluation360.entity.EvaluationEntity;
@@ -128,7 +129,7 @@ class RespondentServiceTest {
     void getRespondents_TestNotFound() {
         when(testRepository.findById(testId)).thenReturn(Optional.empty());
 
-        assertThrows(DontFoundException.class, () -> respondentService.getRespondents(testId));
+        assertThrows(BadCredentialsException.class, () -> respondentService.getRespondents(testId));
         verify(testRepository).findById(testId);
         verify(participantRepository, never()).findAllById(any());
     }

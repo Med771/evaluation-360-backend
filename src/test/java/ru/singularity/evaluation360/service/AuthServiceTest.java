@@ -5,12 +5,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import ru.singularity.evaluation360.config.JwtCore;
 import ru.singularity.evaluation360.dto.auth.RegisterRequestDTO;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.UserEntity;
+import ru.singularity.evaluation360.exeptions.FalsiesDtoFormatException;
 import ru.singularity.evaluation360.repository.ParticipantRepository;
 import ru.singularity.evaluation360.repository.UserRepository;
 
@@ -33,6 +37,14 @@ class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private JwtCore jwtCore;
+
+    @Mock
+    private CustomUserDetailsService customUserDetailsService;
+
+
+
     @InjectMocks
     private AuthService authService;
 
@@ -41,6 +53,8 @@ class AuthServiceTest {
 
     private final UserEntity user = new UserEntity();
     private RegisterRequestDTO registerRequest;
+
+    String token = "token";
 
     @BeforeEach
     void setUp() {
@@ -53,43 +67,40 @@ class AuthServiceTest {
                 "test@example.com",
                 "password"
         );
+
     }
 
     @Test
     void login_Success() {
 
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(customUserDetailsService.loadUserByUsername(email)).thenReturn(user);
         when(passwordEncoder.matches(password, user.getPassword())).thenReturn(true);
+        when(jwtCore.generateToken(any())).thenReturn(token);
 
-        boolean result = authService.login(email, password);
+        String result = authService.login(email, password);
 
-        assertTrue(result);
-        verify(userRepository).findByEmail(email);
+        assertEquals(result, token);
+        verify(customUserDetailsService).loadUserByUsername(email);
         verify(passwordEncoder).matches(password, user.getPassword());
     }
 
     @Test
     void login_UserNotFound() {
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+        when(customUserDetailsService.loadUserByUsername(email)).thenReturn(null);
 
-        boolean result = authService.login(email, password);
-
-        assertFalse(result);
-        verify(userRepository).findByEmail(email);
+        assertThrows(UsernameNotFoundException.class, () -> authService.login(email, password));
+        verify(customUserDetailsService).loadUserByUsername(email);
         verify(passwordEncoder, never()).matches(any(), any());
     }
 
     @Test
-    void login_WrongPassword() {
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+    void login_Rejected() {
+        when(customUserDetailsService.loadUserByUsername(email)).thenReturn(user);
         when(passwordEncoder.matches(password, user.getPassword())).thenReturn(false);
-
-        boolean result = authService.login(email, password);
-
-        assertFalse(result);
-        verify(userRepository).findByEmail(email);
-        verify(passwordEncoder).matches(password, user.getPassword());
+        assertThrows(BadCredentialsException.class, () -> authService.login(email, password));
     }
+
+
 
     @Test
     void register_Success() {
@@ -98,10 +109,11 @@ class AuthServiceTest {
         when(passwordEncoder.encode(registerRequest.password())).thenReturn("encodedPassword");
         when(participantRepository.save(any(ParticipantEntity.class))).thenReturn(new ParticipantEntity());
         when(userRepository.save(any(UserEntity.class))).thenReturn(new UserEntity());
+        when(jwtCore.generateToken(any())).thenReturn(token);
 
-        boolean result = authService.register(registerRequest);
+        String result = authService.register(registerRequest);
 
-        assertTrue(result);
+        assertEquals(result, token);
         verify(userRepository).existsByEmail(registerRequest.email());
         verify(passwordEncoder).encode(registerRequest.password());
         verify(participantRepository).save(any(ParticipantEntity.class));
@@ -113,9 +125,8 @@ class AuthServiceTest {
 
         when(userRepository.existsByEmail(registerRequest.email())).thenReturn(true);
 
-        boolean result = authService.register(registerRequest);
 
-        assertFalse(result);
+        assertThrows(BadCredentialsException.class, () -> authService.register(registerRequest));
         verify(userRepository).existsByEmail(registerRequest.email());
         verify(passwordEncoder, never()).encode(any());
         verify(participantRepository, never()).save(any());
@@ -124,32 +135,12 @@ class AuthServiceTest {
 
     @Test
     void register_NullRequest() {
-        boolean result = authService.register(null);
-
-        assertFalse(result);
+        assertThrows(FalsiesDtoFormatException.class, () -> authService.register(null));
         verify(userRepository, never()).existsByEmail(any());
         verify(passwordEncoder, never()).encode(any());
         verify(participantRepository, never()).save(any());
         verify(userRepository, never()).save(any());
     }
 
-    @Test
-    void findUserByEmail_Success() {
 
-        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
-
-        UserEntity result = authService.findUserByEmail(email);
-
-        assertEquals(user, result);
-        verify(userRepository).findByEmail(email);
-    }
-
-    @Test
-    void findUserByEmail_UserNotFound() {
-
-        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
-
-        assertThrows(UsernameNotFoundException.class, () -> authService.findUserByEmail(email));
-        verify(userRepository).findByEmail(email);
-    }
 } 

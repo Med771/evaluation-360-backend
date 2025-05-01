@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.BadCredentialsException;
 import ru.singularity.evaluation360.dto.test.*;
 import ru.singularity.evaluation360.dto.test.model.QuestionTestModel;
 import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
@@ -132,7 +133,7 @@ class TestManagementServiceTest {
     void editTestStatus_TestNotFound() {
         when(testRepository.findById(testId)).thenReturn(Optional.empty());
 
-        assertThrows(DontFoundException.class, () -> testManagementService.editTestStatus(testId, testStatusRequestDTO));
+        assertThrows(BadCredentialsException.class, () -> testManagementService.editTestStatus(testId, testStatusRequestDTO));
         verify(testRepository).findById(testId);
         verify(testRepository, never()).save(any());
     }
@@ -174,7 +175,7 @@ class TestManagementServiceTest {
     void getTest_TestNotFound() {
         when(testRepository.findById(testId)).thenReturn(Optional.empty());
 
-        assertThrows(DontFoundException.class, () -> testManagementService.getTest(testId, userId, evaluatedId));
+        assertThrows(BadCredentialsException.class, () -> testManagementService.getTest(testId, userId, evaluatedId));
         verify(testRepository).findById(testId);
         verify(questionRepository, never()).findAllById(any());
     }

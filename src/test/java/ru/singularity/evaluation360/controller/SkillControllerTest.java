@@ -2,6 +2,7 @@ package ru.singularity.evaluation360.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -16,6 +17,7 @@ import ru.singularity.evaluation360.entity.SkillEntity;
 import ru.singularity.evaluation360.entity.UserEntity;
 import ru.singularity.evaluation360.service.AuthService;
 
+import ru.singularity.evaluation360.service.CustomUserDetailsService;
 import ru.singularity.evaluation360.service.SkillService;
 
 import java.util.Arrays;
@@ -37,6 +39,8 @@ class SkillControllerTest extends BaseControllerTest {
 
     @MockBean
     private AuthService authService;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @BeforeEach
     void setUp() {
@@ -45,7 +49,7 @@ class SkillControllerTest extends BaseControllerTest {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(1);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        when(authService.findUserByEmail(anyString())).thenReturn(userEntity);
+        when(customUserDetailsService.loadUserByUsername(anyString())).thenReturn(userEntity);
 
 
     }

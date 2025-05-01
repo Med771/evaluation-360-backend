@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.BadCredentialsException;
 import ru.singularity.evaluation360.dto.test.TestMenuResponseDTO;
 import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
 import ru.singularity.evaluation360.entity.EvaluationEntity;
@@ -117,7 +118,7 @@ class EvaluationServiceTest {
         when(evaluationRepository.findByIndex(index)).thenReturn(Optional.of(evaluationEntity));
         when(testRepository.findById(testId)).thenReturn(Optional.empty());
 
-        assertThrows(DontFoundException.class, () -> evaluationService.getTestMenu(testId, userId));
+        assertThrows(BadCredentialsException.class, () -> evaluationService.getTestMenu(testId, userId));
         verify(evaluationRepository).findByIndex(index);
         verify(testRepository).findById(testId);
     }

@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import ru.singularity.evaluation360.dto.result.ResultApproveRequestDto;
 import ru.singularity.evaluation360.dto.result.ResultRequestDTO;
 import ru.singularity.evaluation360.dto.result.ResultResponseDTO;
@@ -16,7 +17,7 @@ import ru.singularity.evaluation360.dto.result.model.SkillsTestModel;
 import ru.singularity.evaluation360.entity.ReportEntity;
 import ru.singularity.evaluation360.entity.ResultEntity;
 
-import ru.singularity.evaluation360.exeptions.DontFoundException;
+
 import ru.singularity.evaluation360.exeptions.FalsiesDtoFormatException;
 
 import ru.singularity.evaluation360.exeptions.RepeatException;
@@ -27,7 +28,7 @@ import ru.singularity.evaluation360.repository.ResultRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -122,7 +123,7 @@ class ResultServiceTest {
     void getResultByIndex_NotFound() {
         when(resultRepository.findByUserTestIndex(index)).thenReturn(Optional.empty());
 
-        assertThrows(DontFoundException.class, () -> resultService.getResultByIndex(testId, userId));
+        assertThrows(BadCredentialsException.class, () -> resultService.getResultByIndex(testId, userId));
         verify(resultRepository).findByUserTestIndex(index);
         verify(resultMapper, never()).toResultResponseDTO(any());
     }

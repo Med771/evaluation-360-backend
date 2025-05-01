@@ -2,10 +2,10 @@ package ru.singularity.evaluation360.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,6 +17,7 @@ import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
 import ru.singularity.evaluation360.entity.UserEntity;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
 import ru.singularity.evaluation360.service.AuthService;
+import ru.singularity.evaluation360.service.CustomUserDetailsService;
 import ru.singularity.evaluation360.service.EvaluationService;
 import ru.singularity.evaluation360.service.TestManagementService;
 
@@ -49,6 +50,8 @@ class TestControllerTest extends BaseControllerTest {
     QuestionTestModel questionTestModel;
 
     TestResponseDTO testResponseDTO;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @BeforeEach
     void setUp() {
@@ -57,7 +60,7 @@ class TestControllerTest extends BaseControllerTest {
         UserEntity userEntity = new UserEntity();
         userEntity.setId(1);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        when(authService.findUserByEmail(anyString())).thenReturn(userEntity);
+        when(customUserDetailsService.loadUserByUsername(anyString())).thenReturn(userEntity);
 
         questionTestModel = new QuestionTestModel("test", List.of(1));
 
