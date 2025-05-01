@@ -1,15 +1,11 @@
 package ru.singularity.evaluation360.config;
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.context.annotation.Profile;
+
+import org.springframework.http.HttpStatus;
 
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,22 +13,20 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-
+import org.springframework.security.config.Customizer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
-
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
-
-import ru.singularity.evaluation360.filter.BasicAuthCorsFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import ru.singularity.evaluation360.filter.JwtFilter;
 
 import java.util.List;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
-@SecurityScheme(name = "basicAuth", type = SecuritySchemeType.HTTP, scheme = "basic")
-@SecurityRequirement(name = "basicAuth")
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -56,31 +50,23 @@ public class WebSecurityConfig {
             "/favicon.ico"
     };
 
-    private final BasicAuthCorsFilter basicAuthCorsFilter;
+    private final JwtFilter jwtFilter;
 
     @Bean
     @Profile("test")
     public SecurityFilterChain testSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable);
-
-        http.cors(AbstractHttpConfigurer::disable);
-
-        http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/swagger-ui.html",
-                        "/webjars/**"
-                ).permitAll()
-                .requestMatchers(AUTH_IGNORE_WHITELIST).permitAll()
-                .requestMatchers(AUTH_WHITELIST).authenticated()
-                .anyRequest().denyAll());
-
-        http.httpBasic(withDefaults()).addFilterBefore(basicAuthCorsFilter, UsernamePasswordAuthenticationFilter.class);
-
-        http.headers(AbstractHttpConfigurer::disable);
+        http.csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(AUTH_IGNORE_WHITELIST).permitAll()
+                        .requestMatchers(AUTH_WHITELIST).authenticated()
+                        .anyRequest().denyAll()
+                )
+                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
@@ -88,50 +74,66 @@ public class WebSecurityConfig {
     @Bean
     @Profile("prod")
     public SecurityFilterChain prodSecurityFilterChain(HttpSecurity http) throws Exception {
-        XorCsrfTokenRequestAttributeHandler requestHandler = new XorCsrfTokenRequestAttributeHandler();
-        requestHandler.setCsrfRequestAttributeName("_csrf");
+        // включаем CSRF с хранением токена в куки для SPA
+//        http.csrf(csrf -> csrf
+//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                .ignoringRequestMatchers(
+//                        new AntPathRequestMatcher("/swagger-ui/**"),
+//                        new AntPathRequestMatcher("/v3/api-docs/**"),
+//                        new AntPathRequestMatcher("/swagger-ui.html")
+//                )
+//        );
+        http.csrf(AbstractHttpConfigurer::disable);
 
-        http.csrf(csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .csrfTokenRequestHandler(requestHandler)
-                .ignoringRequestMatchers(
-                        "/v3/api-docs/**",
-                        "/swagger-ui/**",
-                        "/swagger-ui.html",
-                        "/webjars/**"));
+        // CORS для боевого фронта
+        http.cors(cors -> cors
+                .configurationSource(corsConfigurationSource()));
 
-        http.cors(cors -> cors.configurationSource(request -> {
-            var cfg = new CorsConfiguration();
-            cfg.setAllowedOrigins(List.of("http://localhost:4200"));
-            cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "OPTIONS"));
-            cfg.setAllowedHeaders(List.of("*"));
-            cfg.setAllowCredentials(true);
-            cfg.setMaxAge(3600L);
-            return cfg;
-        }));
+        // без сессий
+        http.sessionManagement(sm -> sm
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        // обработка ошибок аутентификации
+        http.exceptionHandling(ex -> ex
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 
+        // правила доступа
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/swagger-ui.html",
-                        "/webjars/**"
-                ).permitAll()
-                .requestMatchers(AUTH_IGNORE_WHITELIST).permitAll()
-                .requestMatchers(AUTH_WHITELIST).authenticated()
-                .anyRequest().denyAll());
+                    .requestMatchers(AUTH_IGNORE_WHITELIST).permitAll()
+                    .requestMatchers(AUTH_WHITELIST).authenticated()
+                    .anyRequest().denyAll()
+        );
 
-        http.httpBasic(withDefaults()).addFilterBefore(basicAuthCorsFilter, UsernamePasswordAuthenticationFilter.class);
+        // JWT фильтр
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
+        // заголовки безопасности
         http.headers(headers -> headers
-                .contentSecurityPolicy(csp -> csp
-                        .policyDirectives("default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';")
-                )
-                .xssProtection(HeadersConfigurer.XXssConfig::disable)
-                .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
+                    .httpStrictTransportSecurity(hsts -> hsts
+                            .includeSubDomains(true)
+                            .maxAgeInSeconds(31536000)
+                    )
+                    .contentSecurityPolicy(csp -> csp
+                            .policyDirectives("default-src 'self'; script-src 'self'; style-src 'self';")
+                    )
+                    .referrerPolicy(ref -> ref
+                            .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN))
+                    .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+        );
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:8080"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowCredentials(true);
+        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }

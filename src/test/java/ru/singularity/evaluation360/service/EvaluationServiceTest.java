@@ -12,7 +12,6 @@ import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.ReportEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
 import ru.singularity.evaluation360.repository.EvaluationRepository;
 import ru.singularity.evaluation360.repository.ParticipantRepository;

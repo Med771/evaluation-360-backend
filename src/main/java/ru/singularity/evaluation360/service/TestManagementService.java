@@ -2,6 +2,8 @@ package ru.singularity.evaluation360.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import ru.singularity.evaluation360.dto.test.*;
@@ -11,14 +13,12 @@ import ru.singularity.evaluation360.dto.test.model.TestTitleModel;
 import ru.singularity.evaluation360.entity.QuestionEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 import ru.singularity.evaluation360.entity.model.StatusTestEnum;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
 
 
 import ru.singularity.evaluation360.exeptions.FalsiesDtoFormatException;
 
 import ru.singularity.evaluation360.log.annotation.LogEntryExit;
 import ru.singularity.evaluation360.log.annotation.LogException;
-import ru.singularity.evaluation360.log.annotation.LogMethod;
 
 import ru.singularity.evaluation360.mapper.ParticipantsMapper;
 import ru.singularity.evaluation360.mapper.QuestionMapper;
@@ -49,7 +49,7 @@ public class TestManagementService {
     @LogEntryExit
     @LogException
     private TestResponseDTO toTestResponseDTO(long elevatorId, long evaluatedId, String testId) {
-        TestEntity testEntity = testRepository.findById(testId).orElseThrow(() -> new DontFoundException(testId));
+        TestEntity testEntity = testRepository.findById(testId).orElseThrow(() -> new BadCredentialsException(testId));
         String title = testEntity.getTitle();
         return new TestResponseDTO(title, evaluatedId, elevatorId,
                 questionMapper.
@@ -103,7 +103,7 @@ public class TestManagementService {
     @LogException
     @LogEntryExit
     public void editTestStatus(String testID, TestStatusRequestDTO testStatusRequestDTO){
-        TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new DontFoundException(testID));
+        TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new BadCredentialsException(testID));
         if(testStatusRequestDTO.status() == null){
             throw new FalsiesDtoFormatException("test status is null");
         }
@@ -127,7 +127,7 @@ public class TestManagementService {
     @LogException
     @LogEntryExit
     public TestViewResponseDTO getTest(String testID) {
-        TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new DontFoundException(testID));
+        TestEntity testEntity = testRepository.findById(testID).orElseThrow(() -> new BadCredentialsException(testID));
         return testMapper.toTestViewResponseDTO(testEntity,
                 participantsMapper.
                         toRespondentModels(participantRepository.findAllById(testEntity.getParticipantsIds())),

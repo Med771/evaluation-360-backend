@@ -4,15 +4,24 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+
 import ru.singularity.evaluation360.dto.auth.LoginRequestDTO;
 import ru.singularity.evaluation360.dto.auth.RegisterRequestDTO;
+
 import ru.singularity.evaluation360.service.AuthService;
 
 @RestController
@@ -29,12 +38,22 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(
             @Parameter(description = "Данные для входа: имя пользователя и пароль", required = true)
-            @RequestBody LoginRequestDTO login) {
-        if (authService.login(login.email(), login.password())) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+            @RequestBody LoginRequestDTO login,
+            HttpServletResponse response) {
+        String token = authService.login(login.email(), login.password());
+
+        ResponseCookie cookie = ResponseCookie.from("JWT_TOKEN", token)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(3600)
+
+                .build();
+
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok().body(HttpStatus.CREATED);
     }
 
     @Operation(summary = "Регистрация пользователя", description = "Регистрирует нового пользователя в системе.")
@@ -45,11 +64,20 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<HttpStatus> register(
             @Parameter(description = "Данные для регистрации: имя пользователя, пароль и дополнительные данные", required = true)
-            @RequestBody RegisterRequestDTO register) {
-        if (authService.register(register)) {
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+            @RequestBody RegisterRequestDTO register,
+            HttpServletResponse response) {
+        String token = authService.register(register);
+
+        ResponseCookie cookie = ResponseCookie.from("JWT_TOKEN", token)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(3600)
+                .build();
+
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok().body(HttpStatus.CREATED);
     }
 }

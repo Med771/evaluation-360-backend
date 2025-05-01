@@ -2,6 +2,7 @@ package ru.singularity.evaluation360.service;
 
 import lombok.AllArgsConstructor;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import ru.singularity.evaluation360.dto.respondent.RespondentsRequestDTO;
@@ -12,7 +13,6 @@ import ru.singularity.evaluation360.entity.EvaluationEntity;
 import ru.singularity.evaluation360.entity.ParticipantEntity;
 import ru.singularity.evaluation360.entity.TestEntity;
 
-import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.exeptions.RepeatException;
 
 import ru.singularity.evaluation360.log.annotation.LogEntryExit;
@@ -98,7 +98,7 @@ public class RespondentService {
     @LogException
     public RespondentsResponseDTO getRespondents(String testId) {
         Optional<TestEntity> testEntity = testRepository.findById(testId);
-        TestEntity test = testEntity.orElseThrow(() -> new DontFoundException("Test not found"));
+        TestEntity test = testEntity.orElseThrow(() -> new BadCredentialsException("Test not found"));
 
         List<RespondentModel> respondents = new ArrayList<>();
 

@@ -13,14 +13,15 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.web.bind.annotation.*;
 
 import ru.singularity.evaluation360.dto.respondent.RespondentsRequestDTO;
 import ru.singularity.evaluation360.dto.respondent.RespondentsResponseDTO;
 
-import ru.singularity.evaluation360.exeptions.DontFoundException;
+import ru.singularity.evaluation360.entity.UserEntity;
 
-import ru.singularity.evaluation360.service.AuthService;
+import ru.singularity.evaluation360.service.CustomUserDetailsService;
 import ru.singularity.evaluation360.service.RespondentService;
 
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class RespondentController {
     private final RespondentService respondentService;
-    private final AuthService authService;
+    private final CustomUserDetailsService userDetails;
 
     /**
      * Получить список респондентов для указанного теста.
@@ -49,12 +50,7 @@ public class RespondentController {
     @PreAuthorize("@testAuthFilter.hasTestAccess(#test_id, authentication.principal.id, authentication.principal.role)")
     public ResponseEntity<RespondentsResponseDTO> respondent(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable("test_id") String test_id) {
-        try {
-            return ResponseEntity.ok(respondentService.getRespondents(test_id));
-        }
-        catch (DontFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok(respondentService.getRespondents(test_id));
     }
 
     /**
@@ -74,11 +70,11 @@ public class RespondentController {
     public ResponseEntity<HttpStatus> createRespondent(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable("test_id") String test_id,
             @RequestBody RespondentsRequestDTO respondentsRequestDTO) {
-        Integer userId = authService.
-                findUserByEmail(SecurityContextHolder.
+        Integer userId = ((UserEntity) userDetails.
+                loadUserByUsername(SecurityContextHolder.
                         getContext().
                         getAuthentication().
-                        getName()).getId();
+                        getName())).getId();
 
 
         try {

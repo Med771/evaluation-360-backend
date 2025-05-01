@@ -21,7 +21,6 @@ import ru.singularity.evaluation360.entity.UserEntity;
 import ru.singularity.evaluation360.entity.model.RoleUserEnum;
 import ru.singularity.evaluation360.entity.model.StatusTestEnum;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
 import ru.singularity.evaluation360.exeptions.FalsiesDtoFormatException;
 import ru.singularity.evaluation360.service.*;
 
