@@ -16,7 +16,6 @@ import ru.singularity.evaluation360.dto.result.model.SkillsResultModel;
 import ru.singularity.evaluation360.entity.ReportEntity;
 
 import ru.singularity.evaluation360.entity.ResultEntity;
-import ru.singularity.evaluation360.exeptions.DontFoundException;
 
 import ru.singularity.evaluation360.exeptions.FalsiesDtoFormatException;
 import ru.singularity.evaluation360.exeptions.RepeatException;
@@ -71,7 +70,7 @@ public class ResultService {
     public void editResult(String resultId, ResultApproveRequestDto resultApproveRequestDto) {
         ResultEntity result = resultRepository.
                 findById(resultId).orElseThrow(()
-                        -> new DontFoundException(String.format("Report with id %s not found", resultId)));
+                        -> new BadCredentialsException(String.format("Report with id %s not found", resultId)));
 
         result.setComment(resultApproveRequestDto.comment());
         List<SkillsResultModel> skills = result.getResults();
