@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import ru.singularity.evaluation360.config.JwtCore;
 
-import ru.singularity.evaluation360.dto.auth.JwtAuthenticationResponseDTO;
 import ru.singularity.evaluation360.dto.auth.RegisterRequestDTO;
 
 import ru.singularity.evaluation360.entity.ParticipantEntity;
