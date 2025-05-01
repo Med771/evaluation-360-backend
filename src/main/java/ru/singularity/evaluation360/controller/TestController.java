@@ -99,24 +99,4 @@ public class TestController {
         return ResponseEntity.ok(testManagementService.getTest(test_id, userId, evaluatedId));
     }
 
-    /**
-     *
-     * Добавление теста
-     * @param testRequestDTO тест
-     */
-    @PostMapping()
-    @Operation(summary = "добавить тест", description = "добавляет тест")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Успешное добавление теста")
-    })
-    @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
-    public ResponseEntity<HttpStatus> postTest(@RequestBody TestRequestDTO testRequestDTO){
-        try {
-            testManagementService.addTest(testRequestDTO);
-            return ResponseEntity.ok(HttpStatus.CREATED);
-        }catch (Exception e){
-            log.error(Arrays.toString(e.getStackTrace()));
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST);
-        }
-    }
 }

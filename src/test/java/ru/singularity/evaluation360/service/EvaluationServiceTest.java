@@ -61,10 +61,8 @@ class EvaluationServiceTest {
         MockitoAnnotations.openMocks(this);
         evaluationService = new EvaluationService(
                 evaluationRepository,
-                participantRepository,
                 reportRepository,
                 testRepository,
-                participantsMapper,
                 splitter
         );
 
@@ -98,7 +96,7 @@ class EvaluationServiceTest {
     void getTestMenu_Success() {
         when(evaluationRepository.findByIndex(index)).thenReturn(Optional.of(evaluationEntity));
         when(testRepository.findById(testId)).thenReturn(Optional.of(testEntity));
-        when(reportRepository.existsByEvaluatedIdTestIdEvaluatorId(reportIndex)).thenReturn(true);
+        when(reportRepository.existsByIndex(reportIndex)).thenReturn(true);
         when(participantRepository.findAllById(any())).thenReturn(Collections.singletonList(participantEntity));
         when(participantsMapper.toTestRespondentTitleModel(any(), anyBoolean())).thenReturn(testRespondentTitleModel);
 
@@ -111,7 +109,7 @@ class EvaluationServiceTest {
         assertTrue(result.isCompleteEvaluation());
         verify(evaluationRepository).findByIndex(index);
         verify(testRepository).findById(testId);
-        verify(reportRepository).existsByEvaluatedIdTestIdEvaluatorId(reportIndex);
+        verify(reportRepository).existsByIndex(reportIndex);
     }
 
     @Test
@@ -128,7 +126,7 @@ class EvaluationServiceTest {
     void getTestMenu_NoEvaluation() {
         when(evaluationRepository.findByIndex(index)).thenReturn(Optional.empty());
         when(testRepository.findById(testId)).thenReturn(Optional.of(testEntity));
-        when(reportRepository.findByEvaluatedIdTestIdEvaluatorId(reportIndex)).thenReturn(Optional.empty());
+        when(reportRepository.findByIndex(reportIndex)).thenReturn(Optional.empty());
         when(participantRepository.findAllById(any())).thenReturn(Collections.singletonList(participantEntity));
         when(participantsMapper.toTestRespondentTitleModel(any(), anyBoolean())).thenReturn(testRespondentTitleModel);
 

@@ -98,4 +98,9 @@ class ResultControllerTest extends BaseControllerTest {
                 .content(objectMapper.writeValueAsString(resultRequest)))
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    void editResult_Success(){
+
+    }
 } 

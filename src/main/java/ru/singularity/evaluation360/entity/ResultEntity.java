@@ -1,6 +1,8 @@
 package ru.singularity.evaluation360.entity;
 
+import jakarta.persistence.Column;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import org.springframework.data.annotation.Id;
@@ -25,6 +27,9 @@ public class ResultEntity {
 
     // Average Result
     private Double averageResult;
+
+    @Column(nullable = false)
+    private boolean approve = false;
 
     // Results
     private Double thisResult;

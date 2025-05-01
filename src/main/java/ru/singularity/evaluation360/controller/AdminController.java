@@ -14,10 +14,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.*;
 
+import ru.singularity.evaluation360.dto.result.ResultApproveRequestDto;
 import ru.singularity.evaluation360.dto.test.QuestionsResponseDTO;
+import ru.singularity.evaluation360.dto.test.TestRequestDTO;
 import ru.singularity.evaluation360.dto.test.TestStatusRequestDTO;
 import ru.singularity.evaluation360.dto.test.TestViewResponseDTO;
 import ru.singularity.evaluation360.service.QuestionService;
+import ru.singularity.evaluation360.service.ResultService;
 import ru.singularity.evaluation360.service.TestManagementService;
 
 import java.util.Arrays;
@@ -29,6 +32,7 @@ import java.util.Arrays;
 public class AdminController {
     private final QuestionService questionService;
     private final TestManagementService testManagementService;
+    private final ResultService resultService;
 
     /**
      *
@@ -88,4 +92,34 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+
+    /**
+     *
+     * Добавление теста
+     * @param testRequestDTO тест
+     */
+    @PostMapping("addTest")
+    @Operation(summary = "добавить тест", description = "добавляет тест")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Успешное добавление теста")
+    })
+    @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
+    public ResponseEntity<HttpStatus> postTest(@RequestBody TestRequestDTO testRequestDTO){
+        try {
+            testManagementService.addTest(testRequestDTO);
+            return ResponseEntity.ok(HttpStatus.CREATED);
+        }catch (Exception e){
+            log.error(Arrays.toString(e.getStackTrace()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("result/approve/{result_id}")
+    @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
+    public ResponseEntity<HttpStatus> approveResult(@PathVariable String result_id,
+                                                    @RequestBody ResultApproveRequestDto resultApproveRequestDto) {
+        resultService.editResult(result_id, resultApproveRequestDto);
+        return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
 }

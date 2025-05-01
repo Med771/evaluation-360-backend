@@ -25,5 +25,5 @@ public record SkillsResultModel(
         Double expertEvaluation,
 
         @Schema(description = "Комментарии", example = "[\"Очень хорошо работает в команде\", \"Немного медлит в принятии решений\"]")
-        List<String> comments
+        String comment
 ) {}
