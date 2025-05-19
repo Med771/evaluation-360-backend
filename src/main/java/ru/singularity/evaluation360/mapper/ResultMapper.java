@@ -10,6 +10,4 @@ import ru.singularity.evaluation360.entity.ResultEntity;
 public interface ResultMapper {
 
     ResultResponseDTO toResultResponseDTO(ResultEntity result);
-
-    ResultEntity toResultEntity(ResultRequestDTO result);
 }

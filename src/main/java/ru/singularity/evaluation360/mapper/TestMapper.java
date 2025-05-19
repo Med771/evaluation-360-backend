@@ -19,15 +19,6 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface TestMapper {
-
-    /**
-     *
-     * @param testEntity модель теста
-     * @param respondents список респондентов которые были добавленные в тест
-     */
-    @Mappings({@Mapping(target = "respondents", source = "respondents")})
-    RespondentsResponseDTO toRespondentResponseDto(TestEntity testEntity,
-                                                   List<RespondentModel> respondents);
     /**
      *
      * @param testEntity модель теста
@@ -41,9 +32,6 @@ public interface TestMapper {
     TestViewResponseDTO toTestViewResponseDTO(TestEntity testEntity,
                                               List<RespondentModel> respondentModels,
                                               List<QuestionModel> questionModels);
-
-    List<TestViewResponseDTO> toTestViewResponseDtoList(List<TestEntity> testEntities);
-
     /**
      *
      * @param testRequestDTO модель для создания теста
