@@ -46,6 +46,7 @@ public class ResultController {
             @ApiResponse(responseCode = "404", description = "Результаты не найдены")
     })
     @GetMapping("/{test_id}")
+    @PreAuthorize("@testAuthFilter.hasResultAccess(#test_id, authentication.principal.id)")
     public ResponseEntity<ResultResponseDTO> getResult(
             @Parameter(description = "Идентификатор результата", required = true) @PathVariable String test_id) {
 

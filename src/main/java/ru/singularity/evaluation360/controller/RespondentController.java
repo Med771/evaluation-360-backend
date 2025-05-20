@@ -40,7 +40,6 @@ public class RespondentController {
      * @param test_id Идентификатор теста.
      * @return Ответ с данными респондентов для теста.
      */
-    // TODO: add security (Access for test users only)
     @Operation(summary = "Получить респондентов для теста", description = "Возвращает список респондентов для указанного теста.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешное получение списка респондентов"),
@@ -59,7 +58,6 @@ public class RespondentController {
      * @param respondentsRequestDTO Данные о респондентах.
      * @return Статус HTTP 201 (Создано).
      */
-    // TODO: add security (Access for test users only)
     @Operation(summary = "Выбрать респондентов", description = "Выбирает респондентов на основе предоставленных данных.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Респонденты успешно созданы"),
