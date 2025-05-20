@@ -18,11 +18,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import ru.singularity.evaluation360.filter.CsrfHeaderFilter;
 import ru.singularity.evaluation360.filter.JwtFilter;
 
 import java.util.List;
@@ -51,6 +54,7 @@ public class WebSecurityConfig {
     };
 
     private final JwtFilter jwtFilter;
+    private final CsrfHeaderFilter csrfHeaderFilter;
 
     @Bean
     @Profile("test")
@@ -75,15 +79,15 @@ public class WebSecurityConfig {
     @Profile("prod")
     public SecurityFilterChain prodSecurityFilterChain(HttpSecurity http) throws Exception {
         // включаем CSRF с хранением токена в куки для SPA
-//        http.csrf(csrf -> csrf
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                .ignoringRequestMatchers(
-//                        new AntPathRequestMatcher("/swagger-ui/**"),
-//                        new AntPathRequestMatcher("/v3/api-docs/**"),
-//                        new AntPathRequestMatcher("/swagger-ui.html")
-//                )
-//        );
-        http.csrf(AbstractHttpConfigurer::disable);
+        http.csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers(
+                        new AntPathRequestMatcher("/swagger-ui/**"),
+                        new AntPathRequestMatcher("/v3/api-docs/**"),
+                        new AntPathRequestMatcher("/swagger-ui.html")
+                )
+                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+        );
 
         // CORS для боевого фронта
         http.cors(cors -> cors
@@ -105,7 +109,8 @@ public class WebSecurityConfig {
         );
 
         // JWT фильтр
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(csrfHeaderFilter, CsrfFilter.class);
+        http.addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         // заголовки безопасности
         http.headers(headers -> headers
@@ -130,7 +135,7 @@ public class WebSecurityConfig {
         config.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:8080"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowCredentials(true);
-        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "X-XSRF-TOKEN"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
