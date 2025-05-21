@@ -2,11 +2,13 @@ package ru.singularity.evaluation360.dto.respondent.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import ru.singularity.evaluation360.entity.model.RoleUserEnum;
+import ru.singularity.evaluation360.validator.anotation.ValidateFieldsNotNullOrBlank;
 
 /**
  * Модель респондента.
  */
 @Schema(description = "Респондент")
+@ValidateFieldsNotNullOrBlank
 public record RespondentModel(
 
         @Schema(description = "ID респондента", example = "123")

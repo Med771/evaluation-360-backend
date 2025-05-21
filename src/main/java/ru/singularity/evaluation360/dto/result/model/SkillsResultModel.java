@@ -1,12 +1,15 @@
 package ru.singularity.evaluation360.dto.result.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import ru.singularity.evaluation360.validator.anotation.ValidateFieldsNotNullOrBlank;
+
 import java.util.List;
 
 /**
  * DTO с результатами по навыкам.
  */
 @Schema(description = "Результаты по навыкам")
+@ValidateFieldsNotNullOrBlank
 public record SkillsResultModel(
 
         @Schema(description = "Название навыка", example = "Командная работа")

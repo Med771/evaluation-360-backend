@@ -1,10 +1,12 @@
 package ru.singularity.evaluation360.dto.test.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import ru.singularity.evaluation360.validator.anotation.ValidateFieldsNotNullOrBlank;
 
 /**
  * Модель заголовка респондента в тесте.
  */
+@ValidateFieldsNotNullOrBlank
 @Schema(description = "Модель заголовка респондента в тесте")
 public record TestRespondentTitleModel(
         @Schema(description = "Идентификатор респондента", example = "101")

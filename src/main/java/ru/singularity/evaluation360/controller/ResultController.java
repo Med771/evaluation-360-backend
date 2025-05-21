@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,7 +73,7 @@ public class ResultController {
     @PostMapping("/{test_id}")
     @PreAuthorize("@testAuthFilter.hasTestAccess(#test_id, authentication.principal.id, authentication.principal.role)")
     public ResponseEntity<HttpStatus> addResult(@PathVariable String test_id,
-                                                @RequestBody ResultRequestDTO resultRequestDTO) {
+                                                @Valid @RequestBody ResultRequestDTO resultRequestDTO) {
         try {
             resultService.addResult(test_id, resultRequestDTO);
 

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpHeaders;
@@ -38,7 +39,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(
             @Parameter(description = "Данные для входа: имя пользователя и пароль", required = true)
-            @RequestBody LoginRequestDTO login,
+            @Valid @RequestBody LoginRequestDTO login,
             HttpServletResponse response) {
         String token = authService.login(login.email(), login.password());
 
@@ -64,7 +65,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<HttpStatus> register(
             @Parameter(description = "Данные для регистрации: имя пользователя, пароль и дополнительные данные", required = true)
-            @RequestBody RegisterRequestDTO register,
+            @Valid @RequestBody RegisterRequestDTO register,
             HttpServletResponse response) {
         String token = authService.register(register);
 

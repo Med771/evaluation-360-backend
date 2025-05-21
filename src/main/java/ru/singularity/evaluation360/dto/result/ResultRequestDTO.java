@@ -3,12 +3,14 @@ package ru.singularity.evaluation360.dto.result;
 import io.swagger.v3.oas.annotations.media.Schema;
 import ru.singularity.evaluation360.dto.result.model.AnswerTestModel;
 import ru.singularity.evaluation360.dto.result.model.SkillsTestModel;
+import ru.singularity.evaluation360.validator.anotation.ValidateFieldsNotNullOrBlank;
 
 import java.util.List;
 
 /**
  * DTO для отправки результатов теста.
  */
+@ValidateFieldsNotNullOrBlank
 @Schema(description = "Отправка результатов после теста")
 public record ResultRequestDTO(
 

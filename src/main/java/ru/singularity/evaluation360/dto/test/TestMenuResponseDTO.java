@@ -2,12 +2,14 @@ package ru.singularity.evaluation360.dto.test;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import ru.singularity.evaluation360.dto.test.model.TestRespondentTitleModel;
+import ru.singularity.evaluation360.validator.anotation.ValidateFieldsNotNullOrBlank;
 
 import java.util.List;
 
 /**
  * DTO для меню тестов.
  */
+@ValidateFieldsNotNullOrBlank
 @Schema(description = "DTO для меню тестов")
 public record TestMenuResponseDTO(
         @Schema(description = "Название теста", example = "Оценка 360")

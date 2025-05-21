@@ -2,6 +2,7 @@ package ru.singularity.evaluation360.dto.respondent;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import ru.singularity.evaluation360.dto.respondent.model.RespondentModel;
+import ru.singularity.evaluation360.validator.anotation.ValidateFieldsNotNullOrBlank;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
  * DTO с информацией о странице выбора респондентов.
  */
 @Schema(description = "Информация о выборе респондентов")
+@ValidateFieldsNotNullOrBlank
 public record RespondentsResponseDTO(
 
         @Schema(description = "Минимальное количество респондентов", example = "3")

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -83,7 +84,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Успешное получение теста")
     })
     @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
-    public ResponseEntity<HttpStatus> updateTestStatus(@PathVariable String test_id, @RequestBody TestStatusRequestDTO testStatusRequestDTO) {
+    public ResponseEntity<HttpStatus> updateTestStatus(@PathVariable String test_id, @Valid @RequestBody TestStatusRequestDTO testStatusRequestDTO) {
         try {
             testManagementService.editTestStatus(test_id, testStatusRequestDTO);
             return ResponseEntity.ok(HttpStatus.CREATED);
@@ -104,7 +105,7 @@ public class AdminController {
             @ApiResponse(responseCode = "201", description = "Успешное добавление теста")
     })
     @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
-    public ResponseEntity<HttpStatus> postTest(@RequestBody TestRequestDTO testRequestDTO){
+    public ResponseEntity<HttpStatus> postTest(@Valid @RequestBody TestRequestDTO testRequestDTO){
         try {
             testManagementService.addTest(testRequestDTO);
             return ResponseEntity.ok(HttpStatus.CREATED);
@@ -117,7 +118,7 @@ public class AdminController {
     @PutMapping("result/approve/{result_id}")
     @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
     public ResponseEntity<HttpStatus> approveResult(@PathVariable String result_id,
-                                                    @RequestBody ResultApproveRequestDto resultApproveRequestDto) {
+                                                    @Valid @RequestBody ResultApproveRequestDto resultApproveRequestDto) {
         resultService.editResult(result_id, resultApproveRequestDto);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }

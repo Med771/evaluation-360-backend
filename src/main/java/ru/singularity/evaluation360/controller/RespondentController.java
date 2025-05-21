@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,7 +70,7 @@ public class RespondentController {
     @PreAuthorize("@testAuthFilter.hasTestAccess(#test_id, authentication.principal.id, authentication.principal.role)")
     public ResponseEntity<HttpStatus> createRespondent(
             @Parameter(description = "Идентификатор теста", required = true) @PathVariable("test_id") String test_id,
-            @RequestBody RespondentsRequestDTO respondentsRequestDTO) {
+            @Valid @RequestBody RespondentsRequestDTO respondentsRequestDTO) {
         Integer userId = ((UserEntity) userDetails.
                 loadUserByUsername(SecurityContextHolder.
                         getContext().

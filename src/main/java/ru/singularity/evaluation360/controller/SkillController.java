@@ -1,5 +1,6 @@
 package ru.singularity.evaluation360.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class SkillController {
      */
     @PostMapping("skill")
     @PreAuthorize("@testAuthFilter.hasAdminAccess(authentication.principal.role)")
-    public ResponseEntity<SkillEntity> addSkill(@RequestBody SkillRequestDTO skillRequestDTO){
+    public ResponseEntity<SkillEntity> addSkill(@Valid @RequestBody SkillRequestDTO skillRequestDTO){
         return ResponseEntity.ok(skillService.addSkill(skillRequestDTO));
     }
 
@@ -31,7 +32,7 @@ public class SkillController {
      * Добавление навыков
      */
     @PostMapping("skills")
-    public ResponseEntity<List<SkillEntity>> addSkills(@RequestBody List<SkillRequestDTO> skillRequestDTOS){
+    public ResponseEntity<List<SkillEntity>> addSkills(@Valid @RequestBody List<SkillRequestDTO> skillRequestDTOS){
         return ResponseEntity.ok(skillService.addSkills(skillRequestDTOS));
     }
     /**

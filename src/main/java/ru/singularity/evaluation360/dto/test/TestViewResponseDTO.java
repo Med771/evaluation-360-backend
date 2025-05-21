@@ -5,9 +5,11 @@ import ru.singularity.evaluation360.dto.respondent.model.RespondentModel;
 import ru.singularity.evaluation360.dto.test.model.QuestionModel;
 import ru.singularity.evaluation360.entity.model.StatusTestEnum;
 import ru.singularity.evaluation360.entity.model.TypeTestEnum;
+import ru.singularity.evaluation360.validator.anotation.ValidateFieldsNotNullOrBlank;
 
 import java.util.List;
 
+@ValidateFieldsNotNullOrBlank
 @Schema(description = "просмотр теста от администратора")
 public record TestViewResponseDTO(
         @Schema(description = "Название теста")
