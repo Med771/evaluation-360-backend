@@ -16,30 +16,46 @@ import javax.crypto.SecretKey;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtCore {
-    private final Long timeLive;
-
+    private final Long accessTokenTimeLive;
+    private final Long refreshTokenTimeLive;
     private final SecretKey key;
 
     public JwtCore(
             @Value("${jwt.secret.token}") String jwtSecret,
-            @Value("${jwt.time.live}") Long timeLive) {
-        this.timeLive = timeLive;
-
+            @Value("${jwt.time.live}") Long accessTokenTimeLive,
+            @Value("${jwt.refresh.time.live:86400000}") Long refreshTokenTimeLive) {
+        this.accessTokenTimeLive = accessTokenTimeLive;
+        this.refreshTokenTimeLive = refreshTokenTimeLive;
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateToken(Authentication auth) {
+    public String generateAccessToken(Authentication auth) {
         UserEntity user = (UserEntity) auth.getPrincipal();
+        return generateToken(user.getUsername(), accessTokenTimeLive);
+    }
 
+    public String generateRefreshToken(Authentication auth) {
+        UserEntity user = (UserEntity) auth.getPrincipal();
+        return generateToken(user.getUsername(), refreshTokenTimeLive);
+    }
+
+    protected String generateToken(String username, Long expirationTime) {
         Date now = new Date();
+        Date expiration = new Date(now.getTime() + expirationTime);
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("type", expirationTime.equals(accessTokenTimeLive) ? "ACCESS" : "REFRESH");
 
         return Jwts.builder()
-                .subject((user.getUsername()))
+                .claims(claims)
+                .subject(username)
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + timeLive))
+                .expiration(expiration)
                 .signWith(key)
                 .compact();
     }
@@ -60,11 +76,33 @@ public class JwtCore {
                     .build()
                     .parseSignedClaims(token);
 
-            Date expiration = claimsJws.getPayload().getExpiration();
+            Claims claims = claimsJws.getPayload();
+            Date expiration = claims.getExpiration();
+            String tokenType = claims.get("type", String.class);
 
-            return expiration != null && expiration.after(Date.from(Instant.now()));
+            return expiration != null && 
+                   expiration.after(Date.from(Instant.now())) &&
+                   "ACCESS".equals(tokenType);
         } catch (JwtException | IllegalArgumentException ex) {
-            System.out.println(ex.getMessage());
+            return false;
+        }
+    }
+
+    public boolean validateRefreshToken(String token) {
+        try {
+            Jws<Claims> claimsJws = Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token);
+
+            Claims claims = claimsJws.getPayload();
+            Date expiration = claims.getExpiration();
+            String tokenType = claims.get("type", String.class);
+
+            return expiration != null && 
+                   expiration.after(Date.from(Instant.now())) &&
+                   "REFRESH".equals(tokenType);
+        } catch (JwtException | IllegalArgumentException ex) {
             return false;
         }
     }
