@@ -60,7 +60,7 @@ public class AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return jwtCore.generateToken(authentication);
+        return jwtCore.generateAccessToken(authentication);
     }
 
     @LogEntryExit
@@ -100,7 +100,7 @@ public class AuthService {
                 null,
                 userEntity.getAuthorities());
 
-        return jwtCore.generateToken(authentication);
+        return jwtCore.generateAccessToken(authentication);
     }
 }
 
