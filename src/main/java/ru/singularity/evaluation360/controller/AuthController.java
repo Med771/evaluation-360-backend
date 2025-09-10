@@ -17,12 +17,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.GetMapping;
 
 import ru.singularity.evaluation360.dto.auth.LoginRequestDTO;
 import ru.singularity.evaluation360.dto.auth.RegisterRequestDTO;
 
 import ru.singularity.evaluation360.service.AuthService;
+
+import org.springframework.security.web.csrf.CsrfToken;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/auth")
@@ -79,5 +82,35 @@ public class AuthController {
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         return ResponseEntity.ok().body(HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Получить CSRF токен", description = "Возвращает новый CSRF токен для авторизованного пользователя.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешное получение токена"),
+            @ApiResponse(responseCode = "401", description = "Пользователь не авторизован")
+    })
+    @GetMapping("/csrf-token")
+    public ResponseEntity<HttpStatus> getCsrfToken(HttpServletRequest request, HttpServletResponse response) {
+        CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+        if (csrf != null) {
+            String token = csrf.getToken();
+
+            ResponseCookie cookie = ResponseCookie.from("XSRF-TOKEN", token)
+                    .httpOnly(false)
+                    .secure(false)
+                    .path("/")
+                    .sameSite("Strict")
+                    .maxAge(3600)
+                    .build();
+
+            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+            response.setHeader("X-CSRF-TOKEN", token);
+            response.setHeader("X-XSRF-TOKEN", token);
+            response.setHeader("X-CSRF-HEADER", csrf.getHeaderName());
+            response.setHeader("X-CSRF-PARAM", csrf.getParameterName());
+        }
+        
+        return ResponseEntity.ok().body(HttpStatus.OK);
     }
 }
